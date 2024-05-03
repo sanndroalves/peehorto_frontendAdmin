@@ -6,7 +6,7 @@ const theme = useTheme();
 const primary = theme.current.value.colors.primary;
 const lightprimary = theme.current.value.colors.lightprimary;
 
-const { data: dados } = await useFetch(`http://localhost:8000/salvar?ano=2024`);
+const { data: dados } = await useFetch(`https://peehorto.cloud/salvar?ano=2024`);
 const ultDados = dados.value[0];
 
 const chartOptions = computed(() => {

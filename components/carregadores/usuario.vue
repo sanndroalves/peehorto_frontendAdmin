@@ -1,7 +1,7 @@
 <script setup>
 
-    const { data: veiculos } = await useFetch("http://localhost:8000/veiculo/");
-    const { data: usuarios } = await useFetch("http://localhost:8000/usuarios/");
+    const { data: veiculos } = await useFetch("https://peehorto.cloud/veiculo/");
+    const { data: usuarios } = await useFetch("https://peehorto.cloud/usuarios/");
 
     /* PROCURAR USER POR CATEGORIA SELECIONADA */
     const categoriaUser = ref()
@@ -93,7 +93,7 @@
     // SALVAR USUARIO
     const salvarUser = async (idUsuario) =>{
         try {
-            const response = await useFetch(`http://localhost:8000/usuarios/${idUsuario}`, {
+            const response = await useFetch(`https://peehorto.cloud/usuarios/${idUsuario}`, {
                 method: 'PUT',
                 body: { 
                     username: usuarioUser.value,
@@ -109,7 +109,7 @@
                 showError.value = false
                 showSuccessAlert.value = true; 
 
-                const { data: updatedUser } = await useFetch("http://localhost:8000/usuarios/");
+                const { data: updatedUser } = await useFetch("https://peehorto.cloud/usuarios/");
                 usuarios.value = updatedUser._rawValue
             } else {
                 showError.value = true
@@ -142,7 +142,7 @@
 
     const excluirUser = async () => {
         try {
-            const response = await useFetch(`http://localhost:8000/usuarios/${userSelected.value}`, {
+            const response = await useFetch(`https://peehorto.cloud/usuarios/${userSelected.value}`, {
                 method: 'DELETE',
                 key: 'deleteUser'
             });
@@ -151,7 +151,7 @@
                 showSuccessAlertExcluir.value = true
                 showErrorExcluir.value = false
 
-                const { data: updatedUser } = await useFetch("http://localhost:8000/usuarios/");
+                const { data: updatedUser } = await useFetch("https://peehorto.cloud/usuarios/");
                 usuarios.value = updatedUser._rawValue    
             }else{
                 showSuccessAlertExcluir.value = false

@@ -21,7 +21,7 @@ const { signIn } = useAuth()
 
         showAlertError.value = false
         showAlertErrorPermissao.value = false
-        const {data: userPesquisar} = await useFetch(`http://localhost:8000/usuarios?username=${credentials.username}`)
+        const {data: userPesquisar} = await useFetch(`https://peehorto.cloud/usuarios?username=${credentials.username}`)
          
         if(userPesquisar._rawValue[0] && userPesquisar._rawValue[0].cargo !== 'AD'){
             showAlertErrorPermissao.value = true

@@ -14,7 +14,7 @@ useHead({
 const { data } = useAuth()
 const idUsuario = ref(JSON.stringify(data.value.results[0].id))
 
-const { data: usuarioInfo } = await useFetch(`http://localhost:8000/usuarios/${idUsuario.value}`); 
+const { data: usuarioInfo } = await useFetch(`https://peehorto.cloud/usuarios/${idUsuario.value}`); 
 </script>
 
 <template>

@@ -33,7 +33,7 @@ const sendUsina = async () => {
     }
 
     try {
-        const response = await useFetch(`http://localhost:8000/usina/`, {
+        const response = await useFetch(`https://peehorto.cloud/usina/`, {
         method: 'POST',
         body: {
             uc: ucUsina.value,

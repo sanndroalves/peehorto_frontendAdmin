@@ -14,7 +14,7 @@ import UiParentCard from '@/components/shared/UiParentCard.vue';
 import RelatorioUsina from "~~/components/dashboard/RelatorioUsina.vue";
 
 import { ref } from 'vue';
-  const { data: usinas } = await useFetch("http://localhost:8000/usina/");
+  const { data: usinas } = await useFetch("https://peehorto.cloud/usina/");
 
   const selectedUsina = ref(null);
   const selectedYear = ref(null);
@@ -35,14 +35,14 @@ import { ref } from 'vue';
 
   
   //PROCURAR UNIDADES DA USINA
-    const {data: todasPorcento} = await useFetch(`http://localhost:8000/porcentagem`)
+    const {data: todasPorcento} = await useFetch(`https://peehorto.cloud/porcentagem`)
 
     const procurarUnidadesCompensadas = async () => {
         const unidadesCompensadas = []
-        const {data: porcentagens} = await useFetch(`http://localhost:8000/porcentagem?idGeradora=${selectedUsina.value}`)
+        const {data: porcentagens} = await useFetch(`https://peehorto.cloud/porcentagem?idGeradora=${selectedUsina.value}`)
         await Promise.all(porcentagens.value.map(async (porcentagem) => {
             const idUnidadeCompensa = porcentagem.idUnidadeCompensa;
-                const { data: predio } = await useFetch(`http://localhost:8000/unidadecompensacao/${idUnidadeCompensa}`);
+                const { data: predio } = await useFetch(`https://peehorto.cloud/unidadecompensacao/${idUnidadeCompensa}`);
                 unidadesCompensadas.push(predio._rawValue);
         }));
         return unidadesCompensadas;
@@ -57,13 +57,13 @@ import { ref } from 'vue';
     idAno.value = selectedYear.value
     ano = selectedYear.value
 
-    const { data: relatorioPesquisa } = await useFetch(`http://localhost:8000/relatoriocompensacao`);
-    const { data: usinas } = await useFetch(`http://localhost:8000/usina/${idGeradora.value}`); //SELECIONAR A USINA
-    const { data: projecaoUsina } = await useFetch(`http://localhost:8000/projecaogeracao?idGeradora=${idGeradora.value}&ano=${idAno.value}`); //PROJECAO
-    const { data: geracaoUsina } = await useFetch(`http://localhost:8000/relatoriogeracao?idGeradora=${idGeradora.value}`); //GERACAO
-    const { data: injecaoUsina } = await useFetch(`http://localhost:8000/relatoriousina?idGeradora=${idGeradora.value}&ano=${idAno.value}`);
-    const { data: injecoesGeral } = await useFetch(`http://localhost:8000/relatoriousina?idGeradora=${idGeradora.value}`);
-    const { data: relatorioInd } = await useFetch(`http://localhost:8000/relatoriocompensacao?idGeradora=${idGeradora.value}`);
+    const { data: relatorioPesquisa } = await useFetch(`https://peehorto.cloud/relatoriocompensacao`);
+    const { data: usinas } = await useFetch(`https://peehorto.cloud/usina/${idGeradora.value}`); //SELECIONAR A USINA
+    const { data: projecaoUsina } = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${idGeradora.value}&ano=${idAno.value}`); //PROJECAO
+    const { data: geracaoUsina } = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${idGeradora.value}`); //GERACAO
+    const { data: injecaoUsina } = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${idGeradora.value}&ano=${idAno.value}`);
+    const { data: injecoesGeral } = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${idGeradora.value}`);
+    const { data: relatorioInd } = await useFetch(`https://peehorto.cloud/relatoriocompensacao?idGeradora=${idGeradora.value}`);
     
     const unidadesCompensadas = await procurarUnidadesCompensadas()
 
@@ -172,8 +172,8 @@ const handlePesquisar = () => {
     if(!selectedYearConsumo.value){
       return;
     }else{
-      const { data: relatorioPesquisa } = await useFetch(`http://localhost:8000/relatoriocompensacao?ano=${selectedYearConsumo.value}`);
-      const { data: predios } = await useFetch(`http://localhost:8000/unidadecompensacao?categoria=${preSelecionado.value}`);
+      const { data: relatorioPesquisa } = await useFetch(`https://peehorto.cloud/relatoriocompensacao?ano=${selectedYearConsumo.value}`);
+      const { data: predios } = await useFetch(`https://peehorto.cloud/unidadecompensacao?categoria=${preSelecionado.value}`);
 
       relatorios.value = relatorioPesquisa._rawValue;
       prediosEscolhidos.value = predios._rawValue
@@ -291,10 +291,10 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
 
   const pesquisarInjetado = async () =>{
     
-    const { data: relatorioPesquisa } = await useFetch(`http://localhost:8000/relatoriousina?idGeradora=${selectedUsinaInjetado.value}&ano=${selectedYearInjetado.value}`);
-    const { data: usinas } = await useFetch(`http://localhost:8000/usina/${selectedUsinaInjetado.value}`); //SELECIONAR A USINA
-    const { data: projecaoUsina } = await useFetch(`http://localhost:8000/projecaogeracao?idGeradora=${selectedUsinaInjetado.value}&ano=${selectedYearInjetado.value}`); //PROJECAO
-    const { data: geracaoUsina } = await useFetch(`http://localhost:8000/relatoriogeracao?idGeradora=${selectedUsinaInjetado.value}&ano=${selectedYearInjetado.value}`); //GERACAO
+    const { data: relatorioPesquisa } = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${selectedUsinaInjetado.value}&ano=${selectedYearInjetado.value}`);
+    const { data: usinas } = await useFetch(`https://peehorto.cloud/usina/${selectedUsinaInjetado.value}`); //SELECIONAR A USINA
+    const { data: projecaoUsina } = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${selectedUsinaInjetado.value}&ano=${selectedYearInjetado.value}`); //PROJECAO
+    const { data: geracaoUsina } = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${selectedUsinaInjetado.value}&ano=${selectedYearInjetado.value}`); //GERACAO
 
     relatoriosInjetado.value = relatorioPesquisa._rawValue;
     usinaEscolhidaInjetado.value = usinas._rawValue;
@@ -313,7 +313,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
   const somaSaldoEnergia = ref("")
 
 
-  const { data: projecao } = await useFetch(`http://localhost:8000/projecaogeracao`);
+  const { data: projecao } = await useFetch(`https://peehorto.cloud/projecaogeracao`);
     const somarIndividualProjecao = async (anoId) => {                                                                                                                                                                                                                                                              
         const totalPorMes = projecao.value
             .filter(item => item.ano === parseInt(anoId))
@@ -325,7 +325,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
             return totalPorMes;
     };
 
-    const { data: real } = await useFetch(`http://localhost:8000/relatoriogeracao`);
+    const { data: real } = await useFetch(`https://peehorto.cloud/relatoriogeracao`);
     const somarIndividualReal = async (anoId) => {
       const totalPorMes = real.value
           .filter(item => item.ano === parseInt(anoId))
@@ -339,7 +339,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
       };
     
     //ANO ATUAL
-    const { data: injetado } = await useFetch(`http://localhost:8000/relatoriousina`);
+    const { data: injetado } = await useFetch(`https://peehorto.cloud/relatoriousina`);
     const somarIndividualInjetado = async (anoId) => {
       const totalPorMes = injetado.value
           .filter(item => item.ano === parseInt(anoId))
@@ -353,7 +353,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
       };
 
     //COMPENSADO
-    const { data: compensado } = await useFetch(`http://localhost:8000/relatoriocompensacao`);
+    const { data: compensado } = await useFetch(`https://peehorto.cloud/relatoriocompensacao`);
     const somarIndividualCompensado = async (anoId) => {
       const totalPorMes = compensado.value
           .filter(item => item.ano === parseInt(anoId))

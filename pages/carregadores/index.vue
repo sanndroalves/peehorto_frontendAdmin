@@ -4,11 +4,11 @@
     import Usuario from "~~/components/carregadores/usuario.vue";
     import Funcionario from "~~/components/carregadores/funcionario.vue";
 
-    const { data: carregadores } = await useFetch("http://localhost:8000/carregador/");
-    const { data: veiculos } = await useFetch("http://localhost:8000/veiculo/");
-    const { data: municipes } = await useFetch("http://localhost:8000/usuarios?cargo=MU");
-    const { data: servidor } = await useFetch("http://localhost:8000/usuarios?cargo=SE");
-    const { data: funcionarios } = await useFetch("http://localhost:8000/usuarios?cargo=FU");
+    const { data: carregadores } = await useFetch("https://peehorto.cloud/carregador/");
+    const { data: veiculos } = await useFetch("https://peehorto.cloud/veiculo/");
+    const { data: municipes } = await useFetch("https://peehorto.cloud/usuarios?cargo=MU");
+    const { data: servidor } = await useFetch("https://peehorto.cloud/usuarios?cargo=SE");
+    const { data: funcionarios } = await useFetch("https://peehorto.cloud/usuarios?cargo=FU");
 
 useHead ({
         title: 'Carregadores'

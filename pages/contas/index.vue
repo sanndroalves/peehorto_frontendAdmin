@@ -14,8 +14,8 @@ import Automatizacao from '@/components/predios/automatizacao.vue';
 
 import { ref } from 'vue';
 
-const { data: solicitacoes } = await useFetch("http://localhost:8000/logsolicitacao/");
-const { data: downloads } = await useFetch("http://localhost:8000/logdownloadpdf?download=True");
+const { data: solicitacoes } = await useFetch("https://peehorto.cloud/logsolicitacao/");
+const { data: downloads } = await useFetch("https://peehorto.cloud/logdownloadpdf?download=True");
 
 </script>
 <template>

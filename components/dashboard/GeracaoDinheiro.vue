@@ -91,7 +91,7 @@ const mudarAno = () =>{
 
 }
 const carregarDados = async (ano) => {
-    const { data: relatorioPesquisa } = await useFetch(`http://localhost:8000/relatoriocompensacao?ano=${ano}&ligacao=L`);
+    const { data: relatorioPesquisa } = await useFetch(`https://peehorto.cloud/relatoriocompensacao?ano=${ano}&ligacao=L`);
     novaLista.value = calcularSomaPorMes(relatorioPesquisa._value);
     totalAnual.value = calcularSomaPorAno(relatorioPesquisa._value)
     somaTotalAnual.value = Object.values(totalAnual.value).reduce((acc, curr) => acc + curr, 0);

@@ -25,9 +25,9 @@ const geracaoUsina = ref([]);
     const consumo = ref([]);
 
 watch([() => props.idUsina, () => props.ano], async ([idUsina, ano]) => {
-  const { data: relatorioPesquisaData } = await useFetch(`http://localhost:8000/relatoriousina?idGeradora=${idUsina}&ano=${ano}`);
-  const { data: projecaoUsinaData } = await useFetch(`http://localhost:8000/projecaogeracao?idGeradora=${idUsina}&ano=${ano}`);
-  const { data: geracaoUsinaData } = await useFetch(`http://localhost:8000/relatoriogeracao?idGeradora=${idUsina}&ano=${ano}`);
+  const { data: relatorioPesquisaData } = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${idUsina}&ano=${ano}`);
+  const { data: projecaoUsinaData } = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${idUsina}&ano=${ano}`);
+  const { data: geracaoUsinaData } = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${idUsina}&ano=${ano}`);
  
   relatorioPesquisa.value = relatorioPesquisaData._rawValue;
   projecaoUsina.value = projecaoUsinaData._rawValue;
@@ -52,9 +52,9 @@ watch([() => props.idUsina, () => props.ano], async ([idUsina, ano]) => {
     }
 });
 
-    // const { data: relatorioPesquisa } = await useFetch(`http://localhost:8000/relatoriousina?idGeradora=${props.idUsina}&ano=${props.ano}`);
-    // const { data: projecaoUsina } = await useFetch(`http://localhost:8000/projecaogeracao?idGeradora=${props.idUsina}&ano=${props.ano}`); //PROJECAO
-    // const { data: geracaoUsina } = await useFetch(`http://localhost:8000/relatoriogeracao?idGeradora=${props.idUsina}&ano=${props.ano}`); //GERACAO
+    // const { data: relatorioPesquisa } = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${props.idUsina}&ano=${props.ano}`);
+    // const { data: projecaoUsina } = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${props.idUsina}&ano=${props.ano}`); //PROJECAO
+    // const { data: geracaoUsina } = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${props.idUsina}&ano=${props.ano}`); //GERACAO
     
 
 // CONFIGURANDO GRÁFICO

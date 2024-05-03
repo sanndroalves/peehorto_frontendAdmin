@@ -14,8 +14,8 @@ definePageMeta({
 import { ref } from 'vue';
 import UiParentCard from '@/components/shared/UiParentCard.vue';
 
-const { data: manutencao } = await useFetch("http://localhost:8000/manutencao/");
-const { data: usinas } = await useFetch("http://localhost:8000/usina/");
+const { data: manutencao } = await useFetch("https://peehorto.cloud/manutencao/");
+const { data: usinas } = await useFetch("https://peehorto.cloud/usina/");
 
 
 const selecionado = ref(null)
