@@ -21,7 +21,7 @@ export default defineNuxtConfig({
     '@sidebase/nuxt-auth'
   ],
   auth: {
-    baseURL: 'https://peehorto.cloud/',//endereço do backend
+    baseURL: 'https://peehorto.cloud',//endereço do backend
     provider: {
       type: 'local',//biblioteca sidebase no modo local (webToken)
       endpoints: {
