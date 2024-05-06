@@ -1,5 +1,5 @@
 <script setup>
-    const { data: usinas } = await useFetch(`http://localhost:8000/usina/`);
+    const { data: usinas } = await useFetch(`https://peehorto.cloud/usina/`);
 
     const usinasAbaixo = ref([]) // apenas usinas abaixo com 3 repetições em segurarUsinas
     const segurarUsinas = ref([]) // salvar todas q estao abaixo, se tiver mais de 3 vezes, salva em usinasAbaixo
@@ -7,8 +7,8 @@
     for (let i=0; i<usinas.value.length; i++){
         const individual = usinas.value[i]
 
-        const { data: proIndi } = await useFetch(`http://localhost:8000/projecaogeracao?idGeradora=${individual.id}&ano=2024`);
-        const { data: geraIndi } = await useFetch(`http://localhost:8000/relatoriogeracao?idGeradora=${individual.id}&ano=2024`);
+        const { data: proIndi } = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${individual.id}&ano=2024`);
+        const { data: geraIndi } = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${individual.id}&ano=2024`);
         
         for (let a=0; a < geraIndi.value.length; a++){
                 const projetado = proIndi.value[a]
@@ -42,12 +42,12 @@
 
     const procurarUsina = async () => {
         for (let i=0; i < usinasAbaixo._rawValue.length; i++) {
-          const { data: irregular } = await useFetch(`http://localhost:8000/irregular?idGeradora=${usinasAbaixo._rawValue[i].usina}`); 
+          const { data: irregular } = await useFetch(`https://peehorto.cloud/irregular?idGeradora=${usinasAbaixo._rawValue[i].usina}`); 
 
           //caso não exista usina na tabela irregualar
           if(irregular.value.length == 0){
               //POST
-              const response = await useFetch(`http://localhost:8000/irregular/`, {
+              const response = await useFetch(`https://peehorto.cloud/irregular/`, {
                         method: 'POST',
                         body: 
                             {
@@ -65,7 +65,7 @@
                       console.log("ERRO1 POST")
                     }
 
-                    const { data: individual } = await useFetch(`http://localhost:8000/usina/${usinasAbaixo._rawValue[i].usina}`);
+                    const { data: individual } = await useFetch(`https://peehorto.cloud/usina/${usinasAbaixo._rawValue[i].usina}`);
                     usinasProcuradas.value.push(individual.value);
           }else{ 
             // SE QTD IRREGULAR FOR DIFERENTE DE QTDCONHECIMENTO, JA FOI FEITO A ADIÇÃO NO QTDIRREGULAR EM PUT ANTERIOR
@@ -73,7 +73,7 @@
                 // SE O MES NO API É DIFERENTE DOQ O ATUAL DA ARRAY
                 if(irregular._rawValue[0].ultMes !== usinasAbaixo._rawValue[i].qtd){
 
-                const response = await useFetch(`http://localhost:8000/irregular/${irregular._rawValue[0].id}`, {
+                const response = await useFetch(`https://peehorto.cloud/irregular/${irregular._rawValue[0].id}`, {
                     method: 'PUT',
                     body: 
                         {
@@ -93,13 +93,13 @@
                 }   
               }
 
-                const { data: individual } = await useFetch(`http://localhost:8000/usina/${usinasAbaixo._rawValue[i].usina}`);
+                const { data: individual } = await useFetch(`https://peehorto.cloud/usina/${usinasAbaixo._rawValue[i].usina}`);
                 usinasProcuradas.value.push(individual.value);
               // QTD IRREGULAR E O QTDCONHEMNTO É 0
               //SE O MES FOI DIFERENTE, alterar a qtdIrregular, mas deixar o ultMes
             }else{
               if(irregular._rawValue[0].ultMes !== usinasAbaixo._rawValue[i].qtd){
-                const response = await useFetch(`http://localhost:8000/irregular/${irregular._rawValue[0].id}`, {
+                const response = await useFetch(`https://peehorto.cloud/irregular/${irregular._rawValue[0].id}`, {
                     method: 'PUT',
                     body: 
                         {
@@ -117,7 +117,7 @@
                   console.log("ERRO1 PUT2")
                 }
 
-                const { data: individual } = await useFetch(`http://localhost:8000/usina/${usinasAbaixo._rawValue[i].usina}`);
+                const { data: individual } = await useFetch(`https://peehorto.cloud/usina/${usinasAbaixo._rawValue[i].usina}`);
                 usinasProcuradas.value.push(individual.value);
               }
             }
@@ -128,7 +128,7 @@
     procurarUsina(usinasAbaixo)
 
     const removerIndica = async(idGeradora) =>{
-      const { data: irregular } = await useFetch(`http://localhost:8000/irregular?idGeradora=${idGeradora}`);
+      const { data: irregular } = await useFetch(`https://peehorto.cloud/irregular?idGeradora=${idGeradora}`);
 
       let filtroUsina = null;
       for (const item of usinasAbaixo._rawValue) { 
@@ -138,7 +138,7 @@
         }
       }
 
-      const response = await useFetch(`http://localhost:8000/irregular/${irregular._rawValue[0].id}`, {
+      const response = await useFetch(`https://peehorto.cloud/irregular/${irregular._rawValue[0].id}`, {
                   method: 'PUT',
                   body: 
                       {

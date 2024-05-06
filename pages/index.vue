@@ -182,8 +182,24 @@ const segurarUsinas = ref([]) // salvar todas q estao abaixo, se tiver mais de 3
                 console.log("ERRO1")
               }  
     }
+
+    const overlay = ref(true)
+    setTimeout(() => {
+            overlay.value = false; 
+        }, 8000);
 </script>
 <template>
+    <v-overlay
+      :model-value="overlay"
+      class="align-center justify-center"
+    >
+      <v-progress-circular
+        color="primary"
+        size="64"
+        indeterminate
+      ></v-progress-circular>
+    </v-overlay>
+
     <v-row>
     <div
       class="v-card v-theme--BLUE_THEME v-card--density-default elevation-10 rounded-md v-card--variant-elevated bg-lightprimary elevation-0 rounded-md mb-8"
