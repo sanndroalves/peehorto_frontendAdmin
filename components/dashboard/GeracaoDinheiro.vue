@@ -76,7 +76,7 @@ const calcularSomaPorAno = (relatorios) => {
             somaPorAno[ano] = 0;
         }
         
-        somaPorAno[ano] += Number(valorInjTUSD) + Number(valorInjTE);
+        somaPorAno[ano] += parseInt(valorInjTUSD) + parseInt(valorInjTE);
     });
     
     return somaPorAno;
