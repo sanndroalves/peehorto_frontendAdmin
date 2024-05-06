@@ -7,6 +7,7 @@
     for (let i=0; i<usinas.value.length; i++){
         const individual = usinas.value[i]
 
+               
         const { data: proIndi } = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${individual.id}&ano=2024`);
         const { data: geraIndi } = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${individual.id}&ano=2024`);
         
@@ -14,7 +15,7 @@
                 const projetado = proIndi.value[a]
                 const gerado = geraIndi.value[a]
                 
-                if(gerado.geracao < projetado.projecao){
+                if(parseInt(gerado.geracao) < parseInt(projetado.projecao)){ 
                     segurarUsinas.value.push(individual.id)
                 }
             
