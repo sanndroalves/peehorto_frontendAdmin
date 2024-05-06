@@ -14,6 +14,7 @@ definePageMeta({
 import SalesOverview from "~~/components/dashboard/RelatorioGeracao.vue";
 import YearlyBreakup from "@/components/dashboard/YearlyBreakup.vue"; 
 import GeracaoDinheiro from "@/components/dashboard/GeracaoDinheiro.vue"; 
+import Irregular from "@/components/dashboard/Irregular.vue"; 
 
 const { data: usinas } = await useFetch(`https://peehorto.cloud/usina/`);
 const { data: predios } = await useFetch( `https://peehorto.cloud/unidadecompensacao/`);
@@ -345,43 +346,7 @@ const segurarUsinas = ref([]) // salvar todas q estao abaixo, se tiver mais de 3
             <YearlyBreakup />
           </div>
           
-           <div>
-            <div
-              class="v-card v-theme--BLUE_THEME v-card--density-default elevation-10 rounded-md v-card--variant-elevated"
-            >
-              <div class="v-card-item pb-sm-8 pb-6">
-                <div class="v-card-item__content">
-                  <div class="v-card-title text-h5">
-                    <v-avatar class="bg-lightwarning text-warning mb-1 mr-2" size="30">
-                        <BoltIcon size="20" />
-                    </v-avatar>
-                    Déficit Gerações</div>
-                  <div class="v-card-subtitle text-subtitle-1 mt-n1">
-                    Gerações irregulares (+3 meses)
-                  </div>
-                  <div class="mt-sm-5 mt-5" v-for="usina in usinasProcuradas" :key="usina.id">
-                    <div class="d-flex align-items-center justify-content-between mt-2">
-                        <div class="v-avatar v-theme--BLUE_THEME v-avatar--density-default v-avatar--variant-flat rounded-md bg-lightwarning" style="width: 40px; height: 40px">
-                            <AlertTriangleIcon size="22" class="text-warning" />
-                        </div>
-                        <div class="pl-4 mt-n1 flex-grow-1">
-                            <h5 class="text-h6">{{ usina.uc }}</h5>
-                            <h6 class="text-subtitle-1 text-medium-emphasis">{{ usina.nome }}</h6>
-                        </div>
-                        <div style="width: 40px;">
-                            <v-btn @click="removerIndica(usina.id)" size="20" icon class="bg-warning">
-                                <v-avatar size="20" class="text-white">
-                                    <XIcon size="15" />
-                                </v-avatar>
-                                <v-tooltip activator="parent" location="bottom">Remover Indicação</v-tooltip>
-                            </v-btn>
-                        </div>
-                    </div>
-                  </div>
-                </div>
-              </div><span class="v-card__underlay"></span>
-            </div>
-          </div> 
+          <Irregular />
         </v-col>
       </v-row>
 
