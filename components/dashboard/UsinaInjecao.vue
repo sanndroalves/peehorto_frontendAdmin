@@ -88,7 +88,7 @@ const areaChart = computed(() => {
             <v-row>
                 <v-col cols="12">
                     <div class="mt-2">
-                        <h3 class="text-h3">{{ (soma/1000) }} MWh</h3>
+                        <h3 class="text-h3">{{ parseInt((soma)/1000) }} MWh</h3>
                         <div class="mt-1">
                             <v-avatar class="bg-lightsuccess text-success" size="25">
                                 <InfoCircleIcon size="20" />

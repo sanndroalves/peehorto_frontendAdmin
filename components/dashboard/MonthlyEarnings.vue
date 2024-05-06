@@ -59,7 +59,7 @@ watch(() => props.lista, (newList) => {
 
     soma.value = 0
     for (let i=0; i<novaLista.value.length; i++){
-        soma.value += novaLista.value[i]
+        soma.value = Number(soma.value) + Number(novaLista.value[i])
     }
 
 });
