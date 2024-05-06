@@ -927,8 +927,8 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                     </div>
                                     <!-- REAL INJ-->  
                                     <div style="display: flex;">
-                                        <div style="width: 100px; border: 1px solid #ddd; padding: 8px; color:#5D87FF  ">{{ rela.enerInjTE +  rela.enerInjTUSD}}</div>
-                                        <div style="width: 100px; border: 1px solid #ddd; padding: 8px; color:#13DEB9 ">{{ Number(rela.valorInjTE) + Number(rela.valorInjTUSD)}}</div>
+                                        <div style="width: 100px; border: 1px solid #ddd; padding: 8px; color:#5D87FF  ">{{ Number(rela.enerInjTE) +  Number(rela.enerInjTUSD)}}</div>
+                                        <div style="width: 100px; border: 1px solid #ddd; padding: 8px; color:#13DEB9 ">{{  (Number(rela.valorInjTE) + Number(rela.valorInjTUSD)).toFixed(2)}}</div>
                                     </div>
 
                                     <!-- PROJ INJ. -->
