@@ -63,7 +63,7 @@ import { ref } from 'vue';
     const { data: geracaoUsina } = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${idGeradora.value}`); //GERACAO
     const { data: injecaoUsina } = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${idGeradora.value}&ano=${idAno.value}`);
     const { data: injecoesGeral } = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${idGeradora.value}`);
-    const { data: relatorioInd } = await useFetch(`https://peehorto.cloud/relatoriocompensacao?idGeradora=${idGeradora.value}`);
+    const { data: relatorioInd } = await useFetch(`https://peehorto.cloud/relatoriocompensacao`);
     
     const unidadesCompensadas = await procurarUnidadesCompensadas()
 
