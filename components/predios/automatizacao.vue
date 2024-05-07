@@ -7,11 +7,11 @@
 
     const idSolicitacao = ref('-')
     const btnSolicita = ref(true) 
-    const { data: dadosDownload } = await useFetch(`https://peehorto.cloud/logdownloadpdf/`);
+    const { data: dadosDownload } = await useFetch(`http://localhost:8000/logdownloadpdf/`);
 
     
     //SE TIVER ALGUMA SOLICITAÇÃO EM ANDAMENTO, MOSTRA OS DADOS DELA
-    const { data: solicitacoes } = await useFetch("https://peehorto.cloud/logsolicitacao/"); 
+    const { data: solicitacoes } = await useFetch("http://localhost:8000/logsolicitacao/"); 
 
     const verificarSoli = ref()   
     const btnS = ref(true) //varia´vel para a div dos botoes solicitções
@@ -25,7 +25,7 @@
                 idSolicitacao.value = verificarSoli.value[0].id
                 btnSolicita.value = false
 
-                const { data: updtDownload } = await useFetch(`https://peehorto.cloud/logdownloadpdf?idSolicitacao=${idSolicitacao.value}`);
+                const { data: updtDownload } = await useFetch(`http://localhost:8000/logdownloadpdf?idSolicitacao=${idSolicitacao.value}`);
                 dadosDownload.value = updtDownload._rawValue
 
         }else{
@@ -40,7 +40,7 @@
      
     const gerarSolicitação = async () =>{
         try {
-            const response = await useFetch(`https://peehorto.cloud/logsolicitacao/`, {
+            const response = await useFetch(`http://localhost:8000/logsolicitacao/`, {
                     method: 'POST',
                     body: 
                         {
@@ -81,7 +81,7 @@
 
     const cancelarSolicitação = async () =>{
         try {
-            const response = await useFetch(`https://peehorto.cloud/logsolicitacao/${idSolicitacao.value}`, {
+            const response = await useFetch(`http://localhost:8000/logsolicitacao/${idSolicitacao.value}`, {
                     method: 'PUT',
                     body: 
                         {
@@ -121,10 +121,10 @@
     // DADOS SELECT SOLICITA TABELA E ATUALIZAR SISTEMA
     const soliciSelected = ref()
     const atualizarDownloads = async ()=>{
-        const { data: uptedDownload } = await useFetch(`https://peehorto.cloud/logdownloadpdf/`);
+        const { data: uptedDownload } = await useFetch(`http://localhost:8000/logdownloadpdf/`);
         dadosDownload.value = uptedDownload._rawValue
 
-        const { data: uptedSolicitacao } = await useFetch(`https://peehorto.cloud/logsolicitacao?statusSoli=P`);
+        const { data: uptedSolicitacao } = await useFetch(`http://localhost:8000/logsolicitacao?statusSoli=P`);
         solicitacoes.value = uptedSolicitacao._rawValue
     }
 
@@ -153,7 +153,7 @@
     }
  
     //PROCURAR UNIDADE POR ID SELECIONADO
-    const { data: unidades } = await useFetch("https://peehorto.cloud/unidadecompensacao/");
+    const { data: unidades } = await useFetch("http://localhost:8000/unidadecompensacao/");
     const procurarUnidade = (idUnidade) =>{
         const unidadeEncontrada = unidades.value.filter(item => item.id == idUnidade) 
         return unidadeEncontrada[0].nome
@@ -224,45 +224,52 @@
                                 </v-alert>
                             </v-col>
                           </v-row>
-                            <table class="table">
-                              <thead>
-                                <tr>
-                                    <th colspan="4">Solicitação ID:</th>
-                                    <th colspan="3" v-if="idSolicitacao !== '-'">{{ idSolicitacao }}</th>
-                                    <th colspan="3" v-else >
-                                        <v-select v-model="soliciSelected" :items="arraySolici"  label="Solicitações"  return-object color="primary"></v-select>
-                                    </th>
-                                </tr>
-                                <tr>
-                                  <th class="header-cell">ID</th>
-                                  <th class="header-cell">Local</th>
-                                  <th class="header-cell">Mês</th>
-                                  <th class="header-cell">Ano</th>
-                                  <th class="header-cell">Solicitação</th>
-                                  <th class="header-cell">Download</th>
-                                  <th class="header-cell">Leitura</th>
-                                </tr>
-                              </thead>
-                              <tbody> 
-                                <tr v-for="pdf in procurarSolicita(idSolicitacao !== '-' ? idSolicitacao : soliciSelected )" :key="pdf.id" class="text-center">
-                                    <td>{{ pdf.id }}</td>
-                                    <td>{{ procurarUnidade(pdf.idUnidadeCompensada) }}</td>
-                                    <td>{{ pdf.mes }}</td>
-                                    <td>{{ pdf.ano }}</td>
-                                    <td>{{ pdf.idSolicitacao }}</td>
-                                    <td>
-                                        <v-chip variant="flat" :color="getStatusColorClass(pdf.download)" text>
-                                            {{ getStatusLabel(pdf.download)  }}
-                                        </v-chip>
-                                    </td> 
-                                    <td>
-                                        <v-chip variant="flat" :color="getStatusColorClass(pdf.leitura)" text>
-                                            {{ getStatusLabel(pdf.leitura)  }}
-                                        </v-chip>
-                                    </td> 
-                                </tr>
-                              </tbody>
-                            </table>
+                          <v-row>
+                            <v-col cols="12">
+
+                            </v-col> 
+                            <v-table class="table" style="width: 100vw;">
+                                <thead>
+                                    <tr>
+                                        <th colspan="4" style="font-size: 17px; text-align: center;">Solicitação ID:</th>
+                                        <th colspan="3" v-if="idSolicitacao !== '-'">{{ idSolicitacao }}</th>
+                                        <th colspan="3" v-else style="padding: 10px;">
+                                            <v-select v-model="soliciSelected" :items="arraySolici"  label="Solicitações"  return-object color="primary"></v-select>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                    <th class="header-cell">ID</th>
+                                    <th class="header-cell">Local</th>
+                                    <th class="header-cell">Mês</th>
+                                    <th class="header-cell">Ano</th>
+                                    <th class="header-cell">Solicitação</th>
+                                    <th class="header-cell">Download</th>
+                                    <th class="header-cell">Leitura</th>
+                                    </tr>
+                                </thead>
+                                <tbody> 
+                                    <tr v-for="pdf in procurarSolicita(idSolicitacao !== '-' ? idSolicitacao : soliciSelected )" :key="pdf.id" class="text-center">
+                                        <td>{{ pdf.id }}</td>
+                                        <td>{{ procurarUnidade(pdf.idUnidadeCompensada) }}</td>
+                                        <td>{{ pdf.mes }}</td>
+                                        <td>{{ pdf.ano }}</td>
+                                        <td>{{ pdf.idSolicitacao }}</td>
+                                        <td>
+                                            <v-chip variant="flat" :color="getStatusColorClass(pdf.download)" text>
+                                                {{ getStatusLabel(pdf.download)  }}
+                                            </v-chip>
+                                        </td> 
+                                        <td>
+                                            <v-chip variant="flat" :color="getStatusColorClass(pdf.leitura)" text>
+                                                {{ getStatusLabel(pdf.leitura)  }}
+                                            </v-chip>
+                                        </td> 
+                                    </tr>
+                                </tbody>
+                            </v-table>    
+                             
+                          </v-row>
+                            
                         </div>
                     </UiParentCard>
                 </v-col>
@@ -281,11 +288,11 @@
 .table th,
 .table td {
   border: 1px solid #e0e0e0;
-  padding: 8px;
+  padding: 8px; 
 }
 
 .table th {
-  background-color: #f5f5f5;
+  background-color: #f5f5f5; 
 }
 
 .header-cell {
@@ -294,10 +301,7 @@
   background: linear-gradient(to bottom, #4d7fff, #1e73be);
   color: white;
   font-weight: bold;
-}
-
-.header-cell:hover {
-  cursor: pointer;
+  font-size: 18px;
 }
 
 tbody tr:nth-child(even) {
