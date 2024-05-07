@@ -84,7 +84,7 @@ const calcularSomaPorAno = (relatorios) => {
 
 const anoId = ref(2024)
 const totalAnual = ref(0)
-const somaTotalAnual = ref()
+const somaTotalAnual = ref(0)
 const mudarAno = () =>{
     anoId.value = anoId.value === 2024 ? 2023 : 2024;
     carregarDados(anoId.value);
