@@ -1619,7 +1619,7 @@ definePageMeta({
                                 </thead>
                                 <tbody v-if="gerDetalheAno.length > 0">
                                     <tr>
-                                        <th>Consumo (geração)</th>
+                                        <th>Consumo (geração aprox.)</th>
                                         <td class="text-center" v-for="(injecao, index) in injecaoUsinaAno" :key="injecao.id">
                                             {{ parseInt(gerDetalheAno[index].geracao)  - ((Number(injecao.injetadoPonta) + Number(injecao.injetadoFPonta))) }}
                                         </td>
