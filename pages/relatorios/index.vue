@@ -1176,12 +1176,12 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                 </td>
                               </tr>
                               <tr>
-                                <td v-for="mesSaldo in somaSaldoEnergia" :key="mesSaldo">
+                                <td v-for="mesSaldo in somaSaldoEnergia" :key="mesSaldo" style="height: 39px;">
                                   <span>{{ parseInt(mesSaldo) }}</span>
                                 </td>
                               </tr>
                               <tr>
-                                <td v-for="(mesCompensado, index) in somaCompensado" :key="mesCompensado" style="height: 39px;">
+                                <td v-for="(mesCompensado, index) in somaCompensado" :key="mesCompensado">
                                  <span v-if="index == 1">
                                   <span v-if="mesCompensado - somaInjetadoAnterior[12]">
                                     {{ parseInt(mesCompensado - somaInjetadoAnterior[12]) }}
@@ -1191,7 +1191,10 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                   </span>
                                  </span> 
                                  <span v-else>
-                                    {{ parseInt(mesCompensado - somaInjetado[index-1]) }}
+                                    <v-chip color="warning" variant="tonal">
+                                      {{ parseInt(mesCompensado - somaInjetado[index-1]) }}  
+                                    </v-chip>
+                                    
                                  </span>
                                 </td>
                               </tr>
