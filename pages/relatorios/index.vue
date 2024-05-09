@@ -198,16 +198,13 @@ const getAvatarClass = (rela, index, predioId) => {
 
   /*VERIFICAR O CONSUMO REAIS COM O MES ANTERIOR (TEXTO)*/
 const getQuantidadeConsumo = (rela, index, predioId) => {
-  if (index > 0) {
-    const consumoAtual = rela.consumoReais;
-    const consumoMesAnterior = relatorios.value.find(item => item.mes === mesesNomes[index - 1] && item.idUnidadeCompensa === predioId)?.consumoReais;
+  const consumoAtual = rela.consumoReais;
+  const consumoMesAnterior = relatorios.value.find(item => item.mes === mesesNomes[index - 1] && item.idUnidadeCompensa === predioId)?.consumoReais;
 
-    const resultado = Number(consumoAtual) - Number(consumoMesAnterior);
-    resultado = Math.abs(resultado); // Obtém o valor absoluto do resultado
+  const resultado = Number(consumoAtual) - Number(consumoMesAnterior);
+  resultado = Math.abs(resultado); // Obtém o valor absoluto do resultado
 
-    return resultado.toFixed(2);
-  }
-  return 0.00; // Se o índice for 0, retorna 0.00
+  return resultado.toFixed(2);
 };
 
   /*TITULO DO RELATORIO*/
