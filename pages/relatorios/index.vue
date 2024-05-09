@@ -187,9 +187,9 @@ const getAvatarClass = (rela, index, predioId) => {
     const consumoMesAnterior = relatorios.value.find(item => item.mes === mesesNomes[index - 1] && item.idUnidadeCompensa === predioId)?.consumoReais;
 
     if (consumoAtual > consumoMesAnterior) {
-      return 'bg-lightsuccess text-success';
-    } else if (consumoAtual < consumoMesAnterior) {
       return 'bg-lighterror text-error';
+    } else if (consumoAtual < consumoMesAnterior) {
+      return 'bg-lightsuccess text-success';
     }
   }
 
@@ -202,11 +202,12 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
     const consumoAtual = rela.consumoReais;
     const consumoMesAnterior = relatorios.value.find(item => item.mes === mesesNomes[index - 1] && item.idUnidadeCompensa === predioId)?.consumoReais;
 
-    const resultado = (Number(consumoAtual) - Number(consumoMesAnterior))
-    return resultado
+    const resultado = Number(consumoAtual) - Number(consumoMesAnterior);
+    resultado = Math.abs(resultado); // Obtém o valor absoluto do resultado
+
+    return resultado.toFixed(2);
   }
-  const resultado = 0
-  return resultado;
+  return 0.00; // Se o índice for 0, retorna 0.00
 };
 
   /*TITULO DO RELATORIO*/
@@ -632,7 +633,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                     <td style="border: none">➔</td>
                                 </tr>
                                 <tr>
-                                    <th style="  ">Qtd Status (R$)</th>
+                                    <th style="  ">Qtd (R$)</th>
                                     <td style="border: none">➔</td>
                                 </tr>
                               </td>
@@ -646,7 +647,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                     <div style="display: flex;">
                                         <div style="width: 200px; border: 1px solid #ddd; padding: 8px;">
                                           <v-avatar :class="getAvatarClass(rela, index, predio.id)" class="text-center" size="30">
-                                              <template v-if="getAvatarClass(rela, index, predio.id) === 'bg-lighterror text-error bg-lightsuccess text-success'">
+                                              <template v-if="getAvatarClass(rela, index, predio.id) === 'bg-lighterror text-error'">
                                                   <ArrowUpRightIcon size="20" />
                                               </template>
                                               <template v-else-if="getAvatarClass(rela, index, predio.id) === 'bg-lightsuccess text-success'">
@@ -659,7 +660,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                         </div> 
                                     </div>
                                     <div style="display: flex;">
-                                        <div style="width: 200px; border: 1px solid #ddd; padding: 8px;">{{getQuantidadeConsumo(rela, index, predio.id)}}</div>  
+                                        <div style="width: 200px; border: 1px solid #ddd; padding: 8px;">{{ getQuantidadeConsumo(rela, index, predio.id)}}</div>  
                                     </div>
                                 </div>
                               </td>
