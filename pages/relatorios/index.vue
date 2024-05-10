@@ -129,13 +129,13 @@ const calcularResultadoInjecao = (somaInjecao, calculoProjecao, idGeradora, mes,
     if (calculo > 0) {
       // Atribua o novo valor ao ref usando a propriedade .value
       injetadoSoma._rawValue.push({ calculo, idGeradora, ano, mes, idRelatorio });
-      return calculo;
+      return Math.abs(calculo);
     }else{
       if(calculoEncontradoFalta){
-        return calculo;
+        return Math.abs(calculo);
       }else{
         injetadoFalta._rawValue.push({ calculo, idGeradora, ano, mes, idRelatorio });
-        return calculo;
+        return Math.abs(calculo);
       }
     }
   }
@@ -201,11 +201,13 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
   if (index > 0) {
     const consumoAtual = rela.consumoReais;
     const consumoMesAnterior = relatorios.value.find(item => item.mes === mesesNomes[index - 1] && item.idUnidadeCompensa === predioId)?.consumoReais;
-
-    const resultado = (Number(consumoAtual) - Number(consumoMesAnterior))
-    resultado = Math.abs(resultado); // Obtém o valor absoluto do resultado
-
-    return resultado.toFixed(2);
+    if(consumoMesAnterior != null){
+      const resultado = (Number(consumoAtual) - Number(consumoMesAnterior))
+      return Math.abs(resultado.toFixed(2))  
+    }
+    else{
+      return '-'
+    }
   }
   const resultado = 0
   return resultado;
@@ -661,7 +663,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                         </div> 
                                     </div>
                                     <div style="display: flex;">
-                                        <div style="width: 200px; border: 1px solid #ddd; padding: 8px;">{{getQuantidadeConsumo(rela, index, predio.id)}}</div>  
+                                        <div style="width: 200px; border: 1px solid #ddd; padding: 8px;">{{ getQuantidadeConsumo(rela, index, predio.id)}}</div>  
                                     </div>
                                 </div>
                               </td>
@@ -822,7 +824,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                         <template v-slot:default>
                           <thead>
                             <tr>
-                                <th class="text-center" colspan="5" style="height: 30px; font-size: 15px; position: sticky; top: 0" >Geração Projetada (kWh)</th>
+                                <th class="text-center" colspan="4" style="height: 30px; font-size: 15px; position: sticky; top: 0" >Geração Projetada (kWh)</th>
                                 <td style="padding: 0px; width: 200px;" v-for="projecao in projecaoUsinaEscolhida.value" :key="projecao.mes" rowspan="5">
                                     <template v-if="projecaoUsinaEscolhida.value.length === 12">
                                         <div  class="header-cell" style="width: 200px; border: 1px solid #ddd; font-weight: bold; background-color: #f2f2f2; padding: 8px; ">
@@ -846,7 +848,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                 </td>
                             </tr>
                             <tr>
-                                <th  class="sticky-cell" colspan="5" style="text-align: center; height: 40px; font-size: 15px;" >Geração Real (kWh)</th>
+                                <th  class="sticky-cell" colspan="4" style="text-align: center; height: 40px; font-size: 15px;" >Geração Real (kWh)</th>
                             </tr>
 
                             <!-- <tr>
@@ -854,7 +856,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                             </tr> -->
                             
                             <tr>
-                                <th colspan="5" style="text-align: center; height: 40px; font-size: 15px;">
+                                <th colspan="4" style="text-align: center; height: 40px; font-size: 15px;">
                                     <div>
                                       Dados
                                     </div>
@@ -863,7 +865,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                             <tr>
                               <th class="header-cell text-center" rowspan="2" style="height: 40px;">UC</th>
                               <th class="header-cell text-center" rowspan="2" style="height: 40px;">Nome</th>
-                              <th class="header-cell text-center" rowspan="2" style="height: 40px;">Médio</th>
+                              <!-- <th class="header-cell text-center" rowspan="2" style="height: 40px;">Médio</th> -->
                               <th class="header-cell text-center" rowspan="2" style="height: 40px;">Porcento(%)</th>
                               <th class="header-cell text-center" rowspan="2" style="height: 40px;">Informações</th>
                             </tr>
@@ -872,7 +874,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                             <tr v-for="unidade in uniCompUsina" :key="unidade.id">
                               <td>{{ unidade.uc }}</td>
                               <td>{{ unidade.nome }}</td>
-                              <td>{{ unidade.mediaConsumo }}</td>
+                              <!-- <td>{{ unidade.mediaConsumo }}</td> -->
                               <td>
                                 <span v-for="porcento in todasPorcento" :key="porcento.id">{{
                                   porcento.idUnidadeCompensa === unidade.id && porcento.idGeradora === usinaEscolhida.value.id ? porcento.porcentagem : ''
@@ -919,18 +921,18 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                     </div>
                                     <!-- INJ TUSD-->  
                                     <div style="display: flex;">
-                                        <div style="width: 100px; border: 1px solid #ddd; padding: 8px; color:#5D87FF ">{{ rela.enerInjTUSD }}</div>
+                                        <div style="width: 100px; border: 1px solid #ddd; padding: 8px; color:#5D87FF ">{{ parseInt(rela.enerInjTUSD) }}</div>
                                         <div style="width: 100px; border: 1px solid #ddd; padding: 8px; color:#13DEB9 ">{{ rela.valorInjTUSD }}</div>
                                     </div>
                                     <!-- INJ TE -->  
                                     <div style="display: flex;">
-                                        <div style="width: 100px; border: 1px solid #ddd; padding: 8px; color:#5D87FF  ">{{ rela.enerInjTE }}</div>
+                                        <div style="width: 100px; border: 1px solid #ddd; padding: 8px; color:#5D87FF  ">{{ parseInt(rela.enerInjTE) }}</div>
                                         <div style="width: 100px; border: 1px solid #ddd; padding: 8px; color:#13DEB9 ">{{ rela.valorInjTE }}</div>
                                     </div>
                                     <!-- REAL INJ-->  
                                     <div style="display: flex;">
-                                        <div style="width: 100px; border: 1px solid #ddd; padding: 8px; color:#5D87FF  ">{{ Number(rela.enerInjTE) +  Number(rela.enerInjTUSD)}}</div>
-                                        <div style="width: 100px; border: 1px solid #ddd; padding: 8px; color:#13DEB9 ">{{  (Number(rela.valorInjTE) + Number(rela.valorInjTUSD)).toFixed(2)}}</div>
+                                        <div style="width: 100px; border: 1px solid #ddd; padding: 8px; color:#5D87FF  ">{{ parseInt(rela.enerInjTE) +  parseInt(rela.enerInjTUSD)}}</div>
+                                        <div style="width: 100px; border: 1px solid #ddd; padding: 8px; color:#13DEB9 ">{{ (Number(rela.valorInjTE) + Number(rela.valorInjTUSD)).toFixed(2)}}</div>
                                     </div>
 
                                     <!-- PROJ INJ. -->
@@ -973,17 +975,17 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                       <div v-for="porcento in todasPorcento.filter(item => item.idUnidadeCompensa === unidade.id && item.idGeradora === usinaEscolhida.value.id)" :key="porcento.id">
                                         <div style="display: flex;">
                                             <div style="width: 200px; border: 1px solid #ddd; padding: 8px;"
-                                                :style="{ color: rela.enerInjTE +  rela.enerInjTUSD < ((porcento.porcentagem / 100) * ((todasInjecoes.filter(item => item.mes === 12 && item.ano === rela.ano-1).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2)  ? 'red' : 'green' }">
+                                                :style="{ color: (parseInt(rela.enerInjTE) +  parseInt(rela.enerInjTUSD)) < ((porcento.porcentagem / 100) * ((todasInjecoes.filter(item => item.mes === 12 && item.ano === rela.ano-1).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2)  ? 'red' : 'green' }">
                                                 
                                                 <v-chip variant="flat" :color="rela.enerInjTE +  rela.enerInjTUSD < ((porcento.porcentagem / 100) * ((todasInjecoes.filter(item => item.mes === 12 && item.ano === rela.ano-1).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2)  ? 'error' : 'success'">
-                                                    {{ rela.enerInjTE +  rela.enerInjTUSD < ((porcento.porcentagem / 100) * ((todasInjecoes.filter(item => item.mes === 12 && item.ano === rela.ano-1).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2)  ? 'Abaixo' : 'Acima' }}
+                                                    {{ (parseInt(rela.enerInjTE) +  parseInt(rela.enerInjTUSD)) < ((porcento.porcentagem / 100) * ((todasInjecoes.filter(item => item.mes === 12 && item.ano === rela.ano-1).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2)  ? 'Abaixo' : 'Acima' }}
                                                 </v-chip>
                                             </div>
                                         </div> 
                                         <div style="display: flex;">
                                             <div style="width: 200px; border: 1px solid #ddd; padding: 8px;">
                                               <!-- {{  parseInt((rela.enerInjTE +  rela.enerInjTUSD) - ((porcento.porcentagem / 100) * ((todasInjecoes.filter(item => item.mes === 12 && item.ano === rela.ano-1).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2)) }} kWh -->
-                                              {{ calcularResultadoInjecao((rela.enerInjTE +  rela.enerInjTUSD), ((porcento.porcentagem / 100) * ((todasInjecoes.filter(item => item.mes === 12 && item.ano === rela.ano-1).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2), usinaEscolhida.value.id, projecao.mes, projecao.ano, rela.id) }} kWh
+                                              {{ calcularResultadoInjecao((parseInt(rela.enerInjTE) +  parseInt(rela.enerInjTUSD)), ((porcento.porcentagem / 100) * ((todasInjecoes.filter(item => item.mes === 12 && item.ano === rela.ano-1).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2), usinaEscolhida.value.id, projecao.mes, projecao.ano, rela.id) }} kWh
                                               <!--#SOMA DAR INJECOES, CALCULO DA PROJ INJECAO  -->
                                             </div>
                                         </div>
@@ -994,16 +996,16 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                       <div v-for="porcento in todasPorcento.filter(item => item.idUnidadeCompensa === unidade.id && item.idGeradora === usinaEscolhida.value.id)" :key="porcento.id">
                                         <div style="display: flex;">
                                             <div style="width: 200px; border: 1px solid #ddd; padding: 8px;"
-                                                :style="{ color: rela.enerInjTE +  rela.enerInjTUSD < ((porcento.porcentagem / 100) * ((injecoes.filter(item => item.mes === projecao.mes-1 && item.ano === projecao.ano).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2)  ? 'red' : 'green' }">
+                                                :style="{ color:(parseInt(rela.enerInjTE) +  parseInt(rela.enerInjTUSD)) < ((porcento.porcentagem / 100) * ((injecoes.filter(item => item.mes === projecao.mes-1 && item.ano === projecao.ano).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2)  ? 'red' : 'green' }">
                                                 
-                                                <v-chip variant="flat" :color="rela.enerInjTE +  rela.enerInjTUSD < ((porcento.porcentagem / 100) * ((injecoes.filter(item => item.mes === projecao.mes-1 && item.ano === projecao.ano).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2)  ? 'error' : 'success'">
-                                                    {{ rela.enerInjTE +  rela.enerInjTUSD < ((porcento.porcentagem / 100) * ((injecoes.filter(item => item.mes === projecao.mes-1 && item.ano === projecao.ano).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2)  ? 'Abaixo' : 'Acima' }}
+                                                <v-chip variant="flat" :color="(parseInt(rela.enerInjTE) +  parseInt(rela.enerInjTUSD)) < ((porcento.porcentagem / 100) * ((injecoes.filter(item => item.mes === projecao.mes-1 && item.ano === projecao.ano).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2)  ? 'error' : 'success'">
+                                                    {{ (parseInt(rela.enerInjTE) +  parseInt(rela.enerInjTUSD)) < ((porcento.porcentagem / 100) * ((injecoes.filter(item => item.mes === projecao.mes-1 && item.ano === projecao.ano).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2)  ? 'Abaixo' : 'Acima' }}
                                                 </v-chip>
                                             </div>
                                         </div> 
                                         <div style="display: flex;">
                                             <div style="width: 200px; border: 1px solid #ddd; padding: 8px;">
-                                              {{ calcularResultadoInjecao((rela.enerInjTE +  rela.enerInjTUSD), ((porcento.porcentagem / 100) * ((todasInjecoes.filter(item => item.mes === projecao.mes-1 && item.ano === rela.ano).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2), usinaEscolhida.value.id, projecao.mes, projecao.ano, rela.id) }} kWh
+                                              {{ calcularResultadoInjecao(((parseInt(rela.enerInjTE) +  parseInt(rela.enerInjTUSD))), ((porcento.porcentagem / 100) * ((todasInjecoes.filter(item => item.mes === projecao.mes-1 && item.ano === rela.ano).reduce((total, item) => total + Number(item.injetadoPonta) + Number(item.injetadoFPonta), 0)))).toFixed(2), usinaEscolhida.value.id, projecao.mes, projecao.ano, rela.id) }} kWh
 
                                             </div>
                                         </div>
@@ -1032,7 +1034,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                               <td v-for="mes in mesesNomes" :key="mes" style="padding: 0;" class="text-center" >
                                 <div style="width: 200px; padding: 8px; color:#FA896B; font-size: 18px;">
                                   <strong>
-                                    {{ injetadoFalta.filter(item => item.mes === mes && item.ano == ano).reduce((total, inj) => total + inj.calculo, 0) }}
+                                    {{ Math.abs(injetadoFalta.filter(item => item.mes === mes && item.ano == ano).reduce((total, inj) => total + inj.calculo, 0)) }}
                                   </strong>
                                 </div>
                               </td>
@@ -1097,6 +1099,8 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                         </div>
                       </div>
                     </div>
+
+
                     <div class="v-col-sm-4 v-col-md-4 v-col-lg-3 v-col-12">
                       <div
                         class="text-decoration-none d-flex align-center justify-center text-center rounded-md pa-6 bg-lightsecondary"
@@ -1112,7 +1116,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                         </div>
                       </div>
                     </div>
-                    
+                     
                     </v-row>
                     <!-- TABELA -->
                     <v-card-text>
@@ -1136,7 +1140,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                           </thead>
                           <tbody>
                             <tr>
-                              <td class="sticky-cell text-right" style="padding: 0;" rowspan="7">
+                              <td class="sticky-cell text-right" style="padding: 0;" rowspan="8">
                                 <div class="header-cell" style="width: 200px; height: 39px; padding: 8px; ">
                                     <strong>Geração Projetada</strong> ➔
                                 </div>  
@@ -1146,14 +1150,18 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                   <div class="header-cell" style="width: 200px; height: 39px; padding: 8px;">
                                     <strong>Injetado</strong> ➔
                                   </div>
-                                  <div class="header-cell" style="width: 200px; height: 39px; padding: 8px;">
-                                    <strong>Compensado</strong> ➔
-                                  </div>
+                                  
                                   <div class="header-cell" style="width: 200px; height: 39px; padding: 8px;">
                                     <strong>Saldo Energia</strong> ➔
                                   </div>
                                   <div class="header-cell" style="width: 200px; height: 39px; padding: 8px;">
-                                    <strong>Crédito</strong> ➔
+                                    <strong>Compensado</strong> ➔
+                                  </div>
+                                  <div class="header-cell" style="width: 200px; height: 39px; padding: 8px;">
+                                    <strong>Status Compensado</strong> ➔
+                                  </div>
+                                  <div class="header-cell" style="width: 200px; height: 39px; padding: 8px;">
+                                    <strong>Crédito Compensado</strong> ➔
                                   </div>
                                 </td>
                               </tr>
@@ -1173,30 +1181,60 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                 </td>
                               </tr>
                               <tr>
-                                <td v-for="mesCompensado in somaCompensado" :key="mesCompensado" style="height: 39px; color: #e009e8">
-                                  <span>{{ parseInt(mesCompensado) }}</span>
-                                </td>
-                              </tr>
-                              <tr>
                                 <td v-for="mesSaldo in somaSaldoEnergia" :key="mesSaldo" style="height: 39px;">
                                   <span>{{ parseInt(mesSaldo) }}</span>
                                 </td>
                               </tr>
                               <tr>
-                                <td v-for="(mesCompensado, index) in somaCompensado" :key="mesCompensado">
+                                <td v-for="mesCompensado in somaCompensado" :key="mesCompensado" style="height: 39px; color: #e009e8">
+                                  <span>{{ parseInt(mesCompensado) }}</span>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td v-for="(mesCompensado, index) in somaCompensado" :key="mesCompensado" style="height: 39px;">
+                                 <span v-if="index == 1">
+                                  <span v-if="mesCompensado - somaInjetadoAnterior[12]">
+                                    {{ parseInt(mesCompensado - somaInjetadoAnterior[12]) }}
+                                    <v-avatar :class="parseInt(mesCompensado - somaInjetadoAnterior[12]) > 0 ? 'bg-lightsuccess text-success' : 'bg-lighterror text-error'" class="text-center" size="30">
+                                        <template v-if="parseInt(mesCompensado - somaInjetadoAnterior[12]) > 0">
+                                            <ArrowUpRightIcon size="20" />
+                                        </template>
+                                        <template v-else>
+                                            <ArrowDownRightIcon size="20" />
+                                        </template> 
+                                    </v-avatar>  
+                                  </span>
+                                  <span v-else>
+                                    s/inj. dez.
+                                  </span>
+                                 </span>  
+
+
+                                 <v-avatar v-else :class="parseInt(mesCompensado - somaInjetado[index-1]) > 0 ? 'bg-lightsuccess text-success' : 'bg-lighterror text-error'" class="text-center" size="30">
+                                      <template v-if="parseInt(mesCompensado - somaInjetado[index-1]) > 0">
+                                          <ArrowUpRightIcon size="20" />
+                                      </template>
+                                      <template v-else>
+                                          <ArrowDownRightIcon size="20" />
+                                      </template> 
+                                  </v-avatar>
+                                </td>
+
+                              </tr>
+                              <tr>
+                                <td v-for="(mesCompensado, index) in somaCompensado" :key="mesCompensado" style="height: 39px;">
                                  <span v-if="index == 1">
                                   <span v-if="mesCompensado - somaInjetadoAnterior[12]">
                                     {{ parseInt(mesCompensado - somaInjetadoAnterior[12]) }}
                                   </span>
                                   <span v-else>
-                                    s/ inj. dez. 
+                                    s/inj. dez.
                                   </span>
                                  </span> 
                                  <span v-else>
-                                    <v-chip color="warning" variant="tonal">
-                                      {{ parseInt(mesCompensado - somaInjetado[index-1]) }}  
+                                    <v-chip color="roxo" variant="flat" class="pa-2">
+                                      {{ Math.abs(parseInt(mesCompensado - somaInjetado[index-1])) }}  
                                     </v-chip>
-                                    
                                  </span>
                                 </td>
                               </tr>
