@@ -392,7 +392,7 @@ definePageMeta({
     const unidadesCompensadas = await procurarUnidadesCompensadas()
 
 
-    const {data: relatorios} = await useFetch(`https://peehorto.cloud/relatoriocompensacao?idGeradora=${route.params.id}`)
+    const {data: relatorios} = await useFetch(`https://peehorto.cloud/relatoriocompensacao/`)
 
     const getQuantidadeRelatorios = (unidadeId, ano) => {
         const relatoriosCompensacaoDoAno = relatorios.value.filter((rela) => rela.idUnidadeCompensa === unidadeId && rela.ano === ano);
