@@ -182,25 +182,22 @@ const handlePesquisar = () => {
 
 /*VERIFICAR O CONSUMO REAIS COM O MES ANTERIOR (ICON)*/
 const getAvatarClass = (rela, index, predioId) => {  
-  if (rela.mes == 1){
-    console.log("MES 1")
-    const consumoAtual = rela.consumoReais;
-    const consumoMesAnterior = relatorios.value.find(item => item.mes === 12 && item.ano === (rela.ano - 1) && item.idUnidadeCompensa === predioId)?.consumoReais;
- 
-    if (consumoAtual > consumoMesAnterior) {
-      return 'bg-lighterror text-error';
-    } else if (consumoAtual < consumoMesAnterior) {
-      return 'bg-lightsuccess text-success';
-    }
-  }else {
-    const consumoAtual = rela.consumoReais;
-    const consumoMesAnterior = relatorios.value.find(item => item.mes === mesesNomes[index - 1] && item.idUnidadeCompensa === predioId)?.consumoReais;
+  const consumoAtual = ref(0)
+  const consumoMesAnterior = ref(0)
 
-    if (consumoAtual > consumoMesAnterior) {
+  if (rela.mes == 1){  
+    consumoAtual.value = rela.consumoReais;  
+    consumoMesAnterior.value = todosRela.value.find(item => item.mes === 12 && item.ano === (rela.ano -1) && item.idUnidadeCompensa === predioId)?.consumoReais;
+ 
+  }else{
+    consumoAtual.value = rela.consumoReais;
+    consumoMesAnterior.value = relatorios.value.find(item => item.mes === mesesNomes[index - 1] && item.idUnidadeCompensa === predioId)?.consumoReais;
+  }
+
+  if (consumoAtual.value > consumoMesAnterior.value) {
       return 'bg-lighterror text-error';
-    } else if (consumoAtual < consumoMesAnterior) {
-      return 'bg-lightsuccess text-success';
-    }
+  } else if (consumoAtual.value < consumoMesAnterior.value) {
+    return 'bg-lightsuccess text-success';
   }
 
   return 'bg-lightsecondary text-secondary';
@@ -208,19 +205,24 @@ const getAvatarClass = (rela, index, predioId) => {
 
   /*VERIFICAR O CONSUMO REAIS COM O MES ANTERIOR (TEXTO)*/
 const getQuantidadeConsumo = (rela, index, predioId) => {
-  if (index > 0) {
-    const consumoAtual = rela.consumoReais;
-    const consumoMesAnterior = relatorios.value.find(item => item.mes === mesesNomes[index - 1] && item.idUnidadeCompensa === predioId)?.consumoReais;
-    if(consumoMesAnterior != null){
-      const resultado = (Number(consumoAtual) - Number(consumoMesAnterior))
-      return Math.abs(resultado.toFixed(2))  
-    }
-    else{
-      return '-'
-    }
+  const consumoAtual = ref(0)
+  const consumoMesAnterior = ref(0)
+
+  if (rela.mes == 1){  
+    consumoAtual.value = rela.consumoReais;  
+    consumoMesAnterior.value = todosRela.value.find(item => item.mes === 12 && item.ano === (rela.ano -1) && item.idUnidadeCompensa === predioId)?.consumoReais;
+ 
+  }else{
+    consumoAtual.value = rela.consumoReais;
+    consumoMesAnterior.value = relatorios.value.find(item => item.mes === mesesNomes[index - 1] && item.idUnidadeCompensa === predioId)?.consumoReais;
   }
-  const resultado = 0
-  return resultado;
+
+  if(consumoMesAnterior.value != null){
+    const resultado = (Number(consumoAtual.value) - Number(consumoMesAnterior.value))
+    return Math.abs(resultado.toFixed(2))  
+  } else{
+    return '-'
+  }  
 };
 
   /*TITULO DO RELATORIO*/
