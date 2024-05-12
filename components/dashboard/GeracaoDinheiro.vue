@@ -63,7 +63,7 @@ const calcularSomaPorMes = (relatorios) => {
         somaPorMes[chave] += Number(valorInjTUSD) + Number(valorInjTE);
     });
     
-    return somaPorMes;
+    return somaPorMes.toFixed(2);
 };
 
 const calcularSomaPorAno = (relatorios) => {
