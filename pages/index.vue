@@ -15,6 +15,7 @@ import SalesOverview from "~~/components/dashboard/RelatorioGeracao.vue";
 import YearlyBreakup from "@/components/dashboard/YearlyBreakup.vue"; 
 import GeracaoDinheiro from "@/components/dashboard/GeracaoDinheiro.vue"; 
 import Irregular from "@/components/dashboard/Irregular.vue"; 
+import Alerta from "@/components/dashboard/Alerta.vue"; 
 
 const { data: usinas } = await useFetch(`https://peehorto.cloud/usina/`);
 const { data: predios } = await useFetch( `https://peehorto.cloud/unidadecompensacao/`);
@@ -202,6 +203,8 @@ setTimeout(() => {
             <YearlyBreakup />
           </div>
           
+          <Alerta />
+          <br>
           <Irregular />
         </v-col>
       </v-row>
