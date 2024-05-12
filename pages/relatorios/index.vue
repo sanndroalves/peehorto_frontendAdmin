@@ -190,7 +190,7 @@ const getAvatarClass = (rela, index, predioId) => {
       return 'bg-lighterror text-error';
     } else if (consumoAtual < consumoMesAnterior) {
       return 'bg-lightsuccess text-success';
-    }
+    } 
   }
 
   return 'bg-lightsecondary text-secondary';
@@ -1016,7 +1016,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                               </td>
                             </tr>
                             <tr>
-                              <th  class="sticky-cell" colspan="5" style="text-align: center; height: 40px; font-size: 15px; background: linear-gradient(to bottom, #0249fd, #479be4); color: white;" >
+                              <th  class="sticky-cell" colspan="4" style="text-align: center; height: 40px; font-size: 15px; background: linear-gradient(to bottom, #0249fd, #479be4); color: white;" >
                                 Injeção de outras usinas  (kWh)
                               </th>
                               <td v-for="mes in mesesNomes" :key="mes" style="padding: 0;" class="text-center">
@@ -1028,7 +1028,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                               </td>
                             </tr> 
                             <tr>
-                              <th  class="sticky-cell" colspan="5" style="text-align: center; height: 40px; font-size: 15px; background: linear-gradient(to bottom, #fd0202, #eb6464); color: white;" >
+                              <th  class="sticky-cell" colspan="4" style="text-align: center; height: 40px; font-size: 15px; background: linear-gradient(to bottom, #fd0202, #eb6464); color: white;" >
                                 Abaixo do esperado (kWh)
                               </th>
                               <td v-for="mes in mesesNomes" :key="mes" style="padding: 0;" class="text-center" >
@@ -1141,27 +1141,27 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                           <tbody>
                             <tr>
                               <td class="sticky-cell text-right" style="padding: 0;" rowspan="8">
-                                <div class="header-cell" style="width: 200px; height: 39px; padding: 8px; ">
+                                <div class="header-cell" style="width: 200px; height: 39px; padding: 8px; color: #5D87FF">
                                     <strong>Geração Projetada</strong> ➔
                                 </div>  
-                                <div class="header-cell" style="width: 200px; height: 39px; padding: 8px;">
+                                <div class="header-cell" style="width: 200px; height: 39px; padding: 8px; color: #13DEB9">
                                     <strong>Geração Real</strong> ➔
                                   </div>
-                                  <div class="header-cell" style="width: 200px; height: 39px; padding: 8px;">
+                                  <div class="header-cell" style="width: 200px; height: 39px; padding: 8px; color: #FFAE1F">
                                     <strong>Injetado</strong> ➔
                                   </div>
                                   
-                                  <div class="header-cell" style="width: 200px; height: 39px; padding: 8px;">
+                                  <div class="header-cell" style="width: 200px; height: 39px; padding: 8px; color: #000000">
                                     <strong>Saldo Energia</strong> ➔
                                   </div>
-                                  <div class="header-cell" style="width: 200px; height: 39px; padding: 8px;">
+                                  <div class="header-cell" style="width: 200px; height: 39px; padding: 8px; color: #e009e8">
                                     <strong>Compensado</strong> ➔
                                   </div>
                                   <div class="header-cell" style="width: 200px; height: 39px; padding: 8px;">
                                     <strong>Status Compensado</strong> ➔
                                   </div>
                                   <div class="header-cell" style="width: 200px; height: 39px; padding: 8px;">
-                                    <strong>Crédito Compensado</strong> ➔
+                                    <strong>Crédito Comp./Inj.</strong> ➔
                                   </div>
                                 </td>
                               </tr>
@@ -1181,7 +1181,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                 </td>
                               </tr>
                               <tr>
-                                <td v-for="mesSaldo in somaSaldoEnergia" :key="mesSaldo" style="height: 39px;">
+                                <td v-for="mesSaldo in somaSaldoEnergia" :key="mesSaldo" style="height: 39px; color: #000000">
                                   <span>{{ parseInt(mesSaldo) }}</span>
                                 </td>
                               </tr>
