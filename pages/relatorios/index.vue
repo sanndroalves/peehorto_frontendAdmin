@@ -181,8 +181,18 @@ const handlePesquisar = () => {
 }
 
 /*VERIFICAR O CONSUMO REAIS COM O MES ANTERIOR (ICON)*/
-const getAvatarClass = (rela, index, predioId) => {
-  if (index > 0) {
+const getAvatarClass = (rela, index, predioId) => {  
+  if (rela.mes == 1){
+    console.log("MES 1")
+    const consumoAtual = rela.consumoReais;
+    const consumoMesAnterior = relatorios.value.find(item => item.mes === 12 && item.ano === (rela.ano - 1) && item.idUnidadeCompensa === predioId)?.consumoReais;
+ 
+    if (consumoAtual > consumoMesAnterior) {
+      return 'bg-lighterror text-error';
+    } else if (consumoAtual < consumoMesAnterior) {
+      return 'bg-lightsuccess text-success';
+    }
+  }else {
     const consumoAtual = rela.consumoReais;
     const consumoMesAnterior = relatorios.value.find(item => item.mes === mesesNomes[index - 1] && item.idUnidadeCompensa === predioId)?.consumoReais;
 
@@ -190,7 +200,7 @@ const getAvatarClass = (rela, index, predioId) => {
       return 'bg-lighterror text-error';
     } else if (consumoAtual < consumoMesAnterior) {
       return 'bg-lightsuccess text-success';
-    } 
+    }
   }
 
   return 'bg-lightsecondary text-secondary';
