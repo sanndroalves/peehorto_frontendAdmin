@@ -15,6 +15,7 @@ import RelatorioUsina from "~~/components/dashboard/RelatorioUsina.vue";
 
 import { ref } from 'vue';
   const { data: usinas } = await useFetch("https://peehorto.cloud/usina/");
+  const { data: todosRela } = await useFetch(`https://peehorto.cloud/relatoriocompensacao/`);
 
   const selectedUsina = ref(null);
   const selectedYear = ref(null);
@@ -1028,7 +1029,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                               </td>
                             </tr>
                             <tr>
-                              <th  class="sticky-cell" colspan="4" style="text-align: center; height: 40px; font-size: 15px; background: linear-gradient(to bottom, #0249fd, #479be4); color: white;" >
+                              <th  class="sticky-cell" colspan="5" style="text-align: center; height: 40px; font-size: 15px; background: linear-gradient(to bottom, #0249fd, #479be4); color: white;" >
                                 Injeção de outras usinas  (kWh)
                               </th>
                               <td v-for="mes in mesesNomes" :key="mes" style="padding: 0;" class="text-center">
@@ -1040,7 +1041,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                               </td>
                             </tr> 
                             <tr>
-                              <th  class="sticky-cell" colspan="4" style="text-align: center; height: 40px; font-size: 15px; background: linear-gradient(to bottom, #fd0202, #eb6464); color: white;" >
+                              <th  class="sticky-cell" colspan="5" style="text-align: center; height: 40px; font-size: 15px; background: linear-gradient(to bottom, #fd0202, #eb6464); color: white;" >
                                 Abaixo do esperado (kWh)
                               </th>
                               <td v-for="mes in mesesNomes" :key="mes" style="padding: 0;" class="text-center" >
@@ -1153,20 +1154,20 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                           <tbody>
                             <tr>
                               <td class="sticky-cell text-right" style="padding: 0;" rowspan="8">
-                                <div class="header-cell" style="width: 200px; height: 39px; padding: 8px; color: #5D87FF">
+                                <div class="header-cell2" style="width: 200px; height: 39px; padding: 8px; color: #5D87FF">
                                     <strong>Geração Projetada</strong> ➔
                                 </div>  
-                                <div class="header-cell" style="width: 200px; height: 39px; padding: 8px; color: #13DEB9">
+                                <div class="header-cell2" style="width: 200px; height: 39px; padding: 8px; color: #13DEB9">
                                     <strong>Geração Real</strong> ➔
                                   </div>
-                                  <div class="header-cell" style="width: 200px; height: 39px; padding: 8px; color: #FFAE1F">
+                                  <div class="header-cell2" style="width: 200px; height: 39px; padding: 8px; color: #FFAE1F">
                                     <strong>Injetado</strong> ➔
                                   </div>
                                   
-                                  <div class="header-cell" style="width: 200px; height: 39px; padding: 8px; color: #000000">
+                                  <div class="header-cell2" style="width: 200px; height: 39px; padding: 8px; color: #000000">
                                     <strong>Saldo Energia</strong> ➔
                                   </div>
-                                  <div class="header-cell" style="width: 200px; height: 39px; padding: 8px; color: #e009e8">
+                                  <div class="header-cell2" style="width: 200px; height: 39px; padding: 8px; color: #e009e8">
                                     <strong>Compensado</strong> ➔
                                   </div>
                                   <div class="header-cell" style="width: 200px; height: 39px; padding: 8px;">
@@ -1193,7 +1194,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                 </td>
                               </tr>
                               <tr>
-                                <td v-for="mesSaldo in somaSaldoEnergia" :key="mesSaldo" style="height: 39px; color: #000000">
+                                <td v-for="mesSaldo in somaSaldoEnergia" :key="mesSaldo" style="height: 39px;">
                                   <span>{{ parseInt(mesSaldo) }}</span>
                                 </td>
                               </tr>
@@ -1203,7 +1204,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                 </td>
                               </tr>
                               <tr>
-                                <td v-for="(mesCompensado, index) in somaCompensado" :key="mesCompensado" style="height: 39px;">
+                                <td v-for="(mesCompensado, index) in somaCompensado" :key="mesCompensado" style="height: 39px; background-color: #afc6ff">
                                  <span v-if="index == 1">
                                   <span v-if="mesCompensado - somaInjetadoAnterior[12]">
                                     {{ parseInt(mesCompensado - somaInjetadoAnterior[12]) }}
@@ -1234,7 +1235,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
 
                               </tr>
                               <tr>
-                                <td v-for="(mesCompensado, index) in somaCompensado" :key="mesCompensado" style="height: 39px;">
+                                <td v-for="(mesCompensado, index) in somaCompensado" :key="mesCompensado" style="height: 39px; background-color: #c3d3fa;">
                                  <span v-if="index == 1">
                                   <span v-if="mesCompensado - somaInjetadoAnterior[12]">
                                     {{ parseInt(mesCompensado - somaInjetadoAnterior[12]) }}
@@ -1301,4 +1302,10 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
   color: white;
   font-weight: bold;
 }
+  .header-cell2 { 
+    border: 2px solid #afc6ff;
+    padding: 8px; 
+    color: white;
+    font-weight: bold;
+  }
 </style>
