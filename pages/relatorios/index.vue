@@ -1029,7 +1029,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                               </td>
                             </tr>
                             <tr>
-                              <th  class="sticky-cell" colspan="5" style="text-align: center; height: 40px; font-size: 15px; background: linear-gradient(to bottom, #0249fd, #479be4); color: white;" >
+                              <th  class="sticky-cell" colspan="4" style="text-align: center; height: 40px; font-size: 15px; background: linear-gradient(to bottom, #0249fd, #479be4); color: white;" >
                                 Injeção de outras usinas  (kWh)
                               </th>
                               <td v-for="mes in mesesNomes" :key="mes" style="padding: 0;" class="text-center">
@@ -1041,7 +1041,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                               </td>
                             </tr> 
                             <tr>
-                              <th  class="sticky-cell" colspan="5" style="text-align: center; height: 40px; font-size: 15px; background: linear-gradient(to bottom, #fd0202, #eb6464); color: white;" >
+                              <th  class="sticky-cell" colspan="4" style="text-align: center; height: 40px; font-size: 15px; background: linear-gradient(to bottom, #fd0202, #eb6464); color: white;" >
                                 Abaixo do esperado (kWh)
                               </th>
                               <td v-for="mes in mesesNomes" :key="mes" style="padding: 0;" class="text-center" >
@@ -1194,7 +1194,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                 </td>
                               </tr>
                               <tr>
-                                <td v-for="mesSaldo in somaSaldoEnergia" :key="mesSaldo" style="height: 39px;">
+                                <td v-for="mesSaldo in somaSaldoEnergia" :key="mesSaldo" style="height: 39px; color: #000000">
                                   <span>{{ parseInt(mesSaldo) }}</span>
                                 </td>
                               </tr>
@@ -1245,7 +1245,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                   </span>
                                  </span> 
                                  <span v-else>
-                                    <v-chip color="roxo" variant="flat" class="pa-2">
+                                    <v-chip color="secondary" variant="flat" class="pa-2">
                                       {{ Math.abs(parseInt(mesCompensado - somaInjetado[index-1])) }}  
                                     </v-chip>
                                  </span>
