@@ -13,7 +13,7 @@ const ultimaReal = ref("")
 
 
     // PEGA A PROJECAO POR MES
-    const { data: projecao } = await useFetch(`https://peehorto.cloud/projecaogeracao`);
+    const { data: projecao } = await useFetch(`https://api.peehorto.com/projecaogeracao`);
         
         const somarIndividualProjecao = async (anoId) => {                                                                                                                                                                                                                                                              
             const totalPorMes = projecao.value
@@ -33,7 +33,7 @@ const ultimaReal = ref("")
     
 
     //PEGANDO A GERAÇÃO REAL POR MÊS
-    const { data: real } = await useFetch(`https://peehorto.cloud/relatoriogeracao`);
+    const { data: real } = await useFetch(`https://api.peehorto.com/relatoriogeracao`);
         
         const somarIndividualReal = async (anoId) => {
             const totalPorMes = real.value
@@ -59,20 +59,20 @@ const ultimaReal = ref("")
                 itemReal.value = totalPorMesReal;
                 
 
-                const { data: dadosSalvar } = await useFetch(`https://peehorto.cloud/salvar?ano=${newYear}`);
+                const { data: dadosSalvar } = await useFetch(`https://api.peehorto.com/salvar?ano=${newYear}`);
                 const idSalvar = ref("")
 
                 if (dadosSalvar.value && dadosSalvar.value[0]) {
                     const arrayDados = dadosSalvar.value[0]
                     idSalvar.value = arrayDados.id
 
-                    await useFetch(`https://peehorto.cloud/salvar/${idSalvar.value}`, {
+                    await useFetch(`https://api.peehorto.com/salvar/${idSalvar.value}`, {
                             method: 'DELETE',
                             key: 'deleteDados'
                         });
                 }
 
-                    await useFetch(`https://peehorto.cloud/salvar/`, {
+                    await useFetch(`https://api.peehorto.com/salvar/`, {
                         method: 'POST',
                         body: 
                             {
