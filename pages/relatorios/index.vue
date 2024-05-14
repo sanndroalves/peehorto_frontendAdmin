@@ -422,6 +422,15 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
       console.log("T", totalProjetado.value)
 
   }
+
+  const calcularMedia = (relatorios) =>{
+    const calculo = ref(0)
+    for(rela of relatorios){
+      calculo.value += rela.consumoReais 
+    }
+
+    return calculo
+  }
 </script>
 <template>
     <v-row>
@@ -638,7 +647,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                             <tr v-for="predio in prediosEscolhidos" :key="predio.id">
                               <td>{{ predio.uc }}</td>
                               <td>{{ predio.nome }}</td>
-                              <td>{{ predio.mediaConsumo }}</td>
+                              <td>{{ calcularMedia(relatorios.filter(item => item.idUnidadeCompensa === predio.id && item.ano === selectedYearConsumo)) }}</td>
                               <td  class="sticky-cell" style="padding: 5px; text-align: right">
                                 <tr>
                                     <th style="  ">Consumo</th>
