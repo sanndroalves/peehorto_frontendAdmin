@@ -20,7 +20,8 @@ console.log("CARGO: ", usuarioInfo.value.cargo)
 
 <template>
     <v-locale-provider >
-        <v-app v-if="usuarioInfo.cargo === 'AD' || !usuarioInfo">
+        <!-- <v-app v-if="usuarioInfo.cargo === 'AD' || !usuarioInfo"> -->
+        <v-app>
             <LayoutFullMain/>
             <v-main>
                 <v-container fluid class="page-wrapper">
