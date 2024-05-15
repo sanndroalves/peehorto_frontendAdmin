@@ -1715,7 +1715,7 @@ definePageMeta({
                 </v-col>
 
                 <v-col cols="6">
-                    <v-label class="font-weight-bold mb-1">Projeção (kWh)</v-label>
+                    <v-label class="font-weight-bold mb-1">Geração (kWh)</v-label>
                     <v-text-field v-model="kwhGeracao" variant="outlined" type="number"  hide-details color="primary"></v-text-field>
                 </v-col>
                 
