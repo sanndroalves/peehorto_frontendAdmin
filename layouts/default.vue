@@ -31,7 +31,7 @@ console.log("CARGO: ", usuarioInfo.value.cargo)
                 </v-container>
             </v-main>
         </v-app> 
-        <v-app v-else>
+        <!-- <v-app v-else>
             <v-main>
                 <v-container fluid class="page-wrapper">
                     <div class="maxWidth">
@@ -45,6 +45,6 @@ console.log("CARGO: ", usuarioInfo.value.cargo)
                     </div>
                 </v-container>
             </v-main>
-        </v-app> 
+        </v-app>  -->
     </v-locale-provider>
 </template>
