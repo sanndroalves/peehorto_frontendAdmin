@@ -24,13 +24,12 @@ const { data: relatorios } = await useFetch(`https://peehorto.cloud/relatoriocom
 const { data: manutencoes } = await useFetch(`https://peehorto.cloud/manutencao/`); 
 const { data: geracao } = await useFetch(`https://peehorto.cloud/relatoriogeracao/`);
 
-const overlay = ref(true)
-setTimeout(() => {
-        overlay.value = false; 
-    }, 3000);
+const valorIluminacao = unidades.value.filter(item => item.secretaria == 'I' || item.secretaria == 'P') 
+const valoresPredios = unidades.value.filter(item => item.secretaria == 'E' || item.secretaria == 'S' || item.secretaria == 'O')
+  
 </script>
 <template>
-    <v-overlay
+    <!-- <v-overlay
       :model-value="overlay"
       class="align-center justify-center"
     >
@@ -39,8 +38,7 @@ setTimeout(() => {
         size="64"
         indeterminate
       ></v-progress-circular>
-    </v-overlay>
-
+    </v-overlay> -->
     <v-row>
     <div
       class="v-card v-theme--BLUE_THEME v-card--density-default elevation-10 rounded-md v-card--variant-elevated bg-lightprimary elevation-0 rounded-md mb-8"
@@ -97,6 +95,24 @@ setTimeout(() => {
 
             <div class="v-col-sm-4 v-col-md-4 v-col-lg-2 v-col-12">
               <div
+                class="text-decoration-none d-flex align-center justify-center text-center rounded-md pa-6 bg-lightwarning"
+              >
+                <div class="bg-lightwarning">
+                  <BuildingStoreIcon size="30" class="text-warning" />
+                  <div
+                    class="text-subtitle-1 text-capitalize font-weight-bold mt-3 text-warning"
+                  >
+                    IP
+                  </div>
+                  <h4 class="text-h4 mt-1 text-warning">
+                    {{ valorIluminacao.length }}
+                  </h4>
+                </div>
+              </div>
+            </div>
+
+            <div class="v-col-sm-4 v-col-md-4 v-col-lg-2 v-col-12">
+              <div
                 class="text-decoration-none d-flex align-center justify-center text-center rounded-md pa-6 bg-lightsuccess"
               >
                 <div class="bg-lightsuccess">
@@ -107,7 +123,7 @@ setTimeout(() => {
                     Prédios
                   </div>
                   <h4 class="text-h4 mt-1 text-success">
-                    {{ predios.length }}
+                    {{ valoresPredios.length }}
                   </h4>
                 </div>
               </div>
@@ -115,16 +131,16 @@ setTimeout(() => {
 
             <div class="v-col-sm-4 v-col-md-4 v-col-lg-2 v-col-12">
               <div
-                class="text-decoration-none d-flex align-center justify-center text-center rounded-md pa-6 bg-lightwarning"
+                class="text-decoration-none d-flex align-center justify-center text-center rounded-md pa-6 bg-lightprimary"
               >
-                <div class="bg-lightwarning">
-                  <BuildingStoreIcon size="30" class="text-warning" />
+                <div class="bg-lightprimary">
+                  <BuildingStoreIcon size="30" class="text-primary" />
                   <div
-                    class="text-subtitle-1 text-capitalize font-weight-bold mt-3 text-warning"
+                    class="text-subtitle-1 text-capitalize font-weight-bold mt-3 text-primary"
                   >
                     Unidades
                   </div>
-                  <h4 class="text-h4 mt-1 text-warning">
+                  <h4 class="text-h4 mt-1 text-primary">
                     {{ unidades.length }}
                   </h4>
                 </div>
@@ -166,38 +182,24 @@ setTimeout(() => {
                 </div>
               </div>
             </div>
-
-            <div class="v-col-sm-4 v-col-md-4 v-col-lg-2 v-col-12">
-              <div
-                class="text-decoration-none d-flex align-center justify-center text-center rounded-md pa-6 bg-lightprimary"
-              >
-                <div class="bg-lightprimary">
-                  <BulbIcon size="30" class="text-primary" />
-                  <div
-                    class="text-subtitle-1 text-capitalize font-weight-bold mt-3 text-primary"
-                  >
-                    Gerações
-                  </div>
-                  <h4 class="text-h4 mt-1 text-primary">
-                    {{ geracao.length }}
-                  </h4>
-                </div>
-              </div>
-            </div>
+ 
 
           </div>
         </div>
 
+        <v-col class="text-center" cols="12">
+          <v-btn class="bg-roxo"  >
+            Painel Central
+          </v-btn>
+        </v-col>
         <!-- Sales overview -->
+        
         <v-col cols="12" lg="8">
            <GeracaoDinheiro/>  
             <br>
           <SalesOverview />
-          
-         
         </v-col>
 
-        <!-- Yearly Breakup / Monthly Earnings -->
         <v-col cols="12" lg="4">
           <div class="mb-6">
             <YearlyBreakup />
@@ -206,13 +208,14 @@ setTimeout(() => {
           <Alerta />
           <br>
           <Irregular />
+           
         </v-col>
       </v-row>
 
     
     </v-col>
     <v-col class="text-center mt-2">
-      <p class="text-muted">Desenvolvido por AleTechLab</p>
+      <p class="text-muted">Desenvolvido por AleTech</p>
     </v-col>
   </v-row>
 </template>

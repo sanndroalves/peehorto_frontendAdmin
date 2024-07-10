@@ -4,25 +4,25 @@
     const usinasAbaixo = ref([]) // apenas usinas abaixo com 3 repetições em segurarUsinas
     const segurarUsinas = ref([]) // salvar todas q estao abaixo, se tiver mais de 3 vezes, salva em usinasAbaixo
 
+
     for (let i=0; i<usinas.value.length; i++){
         const individual = usinas.value[i]
 
-               
         const { data: proIndi } = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${individual.id}&ano=2024`);
         const { data: geraIndi } = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${individual.id}&ano=2024`);
-        
+         
         for (let a=0; a < geraIndi.value.length; a++){
                 const projetado = proIndi.value[a]
                 const gerado = geraIndi.value[a]
-                
+                 
                 if(parseInt(gerado.geracao) < parseInt(projetado.projecao)){ 
                     segurarUsinas.value.push(individual.id)
                 }
             
         }
         
-    }
-
+    } 
+    
     const encontrarIdRepetido = (array) => {
         const frequencia = {};
 

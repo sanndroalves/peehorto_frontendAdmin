@@ -588,7 +588,7 @@ const contaOutros = predios.value.filter(item => item.secretaria === 'O')
                 <li class="v-breadcrumbs-item" text="Dashboard">
                   <a class="v-breadcrumbs-item--link" href="/" style="text-decoration:none"
                     ><h6 class="text-medium-emphasis text-subtitle-1">
-                      Gerenciamento
+                      Unidades Consumidoras
                     </h6></a
                   >
                 </li>

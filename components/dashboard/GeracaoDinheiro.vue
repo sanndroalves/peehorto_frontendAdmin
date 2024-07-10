@@ -60,9 +60,9 @@ const calcularSomaPorMes = (relatorios) => {
             somaPorMes[chave] = 0;
         }
         
-        somaPorMes[chave] += Number(valorInjTUSD) + Number(valorInjTE);
+        somaPorMes[chave] += parseInt(valorInjTUSD) + parseInt(valorInjTE);
     });
-    
+    console.log("MES:", somaPorMes)
     return somaPorMes;
 };
 
@@ -78,7 +78,7 @@ const calcularSomaPorAno = (relatorios) => {
         
         somaPorAno[ano] += parseInt(valorInjTUSD) + parseInt(valorInjTE);
     });
-    
+    console.log("SOMA ANUAL:", somaPorAno)
     return somaPorAno;
 };
 
@@ -131,7 +131,7 @@ const areaChart = computed(() => {
             <v-row>
                 <v-col cols="12">
                     <div class="mt-2">
-                        <h3 class="text-h3">R$ {{parseInt(somaTotalAnual).toFixed(2)}}</h3>
+                        <h3 class="text-h3">R$ {{parseInt(somaTotalAnual) }}</h3>
                         <div class="mt-1">
                             <v-avatar class="bg-lightsuccess text-success" size="25">
                                 <InfoCircleIcon size="20" />

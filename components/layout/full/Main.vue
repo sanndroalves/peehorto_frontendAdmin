@@ -30,7 +30,7 @@ const sDrawer = ref(true);
                     </template>
                 </v-list>
                 <div class="">
-                    <LayoutFullVerticalSidebarExtraBox/>
+                     <!-- <LayoutFullVerticalSidebarExtraBox/>  -->
                 </div>
             </perfect-scrollbar>
         </div>

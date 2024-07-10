@@ -1,0 +1,104 @@
+<script setup> 
+useHead({
+  title: 'Controles • PEE Horto', 
+});
+definePageMeta({
+  layout: "blank",
+});
+
+import Bar from "@/components/painel/Bar.vue";
+import Radial from "@/components/painel/Radial.vue";
+import Radial2 from "@/components/painel/RadialDois.vue";
+
+
+</script>
+ 
+<template> 
+
+    <div class="wrapper">
+        <v-row class="text-center mt-2" style="color: white">
+            <v-col cols="12">
+                <h2>Painel Central - Usinas Fotovoltaicas</h2>
+            </v-col>
+        </v-row>
+
+        <v-row class="ml-3 mr-3">
+            <v-col md="8" cols="12">
+                <div class="box columnbox">
+                    <h4 class="text-center" style="color: white">Porcentagens Geração Individual (kWp)</h4>
+                    <Bar titulo="TESTANDO" idUsina="1"/>
+                </div>
+            </v-col>
+            <v-col md="4" cols="12">
+                <div class="box radialbox">
+                     <h4 class="text-center" style="color: white; margin-bottom: 30px;">Porcentagem Geração Total (kWp)</h4>
+                    <Radial />
+                </div> 
+                <div class="box radialbox">
+                    <h4 class="text-center" style="color: white; margin-bottom: 30px;">Paço e JAC1 (kWp)</h4>
+                    <Radial2 />
+                </div>
+            </v-col> 
+        </v-row>
+ 
+    </div>
+</template>
+
+<style scoped>
+.wrapper {
+    background: #1B213B;
+    color: #777;
+    font-family: Montserrat, Arial, sans-serif;
+    height: 100%;
+  }
+  
+  .wrapper-bg {
+    background: #F3F4FA !important;
+  }
+  
+  h1, h2, h3, h4, h5, h6, strong {
+    font-weight: 600;
+  }
+  
+  .box .apexcharts-xaxistooltip {
+    background: #1B213B;
+    color: #fff;
+  }
+  
+  .content-area {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  
+  .box {
+    background-color: #262D47;
+    padding: 25px 25px;
+    border-radius: 4px;
+  }
+  
+  .columnbox {
+    padding-right: 15px;
+  }
+  .radialbox {
+    max-height: 350px;
+    margin-bottom: 40px;
+  }
+  
+  .apexcharts-legend-series tspan:nth-child(3) {
+    font-weight: bold;
+    font-size: 20px;
+  }
+  
+  .edit-on-codepen {
+    text-align: right;
+    width: 100%;
+    padding: 0 20px 40px;
+    position: relative;
+    top: -30px;
+    cursor: pointer;
+  }
+  
+  .spinner-border {
+    display: none;
+  }
+</style>

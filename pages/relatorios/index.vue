@@ -195,9 +195,10 @@ const getAvatarClass = (rela, index, predioId) => {
     consumoMesAnterior.value = relatorios.value.find(item => item.mes === mesesNomes[index - 1] && item.idUnidadeCompensa === predioId)?.consumoReais;
   }
 
-  if (consumoAtual.value > consumoMesAnterior.value) {
+
+  if (parseInt(consumoAtual.value) > parseInt(consumoMesAnterior.value)) {
       return 'bg-lighterror text-error';
-  } else if (consumoAtual.value < consumoMesAnterior.value) {
+  } else if (parseInt(consumoAtual.value) < parseInt(consumoMesAnterior.value)) {
     return 'bg-lightsuccess text-success';
   }
 
@@ -226,6 +227,44 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
   }  
 };
 
+/*VERIFICAR O CONSUMO REAIS COM O MES ANTERIOR (background)*/
+
+const getBG = (rela, index, predioId) =>{
+  const consumoAtual = ref(0)
+  const consumoMesAnterior = ref(0)
+
+  if (rela.mes == 1){  
+    consumoAtual.value = rela.consumoReais;  
+    consumoMesAnterior.value = todosRela.value.find(item => item.mes === 12 && item.ano === (rela.ano -1) && item.idUnidadeCompensa === predioId)?.consumoReais;
+ 
+  }else{
+    consumoAtual.value = rela.consumoReais;
+    consumoMesAnterior.value = relatorios.value.find(item => item.mes === mesesNomes[index - 1] && item.idUnidadeCompensa === predioId)?.consumoReais;
+  }
+  if(consumoMesAnterior.value != null){
+    if (parseInt(consumoAtual.value) > parseInt(consumoMesAnterior.value)) {
+      const resultado = (Number(consumoAtual.value) - Number(consumoMesAnterior.value))
+      const final = Math.abs(resultado.toFixed(2))  
+       
+      if(parseInt(final) > 150 && parseInt(final) < 299){
+        //amarelo 
+        return '#FFF3CE'
+      }else if(parseInt(final) > 300 && parseInt(final) < 499){
+        //laranja
+        return '#FFE0BA'
+      }else if(parseInt(final) > 500 && parseInt(final) < 799){
+        // vermelho claro
+        return '#FFC79A'
+      }else if(parseInt(final) > 800){
+        //vermelho escuro
+        return '#FFA086'
+      }
+    } else{
+      return '-'
+    } 
+  }
+
+}
   /*TITULO DO RELATORIO*/
   const getStatusLabel = (status) => {
     switch (status) {
@@ -621,7 +660,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                           <thead>
                             
                             <tr>
-                                <th colspan="4" style="height: 40px; font-size: 15px;">
+                                <th colspan="3" style="height: 40px; font-size: 15px;">
                                     <div class="text-center" style="width: 300px;">
                                         Dados
                                     </div>
@@ -639,7 +678,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                             <tr>
                               <th class="header-cell text-center" rowspan="2" style="height: 40px;">UC</th>
                               <th class="header-cell text-center" rowspan="2" style="height: 40px;">Nome</th>
-                              <th class="header-cell text-center" rowspan="2" style="height: 40px;">Médio</th>
+                              <!-- <th class="header-cell text-center" rowspan="2" style="height: 40px;">Médio</th> -->
                               <th class="header-cell text-center" rowspan="2" style="height: 40px;">Informações</th>
                             </tr>
                           </thead>
@@ -647,7 +686,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                             <tr v-for="predio in prediosEscolhidos" :key="predio.id">
                               <td>{{ predio.uc }}</td>
                               <td>{{ predio.nome }}</td>
-                              <td>{{ calcularMedia(relatorios.filter(item => item.idUnidadeCompensa === predio.id && item.ano === selectedYearConsumo)) }}</td>
+                              <!-- <td>{{ calcularMedia(relatorios.filter(item => item.idUnidadeCompensa === predio.id && item.ano === selectedYearConsumo)) }}</td> -->
                               <td  class="sticky-cell" style="padding: 5px; text-align: right">
                                 <tr>
                                     <th style="  ">Consumo</th>
@@ -664,7 +703,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                               </td>
 
                               <td style="padding-left: 0px; padding-right: 0px;" v-for="(mes, index) in mesesNomes" :key="mes">
-                                <div v-for="rela in relatorios.filter(item => item.mes === mes && item.idUnidadeCompensa === predio.id)" :key="rela.id">
+                                <div v-for="rela in relatorios.filter(item => item.mes === mes && item.idUnidadeCompensa === predio.id)" :key="rela.id" :style="'background-color: ' + getBG(rela, index, predio.id)">
                                     <div style="display: flex;">
                                         <div style="width: 100px; border: 1px solid #ddd; padding: 8px;">{{ rela.consumokWh }}</div>
                                         <div style="width: 100px; border: 1px solid #ddd; padding: 8px;">{{ rela.consumoReais }}</div>
@@ -685,7 +724,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
                                         </div> 
                                     </div>
                                     <div style="display: flex;">
-                                        <div style="width: 200px; border: 1px solid #ddd; padding: 8px;">{{ getQuantidadeConsumo(rela, index, predio.id)}}</div>  
+                                        <b><div style="width: 200px; border: 1px solid #ddd; padding: 8px; font-size: 16px;">{{ getQuantidadeConsumo(rela, index, predio.id)}}</div></b> 
                                     </div>
                                 </div>
                               </td>

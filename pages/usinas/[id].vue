@@ -1183,6 +1183,16 @@ definePageMeta({
         }
     }
 
+    const AlertManutencao = ref(false)
+    const verificarManutencao = (qtdReal, qtdProjecao) => {
+        if((qtdReal - qtdProjecao) >= 0){
+            AlertManutencao.value = false
+            return 'Ok'
+        }else{
+            AlertManutencao.value = true
+            return 'Abaixo'
+        }
+    }
 </script>
 <template>
     <!-- BANNER -->
@@ -1273,6 +1283,11 @@ definePageMeta({
 
     <!-- CARD INFORMAÇÕES USINA E MANUTENÇÕES-->
     <v-row>
+        <v-col v-if="AlertManutencao" cols="12">
+                            <v-alert type="warning">
+                                Gerações estão baixas. Talvez seja melhor adiantar a próxima manutenção programanda.
+                            </v-alert>
+                        </v-col>
         <v-col cols="12" md="6">
             <UiParentCard :title="'UC ' + usinaDetalhe.uc"> 
                 <div class="pa-7 pt-1">
@@ -1560,7 +1575,7 @@ definePageMeta({
                                     <th>Análise</th>
                                     <td class="text-center" v-for="(real, index) in gerDetalheAno" :key="real.id">
                                         <v-chip :color="(real.geracao - proDetalheAno[index].projecao) >= 0 ? 'primary' : 'error'" variant="tonal">
-                                            {{ (real.geracao - proDetalheAno[index].projecao) >= 0 ? 'Ok' : 'Abaixo' }}
+                                            {{ verificarManutencao(real.geracao, proDetalheAno[index].projecao) }}
                                         </v-chip>
                                     </td>
                                 </tr>
@@ -1619,7 +1634,7 @@ definePageMeta({
                                 </thead>
                                 <tbody v-if="gerDetalheAno.length > 0">
                                     <tr>
-                                        <th>Consumo (geração aprox.)</th>
+                                        <th>Consumo (geração)</th>
                                         <td class="text-center" v-for="(injecao, index) in injecaoUsinaAno" :key="injecao.id">
                                             {{ parseInt(gerDetalheAno[index].geracao)  - ((Number(injecao.injetadoPonta) + Number(injecao.injetadoFPonta))) }}
                                         </td>
@@ -1715,7 +1730,7 @@ definePageMeta({
                 </v-col>
 
                 <v-col cols="6">
-                    <v-label class="font-weight-bold mb-1">Geração (kWh)</v-label>
+                    <v-label class="font-weight-bold mb-1">Projeção (kWh)</v-label>
                     <v-text-field v-model="kwhGeracao" variant="outlined" type="number"  hide-details color="primary"></v-text-field>
                 </v-col>
                 

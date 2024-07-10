@@ -18,30 +18,172 @@ const { data: manutencao } = await useFetch("https://peehorto.cloud/manutencao/"
 const { data: usinas } = await useFetch("https://peehorto.cloud/usina/");
 
 
+//SELECIONAR A CATEGORIA DA MANUTENÇÃO
 const selecionado = ref(null)
 const categoriaSelecionada = (manutencoes) =>{
-  if(selecionado.value !== null){
+  if(selecionado.value !== null && selecionado.value != 4){
     const manuCategoria = manutencoes.filter(manu => manu.status === selecionado.value);
     return manuCategoria
+  }else if(selecionado.value == 4){
+    console.log("OI")
+    return usinasProcuradas.value
   }else{
     return;
   }
 }
 
 
+// SELECIONAR INFORMAÇÕES DA USINA
 const pegarUsina = (idUsina) =>{
     const usinaIndi = usinas._rawValue.find(usina => usina.id === idUsina);
     return usinaIndi 
 }
 
 const formatarData = (dataString) => {
-        const [ano, mes, dia] = dataString.split('-');
-        return `${dia}/${mes}/${ano}`;
+        const timestamp = Date.parse(dataString);
+        if(!isNaN(timestamp)){
+          const [ano, mes, dia] = dataString.split('-');
+          return `${dia}/${mes}/${ano}`;  
+        }else{
+          return dataString;
+        }
+        
     };
 
 const manuProgramadas = manutencao.value.filter(item => item.status === '1')
 const manuRealizando = manutencao.value.filter(item => item.status === '2')
 const manuRealizadas = manutencao.value.filter(item => item.status === '3')
+
+
+// PEGAR USINAS COM ALERTA
+    const usinasAbaixo = ref([]) // apenas usinas abaixo com 3 repetições em segurarUsinas
+    const segurarUsinas = ref([]) // salvar todas q estao abaixo, se tiver mais de 3 vezes, salva em usinasAbaixo
+
+
+    for (let i=0; i<usinas.value.length; i++){
+        const individual = usinas.value[i]
+
+        const { data: proIndi } = await useFetch(`http://127.0.0.1:8000/projecaogeracao?idGeradora=${individual.id}&ano=2024`);
+        const { data: geraIndi } = await useFetch(`http://127.0.0.1:8000/relatoriogeracao?idGeradora=${individual.id}&ano=2024`);
+         
+        for (let a=0; a < geraIndi.value.length; a++){
+                const projetado = proIndi.value[a]
+                const gerado = geraIndi.value[a]
+                 
+                if(parseInt(gerado.geracao) < parseInt(projetado.projecao)){ 
+                    segurarUsinas.value.push(individual.id)
+                }
+            
+        }
+        
+    } 
+    
+    const encontrarIdRepetido = (array) => {
+        const frequencia = {};
+
+        array.forEach(id => {
+            frequencia[id] = (frequencia[id] || 0) + 1;
+        });
+
+        Object.keys(frequencia).forEach(id => {
+            if (frequencia[id] >= 3) {
+                usinasAbaixo.value.push({ usina: id, qtd: frequencia[id] });;
+            }
+        });
+    };
+
+    encontrarIdRepetido(segurarUsinas.value);
+
+    const usinasProcuradas = ref([]) // USINAS ABAIXO COM DADOS FINAIS
+
+    const procurarUsina = async () => {
+        for (let i=0; i < usinasAbaixo._rawValue.length; i++) {
+              const { data: individual } = await useFetch(`http://127.0.0.1:8000/usina/${usinasAbaixo._rawValue[i].usina}`);
+              usinasProcuradas.value.push(individual.value);
+        }
+    }
+    
+    procurarUsina(usinasAbaixo)
+
+    // PEGAR ULT MANU DA USINA COM ALERA
+    const { data: checklists } = await useFetch("https://peehorto.cloud/checklist/");
+
+    const procurarUltManu = (idUsina) =>{
+      const manuUsina = manutencao.value.filter(item => item.idGeradora == idUsina && item.status == '3')
+      if(manuUsina.length > 0){
+        const itemMaisRecente = manuUsina.reduce((maisRecente, itemAtual) => {
+            return new Date(itemAtual.date) > new Date(maisRecente.date) ? itemAtual : maisRecente;
+        }, manuUsina[0]); 
+        return itemMaisRecente.data
+      }else{
+        return 'Nenhuma Manutenção Realizada'
+      } 
+    }
+
+    //PEGAR STATUS DO CHECKLIST 
+    const verificarStatus = (idUsina) =>{ 
+      const mesAtual = new Date().getMonth() + 1; 
+      
+      const selectedCheckListUsina = checklists.value.filter(item => item.idUsina == idUsina) 
+      const checkListUsina = selectedCheckListUsina.filter(item =>  { 
+              const itemMonth = new Date(item.data).getMonth() + 1;   
+              return itemMonth === mesAtual; 
+      })
+      
+      if(!checkListUsina[0]){
+        return "SEM CHECKLIST";
+      }
+
+      /*
+        1 - ÓTIMO: 3 OTIMOS/2 ÓTIMOS E 1 BOM
+        2 - BOM: 1 ÓTIMO E 2 BONS / 3 BONS
+        3 - VERIFICAR: ELSE EM TODOS ACIMA 
+      */
+    
+      let placa = checkListUsina[0].sitPlaca
+      let inversor = checkListUsina[0].sitInversor
+      let roteador = checkListUsina[0].sitRoteador
+
+      const STATUS_CHECKLIST = {
+        "O": "Ótimo",
+        "B": "Bom",
+        "R": "Ruim",
+        "Q": "Quebrado",
+        "M": "Manutenção"
+      };
+
+      const statusCounts = {
+        "Ótimo": 0,
+        "Bom": 0,
+        "Ruim": 0,
+        "Quebrado": 0,
+        "Manutenção": 0
+      };
+
+      const statuses = [placa, inversor, roteador];
+
+      statuses.forEach(status => {
+        const statusDesc = STATUS_CHECKLIST[status];
+        if (statusDesc) {
+          statusCounts[statusDesc]++;
+        }
+      });
+    
+
+      let classificacaoFinal = "VERIFICAR";
+
+      if (statusCounts["Ótimo"] === 3) {
+        classificacaoFinal = "ÓTIMO";
+      } else if (statusCounts["Ótimo"] === 2 && statusCounts["Bom"] === 1) {
+        classificacaoFinal = "ÓTIMO";
+      } else if (statusCounts["Bom"] === 2 && statusCounts["Ótimo"] === 1) {
+        classificacaoFinal = "BOM";
+      } else if (statusCounts["Bom"] === 3) {
+        classificacaoFinal = "BOM";
+      }
+
+      return classificacaoFinal;
+    }
 
 </script>
 <template>
@@ -92,6 +234,20 @@ const manuRealizadas = manutencao.value.filter(item => item.status === '3')
     <!--CAIXAS DASHBOARD-->
     <div class="v-col v-col-12">
       <v-row justify="space-around">  
+        <div class="v-col-sm-4 v-col-md-4 v-col-lg-3 v-col-12">
+          <div class="text-decoration-none d-flex align-center justify-center text-center rounded-md pa-6 bg-lighterror">
+            <div class="bg-lighterror">
+              <AlertTriangleIcon size="30" class="text-error" />
+              <div class="text-subtitle-1 text-capitalize font-weight-bold mt-3 text-error">
+                Alerta
+              </div>
+              <h4 class="text-h4 mt-1 text-error">
+                {{ usinasProcuradas.length }}
+              </h4>
+            </div>
+          </div>
+        </div>
+
         <div class="v-col-sm-4 v-col-md-4 v-col-lg-3 v-col-12">
           <div class="text-decoration-none d-flex align-center justify-center text-center rounded-md pa-6 bg-lightprimary">
             <div class="bg-lightprimary">
@@ -153,6 +309,7 @@ const manuRealizadas = manutencao.value.filter(item => item.status === '3')
                             <v-row justify="space-around" class="mb-2">
                             <v-col cols="auto">
                                 <v-chip-group mandatory v-model="selecionado" selected-class="text-secondary">
+                                  <v-chip value="4">Alerta</v-chip>
                                   <v-chip value="1">Programada</v-chip>
                                   <v-chip value="2">Realizando</v-chip>
                                   <v-chip value="3">Realizada</v-chip>
@@ -160,7 +317,7 @@ const manuRealizadas = manutencao.value.filter(item => item.status === '3')
                             </v-col>
                           </v-row>
                           <br>
-                          <v-row>
+                          <v-row v-if="selecionado != 4">
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -191,6 +348,45 @@ const manuRealizadas = manutencao.value.filter(item => item.status === '3')
                                     </tr>
                                 </tbody>
                             </table>
+                          </v-row>
+
+                          <v-row v-else>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="header-cell">UC</th>
+                                        <th class="header-cell">Usina</th>
+                                        <th class="header-cell">Descrição</th>
+                                        <th class="header-cell">Últ. Manutenção</th>
+                                        <th class="header-cell">CheckList</th>
+                                        <th class="header-cell">Acesso</th> 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                  <tr v-for="usina in usinasProcuradas" :key="usina">
+                                    <td class="text-center">{{ usina.uc }}</td>
+                                    <td class="text-center">{{ usina.nome }}</td>
+                                    <td class="text-center">Geração Baixa</td>
+                                    <td class="text-center">{{ formatarData(procurarUltManu(usina.id)) }}</td>
+                                    <td class="text-center">
+                                        <v-chip  :color="verificarStatus(usina.id) == 'ÓTIMO'? 'success': verificarStatus(usina.id) == 'BOM'? 'primary': verificarStatus(usina.id) == 'VERIFICAR'? 'warning':''" variant="flat">
+                                            {{ verificarStatus(usina.id)}}
+                                        </v-chip>
+                                    </td>
+                                    <td class="text-center">
+                                            <NuxtLink :to="`/usinas/${usina.id}`">
+                                                <v-btn size="30" icon class="bg-primary mr-2">
+                                                    <v-avatar size="30" class="text-white">
+                                                        <EyeIcon size="18" />
+                                                    </v-avatar>
+                                                    <v-tooltip activator="parent" location="bottom">Ver página da usina</v-tooltip>
+                                                </v-btn>   
+                                            </NuxtLink>
+                                            
+                                        </td>
+                                  </tr>
+                                </tbody>
+                              </table>
                           </v-row>
                         </div>
                     </UiParentCard>

@@ -1,7 +1,7 @@
 import {
     ApertureIcon,
     CopyIcon,
-    LayoutDashboardIcon, PlugIcon, BuildingIcon, FilePowerIcon, BoltIcon, ToolIcon, RobotIcon
+    LayoutDashboardIcon, PlugIcon, BuildingIcon, FilePowerIcon, BoltIcon, ToolIcon, RobotIcon, BulbIcon, ChartArrowsVerticalIcon, ChartPie2Icon, ClipboardCheckIcon
 } from 'vue-tabler-icons';
 
 export interface menu {
@@ -20,37 +20,62 @@ export interface menu {
 }
 
 const sidebarItem: menu[] = [
-    { header: 'Início' },
+    { header: 'início' },
     {
         title: 'Painel',
         icon: LayoutDashboardIcon,
         to: '/'
     },
-    { header: 'EFICIêNCIA' },
+    { header: 'SOLAR' },
     {
         title: 'Usinas',
         icon: BoltIcon,
         to: '/usinas/'
     },
+    
     {
-        title: 'Carregadores',
-        icon: PlugIcon,
-        to: '/carregadores/'
+        title: 'Check-List',
+        icon: ClipboardCheckIcon,
+        to: '/checklist/'
+    },
+
+    {
+        title: 'Gráficos',
+        icon: ChartPie2Icon,
+        to: '/graficos/'
     },
     {
         title: 'Manutenções',
         icon: ToolIcon,
         to: '/manutencoes/'
     },
-
-    { header: 'GERENCIAMENTO' },
+    { header: 'PEEHORTO.COM' },
+    {
+        title: 'Carregadores',
+        icon: PlugIcon,
+        to: '/carregadores/'
+    },
+    {
+        title: 'Análises',
+        icon: ChartArrowsVerticalIcon,
+        to: '/analises/'
+    },
+     
+    { header: 'UNIDADES CONSUMIDORAS' },
+    {
+        title: 'Iluminação Pública',
+        icon: BulbIcon,                               
+        to: '/iluminacao/'
+    },
     {
         title: 'Prédios Públicos',
         icon: BuildingIcon,                               
         to: '/predios/'
     },
+    
+    { header: 'GERENCIAMENTO' },
     {
-        title: 'Contas',
+        title: 'Contas (ATT)',
         icon: RobotIcon,                               
         to: '/contas/'
     },

@@ -7,11 +7,11 @@
 
     const idSolicitacao = ref('-')
     const btnSolicita = ref(true) 
-    const { data: dadosDownload } = await useFetch(`https://peehorto.cloud/logdownloadpdf/`);
+    const { data: dadosDownload } = await useFetch(`http://localhost:8000/logdownloadpdf/`);
 
     
     //SE TIVER ALGUMA SOLICITAÇÃO EM ANDAMENTO, MOSTRA OS DADOS DELA
-    const { data: solicitacoes } = await useFetch("https://peehorto.cloud/logsolicitacao/"); 
+    const { data: solicitacoes } = await useFetch("http://localhost:8000/logsolicitacao/"); 
 
     const verificarSoli = ref()   
     const btnS = ref(true) //varia´vel para a div dos botoes solicitções
@@ -25,7 +25,7 @@
                 idSolicitacao.value = verificarSoli.value[0].id
                 btnSolicita.value = false
 
-                const { data: updtDownload } = await useFetch(`https://peehorto.cloud/logdownloadpdf?idSolicitacao=${idSolicitacao.value}`);
+                const { data: updtDownload } = await useFetch(`http://localhost:8000/logdownloadpdf?idSolicitacao=${idSolicitacao.value}`);
                 dadosDownload.value = updtDownload._rawValue
 
         }else{
@@ -40,7 +40,7 @@
      
     const gerarSolicitação = async () =>{
         try {
-            const response = await useFetch(`https://peehorto.cloud/logsolicitacao/`, {
+            const response = await useFetch(`http://localhost:8000/logsolicitacao/`, {
                     method: 'POST',
                     body: 
                         {
@@ -81,7 +81,7 @@
 
     const cancelarSolicitação = async () =>{
         try {
-            const response = await useFetch(`https://peehorto.cloud/logsolicitacao/${idSolicitacao.value}`, {
+            const response = await useFetch(`http://localhost:8000/logsolicitacao/${idSolicitacao.value}`, {
                     method: 'PUT',
                     body: 
                         {
@@ -121,10 +121,10 @@
     // DADOS SELECT SOLICITA TABELA E ATUALIZAR SISTEMA
     const soliciSelected = ref()
     const atualizarDownloads = async ()=>{
-        const { data: uptedDownload } = await useFetch(`https://peehorto.cloud/logdownloadpdf/`);
+        const { data: uptedDownload } = await useFetch(`http://localhost:8000/logdownloadpdf/`);
         dadosDownload.value = uptedDownload._rawValue
 
-        const { data: uptedSolicitacao } = await useFetch(`https://peehorto.cloud/logsolicitacao?statusSoli=P`);
+        const { data: uptedSolicitacao } = await useFetch(`http://localhost:8000/logsolicitacao?statusSoli=P`);
         solicitacoes.value = uptedSolicitacao._rawValue
     }
 
@@ -153,7 +153,7 @@
     }
  
     //PROCURAR UNIDADE POR ID SELECIONADO
-    const { data: unidades } = await useFetch("https://peehorto.cloud/unidadecompensacao/");
+    const { data: unidades } = await useFetch("http://localhost:8000/unidadecompensacao/");
     const procurarUnidade = (idUnidade) =>{
         const unidadeEncontrada = unidades.value.filter(item => item.id == idUnidade) 
         return unidadeEncontrada[0].nome
