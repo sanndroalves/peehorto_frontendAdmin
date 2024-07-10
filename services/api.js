@@ -13,7 +13,7 @@ export async function getAccessToken() {
   };
 
   try {
-    const response = await axios.post('/api/account/v1.0/token?appId=3023092648151336', data);
+    const response = await axios.post('/account/v1.0/token?appId=3023092648151336', data);
     return response.data.access_token; // Ajuste conforme a estrutura do seu JSON de resposta
   } catch (error) {
     console.error('Erro ao obter o access_token:', error);
@@ -28,7 +28,7 @@ export async function fetchData(stationId, accessToken) {
     const payload = {
       stationId: stationId
     };
-    const response = await axios.post('/api/station/v1.0/base', payload, {
+    const response = await axios.post('/station/v1.0/base', payload, {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }
