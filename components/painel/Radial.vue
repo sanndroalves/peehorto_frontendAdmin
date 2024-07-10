@@ -12,8 +12,14 @@
   const stationId = 61404023;  
   const stationData = ref(null);
 
-  const accessToken = await getAccessToken();
-  stationData.value = await fetchData(stationId, accessToken);
+  onMounted(async () => {
+    try {
+      const accessToken = await getAccessToken();
+      stationData.value = await fetchData(stationId, accessToken);
+    } catch (error) {
+      console.error('Erro ao buscar dados da estação:', error);
+    }
+  });
 
   console.log("STATION", stationData)
 
