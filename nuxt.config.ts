@@ -4,7 +4,7 @@ export default defineNuxtConfig({
     shim: false
   },
   build: {
-    transpile: ["vuetify", '@nuxtjs/vuex', '@vue-leaflet/vue-leaflet', 'leaflet'],
+    transpile: ["vuetify", '@nuxtjs/vuex'],
   },
   css: [
     'leaflet/dist/leaflet.css'
