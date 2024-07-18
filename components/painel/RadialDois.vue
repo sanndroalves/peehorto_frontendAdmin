@@ -7,14 +7,17 @@
   <script setup>
   import { ref } from 'vue';
   import VueApexCharts from 'vue3-apexcharts';
-  
-  const series = ref([71, 63]);
+   
+  import UsinaPaco from '~/components/painel/dados/UsinaPaco.vue'
+  import { calcularPercentualDeGeracao } from '~/components/painel/dados/UsinaPaco.vue'
+   
+  const series = ref([calcularPercentualDeGeracao()]);
   
   const chartOptions = ref({
     chart: {
       type: 'radialBar',
       height: 320,
-      offsetY: -30,
+      offsetY: -45,
       offsetX: 0
     },
     plotOptions: {
@@ -45,7 +48,7 @@
         },
       },
     },
-    labels: ['Paço', 'JAC1'],
+    labels: ['Paço'],
     legend: {
       show: false,
       position: 'left',

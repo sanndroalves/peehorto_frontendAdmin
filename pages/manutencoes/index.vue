@@ -63,8 +63,8 @@ const manuRealizadas = manutencao.value.filter(item => item.status === '3')
     for (let i=0; i<usinas.value.length; i++){
         const individual = usinas.value[i]
 
-        const { data: proIndi } = await useFetch(`http://127.0.0.1:8000/projecaogeracao?idGeradora=${individual.id}&ano=2024`);
-        const { data: geraIndi } = await useFetch(`http://127.0.0.1:8000/relatoriogeracao?idGeradora=${individual.id}&ano=2024`);
+        const { data: proIndi } = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${individual.id}&ano=2024`);
+        const { data: geraIndi } = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${individual.id}&ano=2024`);
          
         for (let a=0; a < geraIndi.value.length; a++){
                 const projetado = proIndi.value[a]
@@ -98,7 +98,7 @@ const manuRealizadas = manutencao.value.filter(item => item.status === '3')
 
     const procurarUsina = async () => {
         for (let i=0; i < usinasAbaixo._rawValue.length; i++) {
-              const { data: individual } = await useFetch(`http://127.0.0.1:8000/usina/${usinasAbaixo._rawValue[i].usina}`);
+              const { data: individual } = await useFetch(`https://peehorto.cloud/usina/${usinasAbaixo._rawValue[i].usina}`);
               usinasProcuradas.value.push(individual.value);
         }
     }

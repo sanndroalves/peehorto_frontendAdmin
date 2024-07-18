@@ -6,11 +6,20 @@ definePageMeta({
   layout: "blank",
 });
 
+const { data: usinas } = await useFetch("https://peehorto.cloud/usina/");
+
+
 import Bar from "@/components/painel/Bar.vue";
 import Radial from "@/components/painel/Radial.vue";
 import Radial2 from "@/components/painel/RadialDois.vue";
 
+onMounted(() => {
+  const interval = setInterval(() => {
+    window.location.reload();
+  }, 120000);  
 
+  onBeforeUnmount(() => clearInterval(interval));
+});
 </script>
  
 <template> 
@@ -18,7 +27,7 @@ import Radial2 from "@/components/painel/RadialDois.vue";
     <div class="wrapper">
         <v-row class="text-center mt-2" style="color: white">
             <v-col cols="12">
-                <h2>Painel Central - Usinas Fotovoltaicas</h2>
+                <h1>Painel Central - Usinas Fotovoltaicas</h1>
             </v-col>
         </v-row>
 
@@ -26,16 +35,21 @@ import Radial2 from "@/components/painel/RadialDois.vue";
             <v-col md="8" cols="12">
                 <div class="box columnbox">
                     <h4 class="text-center" style="color: white">Porcentagens Geração Individual (kWp)</h4>
-                    <Bar titulo="TESTANDO" idUsina="1"/>
+                    <div v-for="usina in usinas" :key="usina">
+                      <div v-if="usina.id != 1 && usina.id !=19 && usina.id !=20">
+                        <Bar :titulo="usina.nome" :idUsina="usina.uc" :idSolar="usina.idSolar" :capacidade="usina.potencia" /> 
+                      </div>
+                    </div>
+                    
                 </div>
             </v-col>
             <v-col md="4" cols="12">
                 <div class="box radialbox">
-                     <h4 class="text-center" style="color: white; margin-bottom: 30px;">Porcentagem Geração Total (kWp)</h4>
+                    <h2 class="text-center" style="color: white; margin-bottom: 30px;">JAC1 (1032 kWp)</h2>
                     <Radial />
                 </div> 
                 <div class="box radialbox">
-                    <h4 class="text-center" style="color: white; margin-bottom: 30px;">Paço e JAC1 (kWp)</h4>
+                    <h2 class="text-center" style="color: white; margin-bottom: 30px;">Paço (1032 kWp)</h2>
                     <Radial2 />
                 </div>
             </v-col> 

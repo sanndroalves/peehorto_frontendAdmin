@@ -7,41 +7,9 @@
   <script setup>
   import { ref } from 'vue';
   import VueApexCharts from 'vue3-apexcharts';
-  
-  import { getAccessToken, fetchData } from '@/services/api';
-  const stationId = 61404023;  
-  const stationData = ref(null);
-
-  onMounted(async () => {
-    try {
-      const accessToken = await getAccessToken();
-      stationData.value = await fetchData(stationId, accessToken);
-    } catch (error) {
-      console.error('Erro ao buscar dados da estação:', error);
-    }
-  });
-
-  console.log("STATION", stationData)
-
-  //FAZER CALCULO DE PORCENTAGEM
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
   // GRÁFICO 
-  const series = ref([71]);
+  const series = ref([0]);
   
   const chartOptions = ref({
     chart: {
@@ -78,7 +46,7 @@
         },
       },
     },
-    labels: ['Geral'],
+    labels: ['JAC1'],
     legend: {
       show: false,
       position: 'left', 

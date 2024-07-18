@@ -10,12 +10,19 @@
   
   const props = defineProps({
     titulo: String,
-    idUsina: Number
+    idUsina: Number,
+    idSolar: Number,
+    capacidade: String,
 })
+  
+  import Usinas from '~/components/painel/dados/Usinas.vue'
+  import { calcularPercentualDeGeracao } from '~/components/painel/dados/Usinas.vue'
+  
+  const percentual = await calcularPercentualDeGeracao(props.idSolar);
 
   const series = ref([{
     name: 'Process 1',
-    data: [44]
+    data: [percentual]
   }]);
   
   const chartOptions = ref({
@@ -42,9 +49,10 @@
     title: {
       floating: true,
       offsetX: -10,
-      offsetY: 5,
-      text: props.titulo,
+      offsetY: -4,
+      text: props.titulo + ` (${props.capacidade} kWp)`,
       style: {
+        fontSize: '18px',
         color: '#FFFFFF'
       }
     },
@@ -52,9 +60,9 @@
       floating: true,
       align: 'right',
       offsetY: 0,
-      text: '44%',
+      text: percentual + '% ',
       style: {
-        fontSize: '17px',
+        fontSize: '20px',
         color: '#FFFFFF'
       }
     },
@@ -71,37 +79,7 @@
       opacity: 1
     }
   });
-  
-  function getRangeRandom({ min, max }) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-  
-  let intervalId;
-  
-  onMounted(() => {
-    intervalId = window.setInterval(() => {
-      const p1Data = getRangeRandom({ min: 10, max: 100 });
-      series.value = [{
-        name: 'Process 1',
-        data: [p1Data]
-      }];
-      // Atualiza o chartOptions para refletir o novo subtítulo
-      chartOptions.value = {
-        ...chartOptions.value,
-        subtitle: {
-          ...chartOptions.value.subtitle,
-          text: p1Data + "%",
-          style: {
-            fontSize: '17px',
-      }
-        }
-      };
-    }, 3000);
-  });
-  
-  onBeforeUnmount(() => {
-    clearInterval(intervalId);
-  });
+   
   </script>
   
   <style scoped>
