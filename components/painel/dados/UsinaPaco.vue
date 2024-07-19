@@ -7,11 +7,13 @@
   const capacidadeInstalda = ref(null)
   const geracaoReal = ref(null)
   const percentualDeGeracao = ref(0)
-  
-  // Função para realizar as requisições 
-    try {
-      // Primeira requisição para obter o access_token
-      const response1 = await fetch('/api/token', {
+
+  let data1 = ''
+  let accessToken = ''
+
+async function initialize() {
+  // Primeira requisição para obter o access_token
+  const response1 = await fetch('/api/token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -23,8 +25,17 @@
         })
       })
   
-      const data1 = await response1.json()
-      const accessToken = data1.access_token
+      data1 = await response1.json()
+      accessToken = data1.access_token
+
+}
+
+initialize();
+
+  // Função para realizar as requisições 
+async function calcularPercentualDeGeracaoPaco() {
+    try {
+
   
       // Segunda requisição usando o access_token para obter dados da instalação
       const response2 = await fetch('/api/station', {
@@ -62,14 +73,12 @@
     } catch (error) {
       console.error('Erro ao fazer requisições:', error)
     } 
-   
+
+   return percentualDeGeracao.value
+}  
   
-  // Função para calcular o percentual de geração
-  function calcularPercentualDeGeracao() {
-    return percentualDeGeracao.value
-  }
   
-  export { calcularPercentualDeGeracao }
+  export { calcularPercentualDeGeracaoPaco }
   </script>
    
   

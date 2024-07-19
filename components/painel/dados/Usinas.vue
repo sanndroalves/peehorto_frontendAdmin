@@ -9,6 +9,11 @@
   
   // Função para realizar as requisições 
     // Primeira requisição para obter o access_token
+
+    let data1 = ''
+    let accessToken = ''
+
+async function initialize() {
         const response1 = await fetch('/api/token2', {
             method: 'POST',
             headers: {
@@ -21,9 +26,13 @@
             })
         })
     
-        const data1 = await response1.json()
-        const accessToken = data1.access_token
-  
+        data1 = await response1.json()
+        accessToken = data1.access_token
+}
+
+initialize();
+
+
   // Função para calcular o percentual de geração
   async function calcularPercentualDeGeracao(idUsina) {
     try {

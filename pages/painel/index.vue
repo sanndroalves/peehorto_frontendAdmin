@@ -13,13 +13,14 @@ import Bar from "@/components/painel/Bar.vue";
 import Radial from "@/components/painel/Radial.vue";
 import Radial2 from "@/components/painel/RadialDois.vue";
 
-onMounted(() => {
-  const interval = setInterval(() => {
-    window.location.reload();
-  }, 120000);  
+// onMounted(() => {
+//   const interval = setInterval(() => {
+//     window.location.reload();
+//   }, 120000);  
 
-  onBeforeUnmount(() => clearInterval(interval));
-});
+//   onBeforeUnmount(() => clearInterval(interval));
+// });
+
 </script>
  
 <template> 
