@@ -1,6 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  ssr: false,
+  ssr: true, // Se estiver usando server-side rendering
+  target: 'server', // Se estiver usando server-side rendering
+ 
+  serverMiddleware: [
+    { path: '/api', handler: '~/api' }
+  ],
   typescript: {
     shim: false
   },
