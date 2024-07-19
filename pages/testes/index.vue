@@ -1,4 +1,12 @@
 <script setup>
+useHead ({
+  title: 'TESTES'
+});
+
+definePageMeta({
+  layout: "blank",
+});
+
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 
