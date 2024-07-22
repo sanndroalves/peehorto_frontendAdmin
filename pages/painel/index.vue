@@ -13,13 +13,13 @@ import Bar from "@/components/painel/Bar.vue";
 import Radial from "@/components/painel/Radial.vue";
 import Radial2 from "@/components/painel/RadialDois.vue";
 
-// onMounted(() => {
-//   const interval = setInterval(() => {
-//     window.location.reload();
-//   }, 120000);  
+onMounted(() => {
+  const interval = setInterval(() => {
+    window.location.reload();
+  }, 120000);  
 
-//   onBeforeUnmount(() => clearInterval(interval));
-// });
+  onBeforeUnmount(() => clearInterval(interval));
+});
 
 </script>
  
@@ -35,24 +35,25 @@ import Radial2 from "@/components/painel/RadialDois.vue";
         <v-row class="ml-3 mr-3">
             <v-col md="8" cols="12">
                 <div class="box columnbox">
-                    <h4 class="text-center" style="color: white">Porcentagens Geração Individual (kWp)</h4>
+                    <h4 class="text-center" style="color: white; margin-bottom: 10px;">Porcentagens Geração Individual (kWp)</h4>
                     <div v-for="usina in usinas" :key="usina">
-                      <div v-if="usina.id != 1 && usina.id !=19 && usina.id !=20">
+                      <div v-if="usina.id != 1 && usina.id !=19 && usina.id !=20 && usina.id == 10">
                         <Bar :titulo="usina.nome" :idUsina="usina.uc" :idSolar="usina.idSolar" :capacidade="usina.potencia" /> 
                       </div>
                     </div>
                     
                 </div>
             </v-col>
+
             <v-col md="4" cols="12">
                 <div class="box radialbox">
-                    <h2 class="text-center" style="color: white; margin-bottom: 30px;">JAC1 (1032 kWp)</h2>
-                    <Radial />
-                </div> 
-                <div class="box radialbox">
-                    <h2 class="text-center" style="color: white; margin-bottom: 30px;">Paço (1032 kWp)</h2>
+                    <h2 class="text-center" style="color: white; margin-bottom: 0px;">Paço (1032 kWp)</h2>
                     <Radial2 />
                 </div>
+                <div class="box radialbox">
+                    <h2 class="text-center" style="color: white; margin-bottom: 0px;">JAC1 (1032 kWp)</h2>
+                    <Radial />
+                </div> 
             </v-col> 
         </v-row>
  

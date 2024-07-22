@@ -15,7 +15,7 @@
     chart: {
       type: 'radialBar',
       height: 360,
-      offsetY: -50,
+      offsetY: 0,
       offsetX: 0
     },
     plotOptions: {

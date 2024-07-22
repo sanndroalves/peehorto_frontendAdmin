@@ -25,7 +25,7 @@ const chartOptions = ref({
   chart: {
     type: 'radialBar',
     height: 320,
-    offsetY: -45,
+    offsetY: 0,
     offsetX: 0
   },
   plotOptions: {
