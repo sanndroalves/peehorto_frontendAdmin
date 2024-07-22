@@ -1,6 +1,6 @@
 <template>
     <div>
-      <apexchart type="radialBar" height="360" :options="chartOptions" :series="series"></apexchart>
+      <apexchart type="radialBar" height="320" :options="chartOptions" :series="series"></apexchart>
     </div>
   </template>
   
@@ -14,7 +14,7 @@
   const chartOptions = ref({
     chart: {
       type: 'radialBar',
-      height: 360,
+      height: 320,
       offsetY: 0,
       offsetX: 0
     },

@@ -37,7 +37,7 @@ onMounted(() => {
                 <div class="box columnbox">
                     <h4 class="text-center" style="color: white; margin-bottom: 10px;">Porcentagens Geração Individual (kWp)</h4>
                     <div v-for="usina in usinas" :key="usina">
-                      <div v-if="usina.id != 1 && usina.id !=19 && usina.id !=20 && usina.id == 10">
+                      <div v-if="usina.id != 1 && usina.id !=19 && usina.id !=20">
                         <Bar :titulo="usina.nome" :idUsina="usina.uc" :idSolar="usina.idSolar" :capacidade="usina.potencia" /> 
                       </div>
                     </div>
