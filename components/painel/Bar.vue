@@ -35,6 +35,11 @@ if (titulo.startsWith('EMEF ')) {
   titulo = titulo.substring(5); // Remove 'EMEF ' que são 5 caracteres
 }
 
+if (titulo.startsWith('EMEI ')) {
+  titulo = titulo.substring(5); // Remove 'EMEF ' que são 5 caracteres
+}
+
+
 if (titulo.startsWith('UBS ')) {
   titulo = titulo.substring(4); // Remove 'EMEF ' que são 5 caracteres
 }
