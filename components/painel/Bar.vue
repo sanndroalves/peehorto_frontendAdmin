@@ -101,7 +101,23 @@ const chartOptions = ref({
     opacity: 1
   }
 });
- 
+
+// Função para atualizar os dados da série
+const updateSeries = async () => {
+  const percentual = await fetchPercentual();
+  series.value[0].data[0] = percentual;
+  // chartOptions.value.subtitle.text = `${percentual}% `;
+};
+// Configurar intervalo para atualizar os dados a cada 10 segundos
+let intervalId = null;
+onMounted(() => {
+  intervalId = setInterval(updateSeries, 60000);
+});
+onBeforeUnmount(() => {
+  if (intervalId) {
+    clearInterval(intervalId);
+  }
+});
 </script>
 
 <style scoped>
