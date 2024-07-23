@@ -82,7 +82,7 @@ const chartOptions = ref({
     floating: true,
     align: 'right',
     offsetY: -4,
-    text: `${series.value[0].data[0]}% `,
+    text: `${await fetchPercentual()}%`,
     style: {
       fontSize: '20px',
       color: '#FFFFFF'
@@ -106,7 +106,7 @@ const chartOptions = ref({
 const updateSeries = async () => {
   const percentual = await fetchPercentual();
   series.value[0].data[0] = percentual;
-  // chartOptions.value.subtitle.text = `${percentual}% `;
+  chartOptions.value.subtitle.text = `${percentual}%`;
 };
 // Configurar intervalo para atualizar os dados a cada 10 segundos
 let intervalId = null;
