@@ -27,6 +27,7 @@
           const accessToken = data1.access_token
           
           usinas.value.forEach(async (usina) => {  
+            if(usina.id != 1 && usina.id !=19 && usina.id !=20){
               try { 
                 const response2 = await fetch('/api/device', {
                   method: 'POST',
@@ -55,6 +56,8 @@
               } catch (error) {
                 console.error("Erro ao obter o resultado:", error);
               } 
+            }
+              
           });  
       } catch (error) {
         console.error('Erro ao fazer requisições:', error)
