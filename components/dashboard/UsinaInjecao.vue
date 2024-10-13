@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup >
 import { ref } from 'vue';
 import { API_BASE_URL } from '~/api/link';
 
@@ -55,6 +55,7 @@ const areachartOptions = computed(() => {
 
 const novaLista = ref()
 const soma = ref(0)
+const resultadoFinal = ref(0)
 watch(() => props.lista, (newList) => {
     novaLista.value = newList
 
@@ -62,7 +63,8 @@ watch(() => props.lista, (newList) => {
     for (let i=0; i<novaLista.value.length; i++){ 
         soma.value = Number(soma.value) + Number(novaLista.value[i])
     }
-
+    
+    resultadoFinal.value = (soma.value/1000).toFixed(2) 
 });
 
 const areaChart = computed(() => {
@@ -90,7 +92,7 @@ const areaChart = computed(() => {
             <v-row>
                 <v-col cols="12">
                     <div class="mt-2">
-                        <h3 class="text-h3">{{ (soma/1000) }} MWh</h3>
+                        <h3 class="text-h3">{{ resultadoFinal }} MWh</h3>
                         <div class="mt-1">
                             <v-avatar class="bg-lightsuccess text-success" size="25">
                                 <InfoCircleIcon size="20" />
