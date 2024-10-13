@@ -1,17 +1,18 @@
 <script setup>
 
     import UiParentCard from '@/components/shared/UiParentCard.vue'; 
-
+    import { API_BASE_URL } from '~/api/link';
+    
     const { data } = useAuth()
     const idUsuario = ref(JSON.stringify(data.value.results[0].id))
 
     const idSolicitacao = ref('-')
     const btnSolicita = ref(true) 
-    const { data: dadosDownload } = await useFetch(`http://localhost:8000/logdownloadpdf/`);
+    const { data: dadosDownload } = await useFetch(`${API_BASE_URL}/logdownloadpdf/`);
 
     
     //SE TIVER ALGUMA SOLICITAÇÃO EM ANDAMENTO, MOSTRA OS DADOS DELA
-    const { data: solicitacoes } = await useFetch("http://localhost:8000/logsolicitacao/"); 
+    const { data: solicitacoes } = await useFetch("${API_BASE_URL}/logsolicitacao/"); 
 
     const verificarSoli = ref()   
     const btnS = ref(true) //varia´vel para a div dos botoes solicitções
@@ -25,7 +26,7 @@
                 idSolicitacao.value = verificarSoli.value[0].id
                 btnSolicita.value = false
 
-                const { data: updtDownload } = await useFetch(`http://localhost:8000/logdownloadpdf?idSolicitacao=${idSolicitacao.value}`);
+                const { data: updtDownload } = await useFetch(`${API_BASE_URL}/logdownloadpdf?idSolicitacao=${idSolicitacao.value}`);
                 dadosDownload.value = updtDownload._rawValue
 
         }else{
@@ -40,7 +41,7 @@
      
     const gerarSolicitação = async () =>{
         try {
-            const response = await useFetch(`http://localhost:8000/logsolicitacao/`, {
+            const response = await useFetch(`${API_BASE_URL}/logsolicitacao/`, {
                     method: 'POST',
                     body: 
                         {
@@ -81,7 +82,7 @@
 
     const cancelarSolicitação = async () =>{
         try {
-            const response = await useFetch(`http://localhost:8000/logsolicitacao/${idSolicitacao.value}`, {
+            const response = await useFetch(`${API_BASE_URL}/logsolicitacao/${idSolicitacao.value}`, {
                     method: 'PUT',
                     body: 
                         {
@@ -121,10 +122,10 @@
     // DADOS SELECT SOLICITA TABELA E ATUALIZAR SISTEMA
     const soliciSelected = ref()
     const atualizarDownloads = async ()=>{
-        const { data: uptedDownload } = await useFetch(`http://localhost:8000/logdownloadpdf/`);
+        const { data: uptedDownload } = await useFetch(`${API_BASE_URL}/logdownloadpdf/`);
         dadosDownload.value = uptedDownload._rawValue
 
-        const { data: uptedSolicitacao } = await useFetch(`http://localhost:8000/logsolicitacao?statusSoli=P`);
+        const { data: uptedSolicitacao } = await useFetch(`${API_BASE_URL}/logsolicitacao?statusSoli=P`);
         solicitacoes.value = uptedSolicitacao._rawValue
     }
 
@@ -153,7 +154,7 @@
     }
  
     //PROCURAR UNIDADE POR ID SELECIONADO
-    const { data: unidades } = await useFetch("http://localhost:8000/unidadecompensacao/");
+    const { data: unidades } = await useFetch(`${API_BASE_URL}/unidadecompensacao/`);
     const procurarUnidade = (idUnidade) =>{
         const unidadeEncontrada = unidades.value.filter(item => item.id == idUnidade) 
         return unidadeEncontrada[0].nome

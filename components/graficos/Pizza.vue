@@ -1,8 +1,10 @@
 <script setup>
 import { ref } from 'vue'
+import { API_BASE_URL } from '~/api/link';
 
-const { data: usinas } = await useFetch("https://peehorto.cloud/usina")
-const { data: geracoes } = await useFetch("https://peehorto.cloud/relatoriogeracao")
+
+const { data: usinas } = await useFetch(`${API_BASE_URL}/usina`)
+const { data: geracoes } = await useFetch(`${API_BASE_URL}/relatoriogeracao`)
  
 const somaGeracoesPorIdGeradora = {};
 let somaTotalGeracoes = 0;

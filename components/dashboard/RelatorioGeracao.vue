@@ -1,5 +1,7 @@
 <script setup>
 import { ref } from 'vue';
+import { API_BASE_URL } from '~/api/link';
+
 import { computed } from 'vue';
 import { useTheme } from 'vuetify';
 const theme = useTheme();
@@ -13,7 +15,7 @@ const ultimaReal = ref("")
 
 
     // PEGA A PROJECAO POR MES
-    const { data: projecao } = await useFetch(`https://peehorto.cloud/projecaogeracao`);
+    const { data: projecao } = await useFetch(`${API_BASE_URL}/projecaogeracao`);
         
         const somarIndividualProjecao = async (anoId) => {                                                                                                                                                                                                                                                              
             const totalPorMes = projecao.value
@@ -24,16 +26,16 @@ const ultimaReal = ref("")
                 return acumulador;
                 }, {});
 
-                const meses = Object.keys(totalPorMes);
-                const ultimoMes = meses.length > 0 ? totalPorMes[meses[meses.length - 1]] : 0;
-                ultimaProjetada.value = ultimoMes
+                const mesAtual = new Date().getMonth() + 1;
+                const projecaoMesAtual = totalPorMes[mesAtual] || 0;
+                ultimaProjetada.value = projecaoMesAtual;
 
                 return totalPorMes;
             };
     
 
     //PEGANDO A GERAÇÃO REAL POR MÊS
-    const { data: real } = await useFetch(`https://peehorto.cloud/relatoriogeracao`);
+    const { data: real } = await useFetch(`${API_BASE_URL}/relatoriogeracao`);
         
         const somarIndividualReal = async (anoId) => {
             const totalPorMes = real.value
@@ -59,20 +61,20 @@ const ultimaReal = ref("")
                 itemReal.value = totalPorMesReal;
                 
 
-                const { data: dadosSalvar } = await useFetch(`https://peehorto.cloud/salvar?ano=${newYear}`);
+                const { data: dadosSalvar } = await useFetch(`${API_BASE_URL}/salvar?ano=${newYear}`);
                 const idSalvar = ref("")
 
                 if (dadosSalvar.value && dadosSalvar.value[0]) {
                     const arrayDados = dadosSalvar.value[0]
                     idSalvar.value = arrayDados.id
 
-                    await useFetch(`https://peehorto.cloud/salvar/${idSalvar.value}`, {
+                    await useFetch(`${API_BASE_URL}/salvar/${idSalvar.value}`, {
                             method: 'DELETE',
                             key: 'deleteDados'
                         });
                 }
 
-                    await useFetch(`https://peehorto.cloud/salvar/`, {
+                    await useFetch(`${API_BASE_URL}/salvar/`, {
                         method: 'POST',
                         body: 
                             {

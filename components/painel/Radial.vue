@@ -6,6 +6,8 @@
   
   <script setup>
   import { ref } from 'vue';
+  import { API_BASE_URL } from '~/api/link';
+  
   import VueApexCharts from 'vue3-apexcharts';
     
   // GRÁFICO 

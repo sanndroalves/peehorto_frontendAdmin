@@ -1,5 +1,9 @@
 <script setup >
 import { useHead  } from '@vueuse/head';
+import { API_BASE_URL } from '~/api/link';
+
+import { nextTick } from 'vue';
+
 
 // Defina o título da página
 useHead ({
@@ -14,8 +18,9 @@ import UiParentCard from '@/components/shared/UiParentCard.vue';
 import RelatorioUsina from "~~/components/dashboard/RelatorioUsina.vue";
 
 import { ref } from 'vue';
-  const { data: usinas } = await useFetch("https://peehorto.cloud/usina/");
-  const { data: todosRela } = await useFetch(`https://peehorto.cloud/relatoriocompensacao/`);
+const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/`);
+  const { data: todosPredios } = await useFetch(`${API_BASE_URL}/unidadecompensacao/`);
+  const { data: todosRela } = await useFetch(`${API_BASE_URL}/relatoriocompensacao/`);
 
   const selectedUsina = ref(null);
   const selectedYear = ref(null);
@@ -36,14 +41,14 @@ import { ref } from 'vue';
 
   
   //PROCURAR UNIDADES DA USINA
-    const {data: todasPorcento} = await useFetch(`https://peehorto.cloud/porcentagem`)
+    const {data: todasPorcento} = await useFetch(`${API_BASE_URL}/porcentagem`)
 
     const procurarUnidadesCompensadas = async () => {
         const unidadesCompensadas = []
-        const {data: porcentagens} = await useFetch(`https://peehorto.cloud/porcentagem?idGeradora=${selectedUsina.value}`)
+        const {data: porcentagens} = await useFetch(`${API_BASE_URL}/porcentagem?idGeradora=${selectedUsina.value}`)
         await Promise.all(porcentagens.value.map(async (porcentagem) => {
             const idUnidadeCompensa = porcentagem.idUnidadeCompensa;
-                const { data: predio } = await useFetch(`https://peehorto.cloud/unidadecompensacao/${idUnidadeCompensa}`);
+                const { data: predio } = await useFetch(`${API_BASE_URL}/unidadecompensacao/${idUnidadeCompensa}`);
                 unidadesCompensadas.push(predio._rawValue);
         }));
         return unidadesCompensadas;
@@ -58,13 +63,13 @@ import { ref } from 'vue';
     idAno.value = selectedYear.value
     ano = selectedYear.value
 
-    const { data: relatorioPesquisa } = await useFetch(`https://peehorto.cloud/relatoriocompensacao`);
-    const { data: usinas } = await useFetch(`https://peehorto.cloud/usina/${idGeradora.value}`); //SELECIONAR A USINA
-    const { data: projecaoUsina } = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${idGeradora.value}&ano=${idAno.value}`); //PROJECAO
-    const { data: geracaoUsina } = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${idGeradora.value}`); //GERACAO
-    const { data: injecaoUsina } = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${idGeradora.value}&ano=${idAno.value}`);
-    const { data: injecoesGeral } = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${idGeradora.value}`);
-    const { data: relatorioInd } = await useFetch(`https://peehorto.cloud/relatoriocompensacao`);
+    const { data: relatorioPesquisa } = await useFetch(`${API_BASE_URL}/relatoriocompensacao`);
+    const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/${idGeradora.value}`); //SELECIONAR A USINA
+    const { data: projecaoUsina } = await useFetch(`${API_BASE_URL}/projecaogeracao?idGeradora=${idGeradora.value}&ano=${idAno.value}`); //PROJECAO
+    const { data: geracaoUsina } = await useFetch(`${API_BASE_URL}/relatoriogeracao?idGeradora=${idGeradora.value}`); //GERACAO
+    const { data: injecaoUsina } = await useFetch(`${API_BASE_URL}/relatoriousina?idGeradora=${idGeradora.value}&ano=${idAno.value}`);
+    const { data: injecoesGeral } = await useFetch(`${API_BASE_URL}/relatoriousina?idGeradora=${idGeradora.value}`);
+    const { data: relatorioInd } = await useFetch(`${API_BASE_URL}/relatoriocompensacao`);
     
     const unidadesCompensadas = await procurarUnidadesCompensadas()
 
@@ -145,11 +150,13 @@ const calcularResultadoInjecao = (somaInjecao, calculoProjecao, idGeradora, mes,
   // FUNÇÃO DE PESQUISAR (DEIXAR BONITO)
 const isLoading = ref(false); 
 const handlePesquisar = () => {
-    isLoading.value = true; 
-
+    isLoading.value = true;  
   setTimeout(() => {
-    if(selectedYear){
+    if(selectedYear.value){
       pesquisarCompensacao();
+    }
+    if(anoSelecionado.value){
+      pesquisarCompensaNovo();
     }
     isLoading.value = false; 
   }, 2000);
@@ -169,16 +176,19 @@ const handlePesquisar = () => {
   const prediosEscolhidos = ref()
   
 
-  const pesquisarConsumo = async () => {
+  const pesquisarConsumo = async () => { 
+
+    
     if(!selectedYearConsumo.value){
       return;
     }else{
-      const { data: relatorioPesquisa } = await useFetch(`https://peehorto.cloud/relatoriocompensacao?ano=${selectedYearConsumo.value}`);
-      const { data: predios } = await useFetch(`https://peehorto.cloud/unidadecompensacao?categoria=${preSelecionado.value}`);
+      const { data: relatorioPesquisa } = await useFetch(`${API_BASE_URL}/relatoriocompensacao?ano=${selectedYearConsumo.value}`);
+      const { data: predios } = await useFetch(`${API_BASE_URL}/unidadecompensacao?categoria=${preSelecionado.value}`);
 
       relatorios.value = relatorioPesquisa._rawValue;
       prediosEscolhidos.value = predios._rawValue
     }
+
 }
 
 /*VERIFICAR O CONSUMO REAIS COM O MES ANTERIOR (ICON)*/
@@ -205,8 +215,99 @@ const getAvatarClass = (rela, index, predioId) => {
   return 'bg-lightsecondary text-secondary';
 };
 
+  /* FUNÇÕES PARA ADICONAR QUANTIDADE AOS MESES QUE POSSUEM CONSUMO IRREGULAR*/
+  const mesesConsumoIrregular = ref({
+    'E': [  // Educação
+      { mes: 1, qtdAcima: 0, unidades: [] },
+      { mes: 2, qtdAcima: 0, unidades: [] },
+      { mes: 3, qtdAcima: 0, unidades: [] },
+      { mes: 4, qtdAcima: 0, unidades: [] },
+      { mes: 5, qtdAcima: 0, unidades: [] },
+      { mes: 6, qtdAcima: 0, unidades: [] },
+      { mes: 7, qtdAcima: 0, unidades: [] },
+      { mes: 8, qtdAcima: 0, unidades: [] },
+      { mes: 9, qtdAcima: 0, unidades: [] },
+      { mes: 10, qtdAcima: 0, unidades: [] },
+      { mes: 11, qtdAcima: 0, unidades: [] },
+      { mes: 12, qtdAcima: 0, unidades: [] }
+    ],
+    'S': [  // Saúde
+      { mes: 1, qtdAcima: 0, unidades: [] },
+      { mes: 2, qtdAcima: 0, unidades: [] },
+      { mes: 3, qtdAcima: 0, unidades: [] },
+      { mes: 4, qtdAcima: 0, unidades: [] },
+      { mes: 5, qtdAcima: 0, unidades: [] },
+      { mes: 6, qtdAcima: 0, unidades: [] },
+      { mes: 7, qtdAcima: 0, unidades: [] },
+      { mes: 8, qtdAcima: 0, unidades: [] },
+      { mes: 9, qtdAcima: 0, unidades: [] },
+      { mes: 10, qtdAcima: 0, unidades: [] },
+      { mes: 11, qtdAcima: 0, unidades: [] },
+      { mes: 12, qtdAcima: 0, unidades: [] }
+    ],
+    'O': [  // Outros
+      { mes: 1, qtdAcima: 0, unidades: [] },
+      { mes: 2, qtdAcima: 0, unidades: [] },
+      { mes: 3, qtdAcima: 0, unidades: [] },
+      { mes: 4, qtdAcima: 0, unidades: [] },
+      { mes: 5, qtdAcima: 0, unidades: [] },
+      { mes: 6, qtdAcima: 0, unidades: [] },
+      { mes: 7, qtdAcima: 0, unidades: [] },
+      { mes: 8, qtdAcima: 0, unidades: [] },
+      { mes: 9, qtdAcima: 0, unidades: [] },
+      { mes: 10, qtdAcima: 0, unidades: [] },
+      { mes: 11, qtdAcima: 0, unidades: [] },
+      { mes: 12, qtdAcima: 0, unidades: [] }
+    ],
+    'P': [  // Praça
+      { mes: 1, qtdAcima: 0, unidades: [] },
+      { mes: 2, qtdAcima: 0, unidades: [] },
+      { mes: 3, qtdAcima: 0, unidades: [] },
+      { mes: 4, qtdAcima: 0, unidades: [] },
+      { mes: 5, qtdAcima: 0, unidades: [] },
+      { mes: 6, qtdAcima: 0, unidades: [] },
+      { mes: 7, qtdAcima: 0, unidades: [] },
+      { mes: 8, qtdAcima: 0, unidades: [] },
+      { mes: 9, qtdAcima: 0, unidades: [] },
+      { mes: 10, qtdAcima: 0, unidades: [] },
+      { mes: 11, qtdAcima: 0, unidades: [] },
+      { mes: 12, qtdAcima: 0, unidades: [] }
+    ],
+    'I': [  // IP (Iluminação Pública)
+      { mes: 1, qtdAcima: 0, unidades: [] },
+      { mes: 2, qtdAcima: 0, unidades: [] },
+      { mes: 3, qtdAcima: 0, unidades: [] },
+      { mes: 4, qtdAcima: 0, unidades: [] },
+      { mes: 5, qtdAcima: 0, unidades: [] },
+      { mes: 6, qtdAcima: 0, unidades: [] },
+      { mes: 7, qtdAcima: 0, unidades: [] },
+      { mes: 8, qtdAcima: 0, unidades: [] },
+      { mes: 9, qtdAcima: 0, unidades: [] },
+      { mes: 10, qtdAcima: 0, unidades: [] },
+      { mes: 11, qtdAcima: 0, unidades: [] },
+      { mes: 12, qtdAcima: 0, unidades: [] }
+    ]
+  });
+  
+
+  const adicionarQtdAcima = (mesAtual, predioId, predioCategoria) => {
+    const mesesCategoria = mesesConsumoIrregular.value[predioCategoria];
+    const mesIndex = mesesCategoria.findIndex(item => item.mes === mesAtual);
+    
+    if (mesIndex !== -1) {
+      const mes = mesesCategoria[mesIndex];
+      if (!mes.unidades.includes(predioId)) {
+        mes.unidades.push(predioId);
+        mes.qtdAcima += 1;
+      } 
+    }
+  };
+
+
+
   /*VERIFICAR O CONSUMO REAIS COM O MES ANTERIOR (TEXTO)*/
 const getQuantidadeConsumo = (rela, index, predioId) => {
+  // console.log("QTDCONSUMO entrou")
   const consumoAtual = ref(0)
   const consumoMesAnterior = ref(0)
 
@@ -220,7 +321,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
   }
 
   if(consumoMesAnterior.value != null){
-    const resultado = (Number(consumoAtual.value) - Number(consumoMesAnterior.value))
+    const resultado = (Number(consumoAtual.value) - Number(consumoMesAnterior.value))   
     return Math.abs(resultado.toFixed(2))  
   } else{
     return '-'
@@ -229,7 +330,7 @@ const getQuantidadeConsumo = (rela, index, predioId) => {
 
 /*VERIFICAR O CONSUMO REAIS COM O MES ANTERIOR (background)*/
 
-const getBG = (rela, index, predioId) =>{
+const getBG = (rela, index, predioId, predioCategoria) =>{
   const consumoAtual = ref(0)
   const consumoMesAnterior = ref(0)
 
@@ -256,7 +357,7 @@ const getBG = (rela, index, predioId) =>{
         // vermelho claro
         return '#FFC79A'
       }else if(parseInt(final) > 800){
-        //vermelho escuro
+        adicionarQtdAcima(rela.mes, predioId, predioCategoria);  
         return '#FFA086'
       }
     } else{
@@ -297,6 +398,13 @@ const getBG = (rela, index, predioId) =>{
           selectedUsina.value = null
           selectedYear.value = null
 
+          /* COMPENSA NOVO */
+          unidadeSelecionado.value = null
+          anoSelecionado.value = null
+          CompensaPrediosSelecionados.value = null
+          selectedUnidade.value = null
+          pesquisaCarregada.value = null
+
       case "INJETADO":
           /*RELATORIOS CONSUMO */
           preSelecionado.value = null
@@ -314,6 +422,13 @@ const getBG = (rela, index, predioId) =>{
           selectedYear.value = null
           injetadoSoma.value = []
 
+          /* COMPENSA NOVO */
+          unidadeSelecionado.value = null
+          anoSelecionado.value = null
+          CompensaPrediosSelecionados.value = null
+          selectedUnidade.value = null
+          pesquisaCarregada.value = null
+
       case "COMPENSA":
           /*RELATORIOS CONSUMO */
           preSelecionado.value = null
@@ -329,6 +444,37 @@ const getBG = (rela, index, predioId) =>{
           selectedUsina.value = null
           selectedYear.value = null
           injetadoSoma.value = []
+
+          /* COMPENSA NOVO */
+          unidadeSelecionado.value = null
+          anoSelecionado.value = null
+          CompensaPrediosSelecionados.value = null
+          selectedUnidade.value = null
+          pesquisaCarregada.value = null
+
+      case "COMPENSANOVO":
+          /*RELATORIOS CONSUMO */
+          preSelecionado.value = null
+          selectedYearConsumo.value = null
+          prediosEscolhidos.value = null
+
+          /*RELATÓRIOS INJEÇÃO*/
+          selectedUsinaInjetado.value = null
+          selectedYearInjetado.value = null
+          
+          /*RELATORIOS COMEPNSACAO*/
+          projecaoUsinaEscolhida.value = null
+          selectedUsina.value = null
+          selectedYear.value = null
+          injetadoSoma.value = []
+
+          /* COMPENSA NOVO */
+          unidadeSelecionado.value = null
+          anoSelecionado.value = null
+          CompensaPrediosSelecionados.value = null
+          selectedUnidade.value = null
+          pesquisaCarregada.value = null
+
       default:
         return "";
     }
@@ -347,10 +493,10 @@ const getBG = (rela, index, predioId) =>{
 
   const pesquisarInjetado = async () =>{
     
-    const { data: relatorioPesquisa } = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${selectedUsinaInjetado.value}&ano=${selectedYearInjetado.value}`);
-    const { data: usinas } = await useFetch(`https://peehorto.cloud/usina/${selectedUsinaInjetado.value}`); //SELECIONAR A USINA
-    const { data: projecaoUsina } = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${selectedUsinaInjetado.value}&ano=${selectedYearInjetado.value}`); //PROJECAO
-    const { data: geracaoUsina } = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${selectedUsinaInjetado.value}&ano=${selectedYearInjetado.value}`); //GERACAO
+    const { data: relatorioPesquisa } = await useFetch(`${API_BASE_URL}/relatoriousina?idGeradora=${selectedUsinaInjetado.value}&ano=${selectedYearInjetado.value}`);
+    const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/${selectedUsinaInjetado.value}`); //SELECIONAR A USINA
+    const { data: projecaoUsina } = await useFetch(`${API_BASE_URL}/projecaogeracao?idGeradora=${selectedUsinaInjetado.value}&ano=${selectedYearInjetado.value}`); //PROJECAO
+    const { data: geracaoUsina } = await useFetch(`${API_BASE_URL}/relatoriogeracao?idGeradora=${selectedUsinaInjetado.value}&ano=${selectedYearInjetado.value}`); //GERACAO
 
     relatoriosInjetado.value = relatorioPesquisa._rawValue;
     usinaEscolhidaInjetado.value = usinas._rawValue;
@@ -369,7 +515,7 @@ const getBG = (rela, index, predioId) =>{
   const somaSaldoEnergia = ref("")
 
 
-  const { data: projecao } = await useFetch(`https://peehorto.cloud/projecaogeracao`);
+  const { data: projecao } = await useFetch(`${API_BASE_URL}/projecaogeracao`);
     const somarIndividualProjecao = async (anoId) => {                                                                                                                                                                                                                                                              
         const totalPorMes = projecao.value
             .filter(item => item.ano === parseInt(anoId))
@@ -381,7 +527,7 @@ const getBG = (rela, index, predioId) =>{
             return totalPorMes;
     };
 
-    const { data: real } = await useFetch(`https://peehorto.cloud/relatoriogeracao`);
+    const { data: real } = await useFetch(`${API_BASE_URL}/relatoriogeracao`);
     const somarIndividualReal = async (anoId) => {
       const totalPorMes = real.value
           .filter(item => item.ano === parseInt(anoId))
@@ -395,7 +541,7 @@ const getBG = (rela, index, predioId) =>{
       };
     
     //ANO ATUAL
-    const { data: injetado } = await useFetch(`https://peehorto.cloud/relatoriousina`);
+    const { data: injetado } = await useFetch(`${API_BASE_URL}/relatoriousina`);
     const somarIndividualInjetado = async (anoId) => {
       const totalPorMes = injetado.value
           .filter(item => item.ano === parseInt(anoId))
@@ -409,7 +555,7 @@ const getBG = (rela, index, predioId) =>{
       };
 
     //COMPENSADO
-    const { data: compensado } = await useFetch(`https://peehorto.cloud/relatoriocompensacao`);
+    const { data: compensado } = await useFetch(`${API_BASE_URL}/relatoriocompensacao`);
     const somarIndividualCompensado = async (anoId) => {
       const totalPorMes = compensado.value
           .filter(item => item.ano === parseInt(anoId))
@@ -470,8 +616,162 @@ const getBG = (rela, index, predioId) =>{
 
     return calculo
   }
+
+
+/* COMPENSAÇÃO NOVO */
+
+const unidadeSelecionado = ref()
+const anoSelecionado = ref()
+const CompensaPrediosSelecionados = ref()
+const selectedUnidade = ref()
+const pesquisaCarregada = ref(false)
+const injecoesUsinas = ref() 
+
+  //PROCURAR INFORMAÇÕES DO PRÉDIO
+  const pesquisarPredios = async () =>{
+    const { data: unidades } = await useFetch(`${API_BASE_URL}/unidadecompensacao?categoria=${unidadeSelecionado.value}`);
+    CompensaPrediosSelecionados.value = unidades._rawValue
+  }
+
+  //PROCURAR UNIDADE
+  const infoUnidade = ref()
+  const infoUsinas = ref()
+  const { data: unidades } = await useFetch(`${API_BASE_URL}/unidadecompensacao`);
+  
+  //PROCURAR USINAS GERADORES DA UNIDADE
+  const procurarUsinasGeradores = async () => {
+        const usinasGeradoras = []
+        const {data: porcentagens} = await useFetch(`${API_BASE_URL}/porcentagem?idUnidadeCompensa=${selectedUnidade.value}`)
+        await Promise.all(porcentagens.value.map(async (porcentagem) => {
+            const idUsina = porcentagem.idGeradora;
+                const { data: usina } = await useFetch(`${API_BASE_URL}/usina/${idUsina}`);
+                usinasGeradoras.push(usina._rawValue);
+        })); 
+        return usinasGeradoras;
+  }
+      
+  //PROCURAR USINAS DA UNIDADE COMPENSAÇÃO
+  const pesquisarCompensaNovo = async () =>{
+    pesquisaCarregada.value = true
+    const pesquisa = unidades.value.filter(item => item.id === selectedUnidade.value)
+    infoUnidade.value = pesquisa[0] //informações da unidade
+
+    const usinasGeradoras = await procurarUsinasGeradores() //compactar as usinas geradores
+    infoUsinas.value = usinasGeradoras  //para as usinas geradoras da unidade
+    tamanhoProcurar.value = infoUsinas.value.length  //para o total de projeto
+    pesquisarRelatorio()// pesquisar relatorio da unidade
+    totalProjetoInjetado.value = 0 //zerar para gerar um novo de acordo com a usina
+
+    gerarRelarios();
+
+  }
+
+
+  // PROCURAR INJEÇÕES PRÉDIO    
+  const { data: injecoesGeral } = await useFetch(`${API_BASE_URL}/relatoriousina`);
+  const totalProjetoInjetado = ref(0)
+
+  const {data: porcentagens} = await useFetch(`${API_BASE_URL}/porcentagem`)
+
+  const tamanhoProcurar = ref(0) // diminuir repetições de uso da função
+
+  const procurarInjecao = (idUsina, idUnidade, idSolicitacao) => { 
+    
+    let mesAnterior = 0
+    let anoNaFuncao = 0
+    const total = ref(0);
+
+    //VERIFICANDO O MES
+    if (mesSelecionado.value === 1) {
+      mesAnterior = 12;
+      anoNaFuncao = anoSelecionado.value - 1;
+    }else{
+      mesAnterior = mesSelecionado.value-1
+      anoNaFuncao = anoSelecionado.value
+    }
+ 
+    //PROCURANDO INJEÇÃO DE ACORDO COM MES E ANO DA USINA
+    const resultadoInjecao = injecoesGeral.value.filter(item => 
+      item.idGeradora === idUsina && item.mes === mesAnterior && item.ano == anoNaFuncao
+    );
+     
+    if (resultadoInjecao.length > 0) {
+      total.value = Number(resultadoInjecao[0].injetadoPonta) + Number(resultadoInjecao[0].injetadoFPonta); 
+    }
+
+    // ADICIONAR VALOR DA INJEÇÃO/% AO TOTAL A SER INJETADO NA UNIDADE
+    const pesquisaPorcento = porcentagens.value.filter(item => 
+      item.idGeradora === idUsina && item.idUnidadeCompensa === idUnidade
+    );
+
+    //calculo para add ao total de injeção
+    if (idSolicitacao === 1) {
+      if (pesquisaPorcento.length > 0) {
+        if (tamanhoProcurar.value > 0) {  
+          let porcentagem = pesquisaPorcento[0].porcentagem;
+          let calculoInjecao = (Number(total.value / 100) * Number(porcentagem)).toFixed(2);
+          totalProjetoInjetado.value = (Number(totalProjetoInjetado.value) + Number(calculoInjecao)).toFixed(2); 
+          tamanhoProcurar.value--; 
+        }
+      }
+    }
+
+    return total.value; 
+     
+};
+
+  
+  const mesSelecionado = ref(1)
+  const somarMes = async () =>{
+    totalProjetoInjetado.value = 0
+    tamanhoProcurar.value = infoUsinas.value.length  
+
+    if(mesSelecionado.value == 12){
+      mesSelecionado.value = 1;
+      pesquisarRelatorio()
+    }else{
+      mesSelecionado.value++;
+      pesquisarRelatorio()
+    }
+  }  
+  const diminuirMes = async() =>{
+    totalProjetoInjetado.value = 0
+    tamanhoProcurar.value = infoUsinas.value.length   
+
+    if(mesSelecionado.value == 1){
+      mesSelecionado.value = 12;
+      pesquisarRelatorio()
+    }else{
+      mesSelecionado.value--;
+      pesquisarRelatorio()
+    }
+  }
+
+  
+
+  //CAIXA DE TEXTO
+  const labelMes = () => {
+    const meses = [
+      "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", 
+      "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
+    ];
+
+    // Retorna o nome do mês com base no valor de mesSelecionado
+    return meses[mesSelecionado.value - 1] || "";
+  }
+
+
+  //FILTRAR RELATORIO COMPENSACAO UNIDADE
+  const relatorioUnidadeCompensaIndividual = ref()
+  
+  const pesquisarRelatorio = async () =>{
+    const { data: relatorioMensal } = await useFetch(`${API_BASE_URL}/relatoriocompensacao?ano=${anoSelecionado.value}&mes=${mesSelecionado.value}&idUnidadeCompensa=${selectedUnidade.value}`);
+    relatorioUnidadeCompensaIndividual.value = relatorioMensal._rawValue
+  } 
+
 </script>
 <template>
+    <!-- BANNER -->
     <v-row>
     <div
       class="v-card v-theme--BLUE_THEME v-card--density-default elevation-10 rounded-md v-card--variant-elevated bg-lightprimary elevation-0 rounded-md mb-8"
@@ -514,132 +814,260 @@ const getBG = (rela, index, predioId) =>{
       </div>
     </div>
     </v-row>
+   
+    <!-- TABELAS -->
     <v-row>
         <v-col cols="12" md="12">
             <UiParentCard title="Gerar novos relatórios"> 
                 <div class="pa-7 pt-1">
                   <!-- SELECIONAR CATEGORIA -->
-                  <v-row justify="space-around" class="mb-2">
-                    <v-col cols="auto">
-                        <v-chip-group mandatory v-model="cateSelecionada" @click="mudouCategoria(cateSelecionada)" selected-class="text-primary">
-                          <v-chip value="CONSUMO">Consumo</v-chip>
-                          <v-chip value="INJETADO">Injetado</v-chip>
-                          <v-chip value="COMPENSA">Compensação</v-chip>
-                          <v-chip value="GERAL">Geral</v-chip>
-                        </v-chip-group>
-                    </v-col>
-                  </v-row>
+                  <v-row justify="space-around" >
+                      <v-table>
+                        <thead>
+                            <tr>
+                              <th class="text-center header-cell2 bg-lightprimary" style="color: black; font-size: 16px; ; border: 0px;" colspan="4">
+                                Página para geração de relatórios estatíscos sobre as usinas e unidades consumidoras.
+                              </th>
+                            </tr>
+                            <tr>
+                              <td class="header-cell2">
+                                <v-chip-group mandatory v-model="cateSelecionada" @click="mudouCategoria(cateSelecionada)" selected-class="text-primary">
+                                  <v-chip value="CONSUMO">Consumo (Unidade)</v-chip>
+                                  <v-chip value="INJETADO">Injetado (Usina)</v-chip>
+                                  <v-chip value="COMPENSA">Compensação (Usina)</v-chip>
+                                  <v-chip value="COMPENSANOVO">Compensação (Unidade)</v-chip>
+                                  <v-chip value="GERAL">Geral</v-chip>
+                                </v-chip-group>  
+                              </td>
+                              
+                            </tr>   
+                          </thead>
+                      </v-table>
+                    </v-row>  
 
                   <!-- RELATORIOS CONSUMO (FEITO)-->
-                  <v-row justify="space-around" class="mb-2" v-if="cateSelecionada === 'CONSUMO' ">
-                    <v-col cols="auto">
-                        <div class="flex-container" style="display: flex;">
-                          <v-chip-group mandatory @click="pesquisarConsumo" v-model="preSelecionado"  selected-class="text-success">
-                            <v-chip value="E">Educação</v-chip>
-                            <v-chip value="S">Saúde</v-chip>
-                            <v-chip value="O">Outros</v-chip>
-                          </v-chip-group> 
-                            <v-chip-group mandatory @click="pesquisarConsumo"  v-model="selectedYearConsumo" selected-class="text-warning" class="ml-10">
-                              <v-chip value="2023">2023</v-chip>
-                              <v-chip value="2024">2024</v-chip>
-                            </v-chip-group>
-                          
-                        </div>
-                    </v-col>
+                  <v-row justify="space-around" class="mt-5 mb-2" v-if="cateSelecionada === 'CONSUMO' ">
+                    <v-table>
+                        <thead>
+                            <tr>
+                              <th class="text-center header-cell2 bg-lightprimary" style="color: black; font-size: 16px; border: 0px;" colspan="2">
+                                Relatório para verificar o consumo dos prédios públicos/iluminação pública.
+                              </th>
+                            </tr>
+                            <tr>
+                              <th class="text-center header-cell">CATEGORIA</th>
+                              <th class="text-center header-cell">ANO</th>
+                            </tr>
+                            <tr>
+                              <td class="text-center header-cell2">
+                                <v-chip-group mandatory @click="pesquisarConsumo" v-model="preSelecionado"  selected-class="text-success">
+                                  <v-chip value="E">Educação</v-chip>
+                                  <v-chip value="S">Saúde</v-chip>
+                                  <v-chip value="O">Outros</v-chip>
+                                  <v-chip value="P">Praças</v-chip>
+                                  <v-chip value="I">IP</v-chip>
+                                </v-chip-group> 
+                              </td>
+                              <td class="text-center header-cell2">
+                                <v-chip-group mandatory @click="pesquisarConsumo"  v-model="selectedYearConsumo" selected-class="text-warning">
+                                  <v-chip value="2023">2023</v-chip>
+                                  <v-chip value="2024">2024</v-chip>
+                                </v-chip-group>
+                              </td>
+                            </tr>
+                        </thead>
+                    </v-table> 
                   </v-row>
+
                   <!-- RELATORIOS INJETADO (FEITO)-->
                   <div v-if="cateSelecionada === 'INJETADO' " class="flex-container">
-                        <v-row class="text-center">
-                            <v-col cols="12" md="12">
-                                <div style="display: flex;">
-                                    <div class="mr-5 text-center">
-                                        <h4 class="mb-2">Selecione a Usina:<br>(Energia Injetada)</h4>
-                                        <select v-model="selectedUsinaInjetado" class="custom-select">
-                                        <option disabled value="">Selecione...</option>
-                                        <option v-for="usina in usinas" :key="usina.id" :value="usina.id">
-                                            {{ usina.uc }} - {{ usina.nome }}
-                                        </option>
-                                        </select>
-                                    </div> 
-                                    <div v-if="selectedUsinaInjetado" class="mr-5">
-                                       <h4 class="mb-2">Selecione o <br>ano:</h4>
-                                        <select  v-model="selectedYearInjetado" class="custom-select" style="width: 100%">
-                                            <option disabled value="">Selecione...</option>
-                                            <option value="2024">2024</option>
-                                            <option value="2023">2023</option>
-                                        </select> 
-                                    </div>
-                                    <div v-if="selectedYearInjetado" class="flex-item mt-10 " style="padding: 15px;">
-                                        <v-btn @click="pesquisarInjetado" size="40" icon color="primary" dark :loading="isLoading">
-                                            <v-avatar size="30" class="text-white">
-                                                <SearchIcon size="17" />
-                                            </v-avatar>
-                                        <v-tooltip activator="parent" location="bottom">Gerar Relatório</v-tooltip>
-                                        </v-btn>
-                                    </div>
-                                </div>
-                            </v-col>
-                        </v-row>
+                    <v-row justify="space-around" class="mt-5 mb-2">
+                      <v-table>
+                        <thead>
+                            <tr>
+                              <th class="text-center header-cell2 bg-lightprimary" style="color: black; font-size: 16px; ; border: 0px;" colspan="4">
+                                Relatório das usinas fotovoltaicas co estatísticas individuais.
+                              </th>
+                            </tr>  
+                            <tr>
+                              <th class="text-center header-cell">SELECIONAR USINA</th>
+                              <th class="text-center header-cell">ANO</th>
+                              <th class="text-center header-cell">🔎</th>
+                            </tr>
+                            <tr>
+                              <td class="header-cell2"  style="padding: 10px">
+                                <select v-model="selectedUsinaInjetado" class="custom-select">
+                                  <option disabled value="">Selecione...</option>
+                                  <option v-for="usina in usinas" :key="usina.id" :value="usina.id">
+                                      {{ usina.uc }} - {{ usina.nome }}
+                                  </option>
+                                </select>
+                              </td>
+                              <td class="header-cell2">
+                                <select v-if="selectedUsinaInjetado" v-model="selectedYearInjetado" class="custom-select" style="width: 100%">
+                                    <option disabled value="">Selecione...</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                </select> 
+                              </td>
+                              <td class="header-cell2">
+                                <v-btn v-if="selectedYearInjetado"   @click="pesquisarInjetado" size="40" icon color="primary" dark :loading="isLoading">
+                                    <v-avatar size="30" class="text-white">
+                                        <SearchIcon size="17" />
+                                    </v-avatar>
+                                  <v-tooltip activator="parent" location="bottom">Gerar Relatório</v-tooltip>
+                                </v-btn>
+                              </td>
+                            </tr>
+                        </thead>
+                      </v-table>
+                    </v-row> 
                   </div>
+
                   <!-- RELATORIOS COMPENSAÇÃO UNIDADE (FEITO)-->
                   <div v-if="cateSelecionada === 'COMPENSA' " class="flex-container">
-                      <v-row>
-                          <v-col cols="12" md="12">
-                              <div style="display: flex;">
-                                  <div class="mr-5 text-center">
-                                      <h4 class="mb-2">Selecione a Usina: <br>(Geração/Compensação)</h4>
-                                      <select v-model="selectedUsina" class="custom-select">
-                                      <option disabled value="">Selecione...</option>
-                                      <option v-for="usina in usinas" :key="usina.id" :value="usina.id">
-                                          {{ usina.uc }} - {{ usina.nome }}
-                                      </option>
-                                      </select>
-                                  </div> 
-                                  <div v-if="selectedUsina" class="mr-5 text-center">
-                                      <h4 class="mb-2">Selecione o <br>ano:</h4>
-                                      <select  v-model="selectedYear" class="custom-select" style="width: 100%">
-                                          <option disabled value="">Selecione...</option>
-                                          <option value="2024">2024</option>
-                                          <option value="2023">2023</option>
-                                      </select> 
-                                  </div>
-
-                                  <div v-if="selectedYear" class="flex-item mt-10 " style="padding: 15px;">
-                                      <v-btn @click="handlePesquisar" size="40" icon color="primary" dark :loading="isLoading" >
-                                          <v-avatar size="30" class="text-white">
-                                              <SearchIcon size="17" />
-                                          </v-avatar>
-                                      <v-tooltip activator="parent" location="bottom">Gerar Relatório</v-tooltip>
-                                      </v-btn>
-                                  </div>
-                              </div>
-                          </v-col>
-                      </v-row>
+                    <v-row justify="space-around" class="mt-5 mb-2">
+                      <v-table>
+                        <thead>
+                            <tr>
+                              <th class="text-center header-cell2 bg-lightprimary" style="color: black; font-size: 16px; ; border: 0px;" colspan="4">
+                                Relatório para verificar as informações usina geradora e todas as unidades que ela está compensando.
+                              </th>
+                            </tr>  
+                            <tr>
+                                <th class="text-center header-cell">SELECIONAR USINA </th>
+                                <th class="text-center header-cell">ANO</th>
+                                <th class="text-center header-cell">🔎</th>
+                            </tr>
+                            <tr>
+                              <td class="header-cell2" style="padding: 10px">
+                               <select v-model="selectedUsina" class="custom-select">
+                                  <option disabled value="">Selecione...</option>
+                                  <option v-for="usina in usinas" :key="usina.id" :value="usina.id">
+                                      {{ usina.uc }} - {{ usina.nome }}
+                                </option>
+                                </select> 
+                              </td>
+                              <td class="header-cell2" >
+                                <select v-if="selectedUsina" v-model="selectedYear" class="custom-select" style="width: 100%">
+                                  <option disabled value="">Selecione...</option>
+                                  <option value="2024">2024</option>
+                                  <option value="2023">2023</option>
+                                </select>
+                              </td>
+                              <td class="header-cell2 text-center" >
+                                <v-btn v-if="selectedYear" @click="handlePesquisar" size="40" icon color="primary" dark :loading="isLoading" >
+                                  <v-avatar size="30" class="text-white">
+                                      <SearchIcon size="17" />
+                                  </v-avatar>
+                                </v-btn>
+                                <v-tooltip activator="parent" location="bottom">Gerar Relatório</v-tooltip>
+                              </td>
+                            </tr>
+                          </thead>
+                        </v-table>
+                      </v-row> 
                   </div>
+
+                  <!-- RELATORIO COMPENSAÇÃO NOVO -->
+                  <div v-if="cateSelecionada === 'COMPENSANOVO'" class="flex-container">
+                    <v-row justify="space-around" class="mt-5 mb-2">
+                      <v-table>
+                        <thead>
+                            <tr>
+                              <th class="text-center header-cell2 bg-lightprimary" style="color: black; font-size: 16px; border: 0px;" colspan="4">
+                                Relatório para verificar as informações da unidade consumidora individualmente.
+                              </th>
+                            </tr>  
+
+                            <tr>
+                                <th class="text-center header-cell">CATEGORIA</th>
+                                <th class="text-center header-cell">UNIDADE</th>
+                                <th class="text-center header-cell">ANO</th>
+                                <th class="text-center header-cell">🔎</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td class="header-cell2" style="padding: 10px;">
+                              <v-chip-group  mandatory @click="pesquisarPredios" v-model="unidadeSelecionado"  selected-class="text-success">
+                                <v-chip value="E">Educação</v-chip>
+                                <v-chip value="S">Saúde</v-chip>
+                                <v-chip value="O">Outros</v-chip>
+                                <v-chip value="I">IP</v-chip>
+                                <v-chip value="P">Praça</v-chip>
+                              </v-chip-group> 
+                            </td>
+
+                            <td class="header-cell2" style="padding: 10px;">
+                              <select v-model="selectedUnidade" class="custom-select">
+                                <option disabled value="">Selecione...</option>
+                                <option v-for="unidade in CompensaPrediosSelecionados" :key="unidade.id" :value="unidade.id">
+                                    {{ unidade.uc }} - {{ unidade.nome }}
+                                </option>
+                              </select>
+                            </td>
+
+                            <td class="header-cell2"> 
+                              <select  v-model="anoSelecionado" class="custom-select" style="width: 100%">
+                                <option disabled value="">Selecione...</option>
+                                <option value="2026">2026</option>
+                                <option value="2025">2025</option>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                            </select>
+                            </td>
+
+                            <td class="header-cell2">
+                              <div v-if="unidadeSelecionado && selectedUnidade && anoSelecionado" class="flex-item " style="padding: 15px;">
+                                  <v-btn @click="handlePesquisar" size="40" icon color="primary" dark :loading="isLoading" >
+                                      <v-avatar size="30" class="text-white">
+                                          <SearchIcon size="17" />
+                                      </v-avatar>
+                                  <v-tooltip activator="parent" location="bottom">Gerar Relatório</v-tooltip>
+                                  </v-btn>
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </v-table>
+                    </v-row>
+                  </div>
+                  
                   <!-- RELATORIOS GERAL -->
                   <div v-if="cateSelecionada === 'GERAL' " class="flex-container">
-                        <v-row class="text-center">
-                            <v-col cols="12" md="12">
-                                <div style="display: flex;">
-                                    <div class="mr-5">
-                                       <h4 class="mb-2">Selecione o ano:</h4>
-                                        <select  v-model="selectedYearGeral" class="custom-select" style="width: 100%">
-                                            <option disabled value="">Selecione...</option>
-                                            <option value="2024">2024</option>
-                                            <option value="2023">2023</option>
-                                        </select> 
-                                    </div>
-                                    <div v-if="selectedYearGeral" class="flex-item mt-5 " style="padding: 15px;">
-                                        <v-btn @click="pesquisarGeral" size="40" icon color="primary" dark :loading="isLoading">
-                                            <v-avatar size="30" class="text-white">
-                                                <SearchIcon size="17" />
-                                            </v-avatar>
-                                        <v-tooltip activator="parent" location="bottom">Gerar Relatório</v-tooltip>
-                                        </v-btn>
-                                    </div>
-                                </div>
-                            </v-col>
-                        </v-row>
+                    <v-row justify="space-around" class="mt-5 mb-2">
+                      <v-table>
+                        <thead>
+                            <tr>
+                              <th class="text-center header-cell2 bg-lightprimary" style="color: black; font-size: 16px; border: 0px;" colspan="4">
+                                Relatório GERAL com todas as estatísticas das usinas e unidades.
+                              </th>
+                            </tr>  
+                            <tr>
+                                <th class="text-center header-cell">ANO</th> 
+                                <th class="text-center header-cell">🔎</th>
+                            </tr>
+                            <tr>
+                              <td style="padding: 10px;" class="header-cell2">
+                                <select  v-model="selectedYearGeral" class="custom-select" style="width: 100%">
+                                    <option disabled value="">Selecione...</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                </select>   
+                              </td>
+                              <td class="header-cell2 text-center">
+                                <v-btn v-if="selectedYearGeral" @click="pesquisarGeral" size="40" icon color="primary" dark :loading="isLoading">
+                                    <v-avatar size="30" class="text-white">
+                                        <SearchIcon size="17" />
+                                    </v-avatar>
+                                <v-tooltip activator="parent" location="bottom">Gerar Relatório</v-tooltip>
+                                </v-btn>
+                              </td>
+                            </tr>
+                        </thead>
+                      </v-table>
+                    </v-row>
                   </div>
                 </div>
                 
@@ -647,7 +1075,7 @@ const getBG = (rela, index, predioId) =>{
                 <br>
 
                 <!-- RELATÓRIOS CONSUMO PRÉDIOS PÚBLICOS (FINALIZADO) -->
-                <v-card elevation="0" v-if="cateSelecionada === 'CONSUMO'">
+                <v-card elevation="0" v-if="preSelecionado && selectedYearConsumo && cateSelecionada === 'CONSUMO'">
                     <div class="text-center mb-5">
                         <h2 v-if="!preSelecionado || !selectedYearConsumo">Gerando Relatório</h2>
                         <h2 v-else>Relatório Gerado</h2>
@@ -658,7 +1086,26 @@ const getBG = (rela, index, predioId) =>{
                       <v-table class="bordered">
                         <template v-slot:default>
                           <thead>
-                            
+                            <tr>
+                              <th colspan="3"></th>
+                              <td v-for="mes in mesesConsumoIrregular[preSelecionado]" :key="mes" style="padding: 0px; border: 0px">
+                                <div class="v-col-sm-12 v-col-md-12 v-col-lg-12  v-col-12">
+                                  <div
+                                    class="text-decoration-none d-flex align-center justify-center text-center rounded-md pa-6 bg-lightwarning"
+                                  >
+                                    <div class="bg-lightwarning">
+                                      <AlertTriangleIcon size="30" class="text-warning" />
+                                      <div
+                                        class="text-subtitle-1 font-weight-bold mt-3 text-warning"
+                                      >
+                                        Alertas de Consumo <br> <span style="font-size: 12px;">Unidades</span>
+                                      </div>
+                                      <h4 class="text-h4 mt-1 text-warning">{{ mes.qtdAcima }}</h4>
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
                             <tr>
                                 <th colspan="3" style="height: 40px; font-size: 15px;">
                                     <div class="text-center" style="width: 300px;">
@@ -703,7 +1150,7 @@ const getBG = (rela, index, predioId) =>{
                               </td>
 
                               <td style="padding-left: 0px; padding-right: 0px;" v-for="(mes, index) in mesesNomes" :key="mes">
-                                <div v-for="rela in relatorios.filter(item => item.mes === mes && item.idUnidadeCompensa === predio.id)" :key="rela.id" :style="'background-color: ' + getBG(rela, index, predio.id)">
+                                <div v-for="rela in relatorios.filter(item => item.mes === mes && item.idUnidadeCompensa === predio.id)" :key="rela.id" :style="'background-color: ' + getBG(rela, index, predio.id, predio.secretaria)">
                                     <div style="display: flex;">
                                         <div style="width: 100px; border: 1px solid #ddd; padding: 8px;">{{ rela.consumokWh }}</div>
                                         <div style="width: 100px; border: 1px solid #ddd; padding: 8px;">{{ rela.consumoReais }}</div>
@@ -737,7 +1184,7 @@ const getBG = (rela, index, predioId) =>{
                 </v-card>
 
                 <!-- RELATÓRIOS INJETADO USINAS  (FINALIZADO)-->
-                <v-card elevation="0" v-if="usinaEscolhidaInjetado  && cateSelecionada === 'INJETADO'">
+                <v-card elevation="0" v-if="usinaEscolhidaInjetado && selectedYearInjetado && cateSelecionada === 'INJETADO'">
                     <div class="text-center mb-5">
                         <h2>Relatório Gerado</h2>
                         <h5>{{ usinaEscolhidaInjetado.nome }} - {{ selectedYearInjetado }}</h5>
@@ -893,10 +1340,7 @@ const getBG = (rela, index, predioId) =>{
                                         </div>
                                         <div  class="header-cell" style="width: 200px; border: 1px solid #ddd; font-weight: bold; background-color: #f2f2f2; padding: 8px; " v-for="geracao in geracaoUsinaEscolhida.value.filter((geracao) => geracao.mes === projecao.mes && geracao.ano === projecao.ano)" :key="geracao.mes">
                                             {{ geracao.geracao }}
-                                        </div>
-                                        <!-- <div  class="header-cell" style="width: 200px; border: 1px solid #ddd; font-weight: bold; background-color: #f2f2f2; padding: 8px; " v-for="injeIndi in injecoes.filter((inje) => inje.mes === projecao.mes && inje.ano === projecao.ano)" :key="injeIndi.mes">
-                                             0
-                                        </div> -->
+                                        </div> 
                                         <div  class="header-cell" style="width: 200px; border: 1px solid #ddd; font-weight: bold; background-color: #f2f2f2; padding: 8px; ">
                                             {{ monthNumberToName(projecao.mes) }}
                                         </div>
@@ -910,12 +1354,7 @@ const getBG = (rela, index, predioId) =>{
                             </tr>
                             <tr>
                                 <th  class="sticky-cell" colspan="4" style="text-align: center; height: 40px; font-size: 15px;" >Geração Real (kWh)</th>
-                            </tr>
-
-                            <!-- <tr>
-                              <th  class="sticky-cell" colspan="5" style="text-align: center; height: 40px; font-size: 15px;" >Injetado (kWh)</th>
-                            </tr> -->
-                            
+                            </tr>  
                             <tr>
                                 <th colspan="4" style="text-align: center; height: 40px; font-size: 15px;">
                                     <div>
@@ -978,7 +1417,7 @@ const getBG = (rela, index, predioId) =>{
                                     </div>
                                     <!--SALDO ENERGIA-->
                                     <div style="display: flex;">
-                                        <div style="width: 200px; border: 1px solid #ddd; padding: 8px; color:#13DEB9">{{ rela.saldoEnergia }}</div>
+                                        <div style="width: 200px; border: 1px solid #ddd; padding: 8px; color:#13DEB9">{{ rela.saldoEnergia ? rela.saldoEnergia : 0 }}</div>
                                     </div>
                                     <!-- INJ TUSD-->  
                                     <div style="display: flex;">
@@ -1106,6 +1545,203 @@ const getBG = (rela, index, predioId) =>{
                     </v-card-text>
                 </v-card>
 
+                <!-- RELATORIOS COMPENSAÇÃO NOVO UNIDADE (FINALIZADO)-->
+                <v-card elevation="0" v-if="pesquisaCarregada && cateSelecionada === 'COMPENSANOVO'">
+                    <div class="text-center mb-5">
+                        <h2>Relatório Gerado</h2>
+                        <h5>{{ anoSelecionado }}</h5>
+                    </div>
+                    <v-divider></v-divider>
+
+                    <!-- CARD MESES -->
+                    <!-- <v-row justify="space-around" class="mt-5 mb-2"> 
+                        <div class="v-col-sm-4 v-col-md-4 v-col-lg-3 v-col-12">
+                          <div
+                            class="text-decoration-none d-flex align-center justify-center text-center rounded-md pa-6 bg-lightprimary"
+                          >
+                            <div class="bg-lightprimary">
+                              <ArrowBigUpLineIcon size="30" class="text-primary" />
+                              <div
+                                class="text-subtitle-1 font-weight-bold mt-3 text-primary"
+                              >
+                                Acima do Projetado <br> <span style="font-size: 12px;">Mês</span>
+                              </div>
+                              <h4 class="text-h4 mt-1 text-primary">{{ parseInt(0) }}</h4>
+                            </div>
+                          </div>
+                        </div> 
+
+                        <div class="v-col-sm-4 v-col-md-4 v-col-lg-3 v-col-12">
+                          <div
+                            class="text-decoration-none d-flex align-center justify-center text-center rounded-md pa-6 bg-lighterror"
+                          >
+                            <div class="bg-lighterror">
+                              <ArrowBigDownLineIcon size="30" class="text-error" />
+                              <div
+                                class="text-subtitle-1 font-weight-bold mt-3 text-error"
+                              >
+                                Abaixo do Projetado <br> <span style="font-size: 12px;">Mês</span>
+                              </div>
+                              <h4 class="text-h4 mt-1 text-error">{{ parseInt(0) }}</h4>
+                            </div>
+                          </div>
+                        </div>
+                    </v-row> -->
+
+                    <!-- TABELA COM ESTATISTICAS -->
+                    <v-card-text>
+                      <v-table class="bordered">
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                                <th colspan="7" style="font-weight: bold; background: linear-gradient(to bottom, #0249fd, #479be4); color: white; padding: 8px; font-size: 15px; text-align: center; position: relative;">
+                                  <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">
+                                    <v-btn @click="diminuirMes()" size="40" icon color="primary" dark  >
+                                        <v-avatar size="30" class="text-white">
+                                            <ArrowLeftIcon size="17" />
+                                        </v-avatar>
+                                      <v-tooltip activator="parent" location="bottom">Voltar Mês</v-tooltip>
+                                    </v-btn>
+                                  </span>
+                                  <span style="font-size: 20px;">
+                                    {{ labelMes() }}
+                                  </span>
+                                  <span style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">
+                                    <v-btn @click="somarMes()" size="40" icon color="primary" dark  >
+                                        <v-avatar size="30" class="text-white">
+                                            <ArrowRightIcon size="17" />
+                                        </v-avatar>
+                                      <v-tooltip activator="parent" location="bottom">Próximo Mês</v-tooltip>
+                                    </v-btn>
+                                  </span>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th  class="sticky-cell"  style="text-align: center;  font-size: 15px; background: linear-gradient(to bottom, #8fb9ff, #b0d4ff);" >Informações Geradoras ➔</th>
+                                <th class="text-center" colspan="2" style="padding: 15px; height: 40px; background: linear-gradient(to bottom, #8fb9ff, #b0d4ff); font-size: 16px;">Usina</th>
+                                <th class="text-center" style="height: 40px; background: linear-gradient(to bottom, #8fb9ff, #b0d4ff); font-size: 16px;">%</th>
+                                <th class="text-center" style="height: 40px; background: linear-gradient(to bottom, #8fb9ff, #b0d4ff); font-size: 14px;">Injetado <br>Mês Anterior (kWh)</th>
+                                <th class="text-center" style="height: 40px; background: linear-gradient(to bottom, #8fb9ff, #b0d4ff); font-size: 14px;">Projeção <br>Injeção (kWh)</th>
+                            </tr>
+                            
+                            <tr v-for="usina in infoUsinas" :key="usina.id"> 
+                              <td>{{ usina.uc }}</td>
+                              <td colspan="2">{{ usina.nome }}</td>
+                              <td   style="padding: 0px;">  
+                                <span v-for="porcento in todasPorcento" :key="porcento.id">{{
+                                  porcento.idUnidadeCompensa === infoUnidade.id && porcento.idGeradora === usina.id ? porcento.porcentagem : ''
+                                }}</span>%   
+                              </td>
+                              <td>
+                                {{procurarInjecao(usina.id, infoUnidade.id, 1)}}
+                              </td>
+                              <td>
+                                <span v-for="porcento in todasPorcento" :key="porcento.id">
+                                  <div v-if="porcento.idUnidadeCompensa === infoUnidade.id && porcento.idGeradora === usina.id">
+                                    {{  (Number(procurarInjecao(usina.id, 0, 2) / 100) * porcento.porcentagem).toFixed(2) }}
+                                  </div> 
+                                </span> 
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <th style="height: 30px;" colspan="7">
+                                <v-divider :thickness="10" class="border-opacity-"></v-divider>
+                              </th>
+                            </tr>
+                            <tr>
+                                <th colspan="3" style="text-align: center; height: 40px; font-size: 15px;">
+                                    <div>
+                                      Dados
+                                    </div>
+                                </th>
+                                <th colspan="2" style="text-align: center; height: 40px; font-size: 15px;">Total Projetado P/ Injeção</th>
+                                <th colspan="2" style="text-align: center; height: 40px; font-size: 20px; color: #5D87FF">{{ totalProjetoInjetado}} kWh</th>
+                            </tr>
+                            <tr>
+                              <th class="header-cell text-center" style="height: 40px;">UC</th>
+                              <th class="header-cell text-center" style="height: 40px;">Unidade</th>  
+                              <th class="header-cell text-center" style="height: 40px;">Informações</th>
+                              <th class="header-cell text-center" colspan="2" style="height: 40px; font-size: 17px; padding-right: 110px;">kWh</th>
+                              <th class="header-cell text-center" colspan="2" style="height: 40px; font-size: 17px; padding-right: 100px;">R$</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            <td>{{infoUnidade.uc}}</td>
+                            <td>{{infoUnidade.nome}}</td>
+                            <td class="sticky-cell text-right" style="padding: 0; width:150px;">
+                                  <div style="width: 200px; height: 42px; padding: 8px;">
+                                    <strong>Consumo</strong> ➔
+                                  </div>
+                                  <div style="width: 200px; height: 42px; padding: 8px;">
+                                    <strong>Saldo Energia (Crédito)</strong> ➔
+                                  </div>
+                                  <div style="width: 200px; height: 42px; padding: 8px;">
+                                    <strong>Inj-TUSD</strong> ➔
+                                  </div>
+                                  <div style="width: 200px; height: 42px; padding: 8px;">
+                                    <strong>Inj-TE</strong> ➔
+                                  </div>
+                                  <div style="width: 200px; height: 42px; padding: 8px;">
+                                    <strong>Total Injetado</strong> ➔
+                                  </div> 
+                                  <div style="width: 200px; padding: 8px;">
+                                      <v-avatar class="text-center" size="30"></v-avatar>
+                                    <strong>Status Injetado</strong> ➔
+                                  </div> 
+                                  <div style="width: 200px; height: 42px; padding: 8px;">
+                                    <strong>Quantidade Análise</strong> ➔
+                                  </div>
+                              </td>
+
+                              <td colspan="4" style="padding: 0px">
+                                <div v-for="rela in relatorioUnidadeCompensaIndividual" :key="rela.id">  
+                                  <div style="display: flex;">
+                                      <div style="width: 300px; border: 3px solid #ddd; padding: 8px;">{{ rela.consumokWh }}</div>
+                                      <div style="width: 300px; border: 3px solid #ddd; padding: 8px;">{{ rela.consumoReais }}</div>
+                                  </div>
+
+                                  <div style="display: flex;">
+                                      <div style="width: 600px; border: 3px solid #ddd; padding: 8px;">{{ rela.saldoEnergia ? rela.saldoEnergia : 0 }}</div> 
+                                  </div> 
+
+                                  <div style="display: flex;">
+                                      <div style="width: 300px; border: 3px solid #ddd; padding: 8px;">{{parseInt(rela.enerInjTUSD)}}</div>
+                                      <div style="width: 300px; border: 3px solid #ddd; padding: 8px;">{{rela.valorInjTUSD}}</div>
+                                  </div>
+
+                                  <div style="display: flex;">
+                                      <div style="width: 300px; border: 3px solid #ddd; padding: 8px;">{{parseInt(rela.enerInjTE) }}</div>
+                                      <div style="width: 300px; border: 3px solid #ddd; padding: 8px;">{{ rela.valorInjTE }}</div>
+                                  </div>
+
+                                  <div style="display: flex;">
+                                      <div style="width: 300px; border: 3px solid #ddd; padding: 8px;">{{ parseInt(rela.enerInjTE) +  parseInt(rela.enerInjTUSD) }}</div>
+                                      <div style="width: 300px; border: 3px solid #ddd; padding: 8px;">{{  (Number(rela.valorInjTE) + Number(rela.valorInjTUSD)).toFixed(2) }}</div>
+                                  </div>
+
+                                  <div style="display: flex;">
+                                      <div style="width: 600px; border: 3px solid #ddd; padding: 8px;"> 
+                                            <v-chip variant="flat" :color="(parseInt(rela.enerInjTE) +  parseInt(rela.enerInjTUSD)) < totalProjetoInjetado  ? 'error' : 'success'">
+                                                {{ (parseInt(rela.enerInjTE) +  parseInt(rela.enerInjTUSD)) < totalProjetoInjetado  ? 'Abaixo' : 'Acima'}}
+                                            </v-chip> 
+                                      </div> 
+                                  </div>
+
+                                  <div style="display: flex;">
+                                      <div style="width: 600px; border: 3px solid #ddd; padding: 8px;"> 
+                                        <strong>{{ Math.abs((parseInt(rela.enerInjTE) +  parseInt(rela.enerInjTUSD)) - totalProjetoInjetado).toFixed(2) }} kWh</strong>
+                                      </div> 
+                                  </div>
+                                </div>
+                              </td>
+                          </tbody>
+                        </template>
+                      </v-table>
+                    </v-card-text>
+                </v-card>
+
                 <!-- RELATÓRIO GERAL -->
                 <v-card elevation="0" v-if="totalProjetado && cateSelecionada === 'GERAL'">
                     <div class="text-center mb-5">
@@ -1115,7 +1751,7 @@ const getBG = (rela, index, predioId) =>{
                     </div>
                     <v-divider></v-divider>
                     <v-row class="pa-5">
-                      <div class="v-col-sm-4 v-col-md-4 v-col-lg-3 v-col-12">
+                    <div class="v-col-sm-4 v-col-md-4 v-col-lg-3 v-col-12">
                       <div
                         class="text-decoration-none d-flex align-center justify-center text-center rounded-md pa-6 bg-lightprimary"
                       >
@@ -1352,8 +1988,7 @@ const getBG = (rela, index, predioId) =>{
 }
   .header-cell2 { 
     border: 2px solid #afc6ff;
-    padding: 8px; 
-    color: white;
+    padding: 8px;  
     font-weight: bold;
   }
 </style>

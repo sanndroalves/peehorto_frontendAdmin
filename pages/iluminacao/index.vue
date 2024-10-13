@@ -1,5 +1,6 @@
 <script setup >
 import { useHead  } from '@vueuse/head';
+import { API_BASE_URL } from '~/api/link';
 
 // Defina o título da página
 useHead ({
@@ -14,8 +15,8 @@ import UiParentCard from '@/components/shared/UiParentCard.vue';
 
 import { ref } from 'vue';
 
-const { data: predios } = await useFetch("https://peehorto.cloud/unidadecompensacao/");
-const { data: usinas } = await useFetch("https://peehorto.cloud/usina/");
+const { data: predios } = await useFetch(`${API_BASE_URL}/unidadecompensacao/`);
+const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/`);
 
 // ALTERANDO OS STATUS
 const getStatusLabel = (status) => {
@@ -65,7 +66,7 @@ const categoriaSelecionada = (prediosNovo) =>{
 }
 
 // BUSCANDO AS PORCENTAGEM POR UNIDADE
-const { data: listaPorcento } = await useFetch("https://peehorto.cloud/porcentagem/");
+const { data: listaPorcento } = await useFetch(`${API_BASE_URL}/porcentagem/`);
 const procurarPorcentagem = (predioId) =>{
   const listaFinal = listaPorcento.value.filter(porcento => porcento.idUnidadeCompensa === predioId);
 
@@ -97,7 +98,7 @@ const openDialogGeradora = async (predioId) =>{
   selectedUsina.value = ""
   porcentagem.value = ""
 
-  const {data: unidadeDetalhe} = await useFetch(`https://peehorto.cloud/unidadecompensacao/${predioId}`)
+  const {data: unidadeDetalhe} = await useFetch(`${API_BASE_URL}/unidadecompensacao/${predioId}`)
         ucUnidadeRela.value = unidadeDetalhe.value.uc
         nomeUnidadeRela.value = unidadeDetalhe.value.nome
         selectedPredio.value = unidadeDetalhe.value.id
@@ -111,7 +112,7 @@ const sendGeradora = async () => {
   }
 
   try {
-    const response = await useFetch(`https://peehorto.cloud/porcentagem/`, {
+    const response = await useFetch(`${API_BASE_URL}/porcentagem/`, {
             method: 'POST',
             body: 
                 {
@@ -126,7 +127,7 @@ const sendGeradora = async () => {
           showErrorCampoGeracao.value = false
           showSuccessAlertGeracao.value = true
           
-          const { data: listaPorcentoNova } = await useFetch("https://peehorto.cloud/porcentagem/");
+          const { data: listaPorcentoNova } = await useFetch(`${API_BASE_URL}/porcentagem/`);
           listaPorcento.value = listaPorcentoNova._value;
 
         } else {
@@ -174,7 +175,7 @@ const sendGeradora = async () => {
         }
 
         try {
-            const response =  await useFetch(`https://peehorto.cloud/unidadecompensacao/`, {
+            const response =  await useFetch(`${API_BASE_URL}/unidadecompensacao/`, {
             method: 'POST',
                 body: 
                     {
@@ -196,7 +197,7 @@ const sendGeradora = async () => {
                 showErrorAlertUnidade.value = false;
                 showErrorCampoUnidade.value = false;
 
-                const {data: prediosUpdated} = await useFetch(`https://peehorto.cloud/unidadecompensacao/`)
+                const {data: prediosUpdated} = await useFetch(`${API_BASE_URL}/unidadecompensacao/`)
                 predios.value = prediosUpdated._value
                 
             } else {
@@ -245,7 +246,7 @@ const mesRelUni = ref("");
         dialogNovoRelatorio.value = true
         compensada.value = idUnidadeCompensa
 
-        const {data: unidadeDetalhe} = await useFetch(`https://peehorto.cloud/unidadecompensacao/${compensada.value}`)
+        const {data: unidadeDetalhe} = await useFetch(`${API_BASE_URL}/unidadecompensacao/${compensada.value}`)
         ucUnidadeRela.value = unidadeDetalhe.value.uc
         nomeUnidadeRela.value = unidadeDetalhe.value.nome
     }
@@ -259,7 +260,7 @@ const mesRelUni = ref("");
             return;
         }
         
-        const {data: relaVerificar} = await useFetch(`https://peehorto.cloud/relatoriocompensacao?idUnidadeCompensa=${compensada.value}&mes=${mesRelUni.value}&ano=${anoRelUni.value}`)
+        const {data: relaVerificar} = await useFetch(`${API_BASE_URL}/relatoriocompensacao?idUnidadeCompensa=${compensada.value}&mes=${mesRelUni.value}&ano=${anoRelUni.value}`)
     
         if(relaVerificar.value.length){
             showErrorMesRelatorio.value = true
@@ -268,7 +269,7 @@ const mesRelUni = ref("");
             return;
         }
         try {
-            const response = await useFetch(`https://peehorto.cloud/relatoriocompensacao/`, {
+            const response = await useFetch(`${API_BASE_URL}/relatoriocompensacao/`, {
                     method: 'POST',
                     body: 
                         {
@@ -330,7 +331,7 @@ const mesRelUni = ref("");
         dialogEditUnidade.value = true
         
 
-        const {data: unidadeDetalhe} = await useFetch(`https://peehorto.cloud/unidadecompensacao/${unidadeId}`)
+        const {data: unidadeDetalhe} = await useFetch(`${API_BASE_URL}/unidadecompensacao/${unidadeId}`)
             ucUnidadeEdit.value = unidadeDetalhe.value.uc
             nomeUnidadeEdit.value = unidadeDetalhe.value.nome
             dataInicioUnidadeEdit.value = unidadeDetalhe.value.dataInicio
@@ -352,7 +353,7 @@ const mesRelUni = ref("");
         }
 
         try {
-            const response = await useFetch(`https://peehorto.cloud/unidadecompensacao/${compensadaId.value}`, {
+            const response = await useFetch(`${API_BASE_URL}/unidadecompensacao/${compensadaId.value}`, {
                 method: 'PUT',
                 body: 
                     {
@@ -373,7 +374,7 @@ const mesRelUni = ref("");
                 showErrorCampoUnidadeEdit.value = false
                 showSuccessAlertUnidadeEdit.value = true
 
-                const {data: updPredios} = await useFetch(`https://peehorto.cloud/unidadecompensacao/`)
+                const {data: updPredios} = await useFetch(`${API_BASE_URL}/unidadecompensacao/`)
                 predios.value = updPredios._value
 
 
@@ -403,7 +404,7 @@ const mesRelUni = ref("");
         dialogExcluirUnidade.value = true
         showSuccessAlertUnidadeExcluida.value = false
 
-        const {data: unidadeDetalhe} = await useFetch(`https://peehorto.cloud/unidadecompensacao/${unidadeId}`)
+        const {data: unidadeDetalhe} = await useFetch(`${API_BASE_URL}/unidadecompensacao/${unidadeId}`)
         ucUnidadeExcluir.value = unidadeDetalhe.value.uc
         nomeUnidadeExcluir.value = unidadeDetalhe.value.nome
         idUnidadeExcluir.value = unidadeDetalhe.value.id
@@ -411,7 +412,7 @@ const mesRelUni = ref("");
 
     const deleteUnidade = async () => {
     try {
-        const response = await useFetch(`https://peehorto.cloud/unidadecompensacao/${idUnidadeExcluir.value}`, {
+        const response = await useFetch(`${API_BASE_URL}/unidadecompensacao/${idUnidadeExcluir.value}`, {
           method: 'DELETE',
           key: 'deleteUnidade'
         });
@@ -424,7 +425,7 @@ const mesRelUni = ref("");
 
         }
 
-        const { data: updPredios } = await useFetch(`https://peehorto.cloud/unidadecompensacao/`);
+        const { data: updPredios } = await useFetch(`${API_BASE_URL}/unidadecompensacao/`);
         predios.value = updPredios._value;
 
       } catch (error) {
@@ -444,11 +445,11 @@ const mesRelUni = ref("");
     const openDialogRelatorios = async (unidadeId) =>{
         dialogRelatorios.value = true
         
-        const {data: unidade} = await useFetch(`https://peehorto.cloud/unidadecompensacao/${unidadeId}`)
+        const {data: unidade} = await useFetch(`${API_BASE_URL}/unidadecompensacao/${unidadeId}`)
         ucUnidadeRelatorio.value = unidade.value.uc
         nomeUnidadeRelatorio.value = unidade.value.nome
 
-        const {data: relatorios} = await useFetch(`https://peehorto.cloud/relatoriocompensacao?idUnidadeCompensa=${unidadeId}`)
+        const {data: relatorios} = await useFetch(`${API_BASE_URL}/relatoriocompensacao?idUnidadeCompensa=${unidadeId}`)
         relatoriosUnidade.value = relatorios._value
         idUnidadeRela.value = unidadeId
     }
@@ -456,12 +457,12 @@ const mesRelUni = ref("");
     /* DELETAR RELATORIOS */
     const deleteRelatorio = async (relatorioId) => {
         try {
-            await useFetch(`https://peehorto.cloud/relatoriocompensacao/${relatorioId}`, {
+            await useFetch(`${API_BASE_URL}/relatoriocompensacao/${relatorioId}`, {
                 method: 'DELETE',
                 key: 'deleteRelatorio'
             });
 
-            const { data: updatedRelatorios } = await useFetch(`https://peehorto.cloud/relatoriocompensacao?idUnidadeCompensa=${idUnidadeRela.value}`);
+            const { data: updatedRelatorios } = await useFetch(`${API_BASE_URL}/relatoriocompensacao?idUnidadeCompensa=${idUnidadeRela.value}`);
             relatoriosUnidade.value = updatedRelatorios._value;
 
         } catch (error) {
@@ -487,7 +488,7 @@ const mesRelUni = ref("");
     const valorTeUniEdit = ref("");
 
     const openDialogRelatoriosEditar = async (relatorioId) =>{
-        const { data: relatorioInd } = await useFetch(`https://peehorto.cloud/relatoriocompensacao/${relatorioId}`);
+        const { data: relatorioInd } = await useFetch(`${API_BASE_URL}/relatoriocompensacao/${relatorioId}`);
 
         idRelaEdit.value = relatorioInd.value.id
         mesRelUniEdit.value = relatorioInd.value.mes
@@ -511,7 +512,7 @@ const mesRelUni = ref("");
 
 
       try {
-        const response = await useFetch(`https://peehorto.cloud/relatoriocompensacao/${idRelaEdit}`,
+        const response = await useFetch(`${API_BASE_URL}/relatoriocompensacao/${idRelaEdit}`,
           {
             method: "PUT",
             body: {
@@ -542,18 +543,18 @@ const mesRelUni = ref("");
         showErrorCampoEdit.value = false;
       }
 
-  const { data: prediosUpdated } = await useFetch("https://peehorto.cloud/unidadecompensacao/");
+  const { data: prediosUpdated } = await useFetch(`${API_BASE_URL}/unidadecompensacao/`);
   predios.value = prediosUpdated._value;
 };
 
 const deletePorcetagem = async (idPorcentagem) =>{
         try {
-            await useFetch(`https://peehorto.cloud/porcentagem/${idPorcentagem}`, {
+            await useFetch(`${API_BASE_URL}/porcentagem/${idPorcentagem}`, {
                 method: 'DELETE',
                 key: 'deletePorcetagem'
             });
 
-            const { data: listaPorcentoNova } = await useFetch("https://peehorto.cloud/porcentagem/");
+            const { data: listaPorcentoNova } = await useFetch(`${API_BASE_URL}/porcentagem/`);
             listaPorcento.value = listaPorcentoNova._value;
 
         } catch (error) {

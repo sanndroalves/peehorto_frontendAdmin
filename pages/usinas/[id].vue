@@ -1,5 +1,6 @@
 <script setup >
     import { useHead  } from '@vueuse/head';
+    import { API_BASE_URL } from '~/api/link';
 
     // Defina o título da página
 useHead ({
@@ -19,7 +20,7 @@ definePageMeta({
 
     const route = useRoute();
 
-    const {data: usinaDetalhe} = await useFetch(`https://peehorto.cloud/usina/${route.params.id}`)
+    const {data: usinaDetalhe} = await useFetch(`${API_BASE_URL}/usina/${route.params.id}`)
 
     useHead ({
     title: `Usina (${usinaDetalhe.value.nome})`
@@ -39,8 +40,8 @@ definePageMeta({
     const toggleYear = async () => {
         selectedYear.value = selectedYear.value === '2024' ? '2023' : '2024';
 
-        const { data: proDetalhe } = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
-        const { data: geraDetalhe } = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
+        const { data: proDetalhe } = await useFetch(`${API_BASE_URL}/projecaogeracao?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
+        const { data: geraDetalhe } = await useFetch(`${API_BASE_URL}/relatoriogeracao?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
         proDetalheAno.value = proDetalhe._value;
         gerDetalheAno.value = geraDetalhe._value;
  
@@ -52,7 +53,7 @@ definePageMeta({
         }
 
         /* PEGANDO AS INJEÇÕES */ 
-        const { data: injecaoUsina } = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
+        const { data: injecaoUsina } = await useFetch(`${API_BASE_URL}/relatoriousina?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
         injecaoUsinaAno.value = injecaoUsina._value;
         
         injecoes.value = []
@@ -96,7 +97,7 @@ definePageMeta({
       
       /* ENVIAR PROJEÇÃO */
       if (tipoGeracao.value === 'P'){
-        const {data: mesVetor} = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${route.params.id}&mes=${mesGeracao.value}&ano=${anoGeracao.value}`)
+        const {data: mesVetor} = await useFetch(`${API_BASE_URL}/projecaogeracao?idGeradora=${route.params.id}&mes=${mesGeracao.value}&ano=${anoGeracao.value}`)
             if(mesVetor.value.length){
                     showSuccessAlertProjecao.value = false;
                     showErrorCampoProjecao.value = false;
@@ -105,7 +106,7 @@ definePageMeta({
         }
 
         try {
-            const response =  await useFetch(`https://peehorto.cloud/projecaogeracao/`, {
+            const response =  await useFetch(`${API_BASE_URL}/projecaogeracao/`, {
                     method: 'POST',
                     body: 
                         {
@@ -135,7 +136,7 @@ definePageMeta({
 
     /* ENVIAR GERACAO */
       } else {
-        const {data: mesVetor} = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${route.params.id}&mes=${mesGeracao.value}&ano=${anoGeracao.value}`)
+        const {data: mesVetor} = await useFetch(`${API_BASE_URL}/relatoriogeracao?idGeradora=${route.params.id}&mes=${mesGeracao.value}&ano=${anoGeracao.value}`)
         if(mesVetor.value.length){
                 showSuccessAlertProjecao.value = false;
                 showErrorCampoProjecao.value = false;
@@ -144,7 +145,7 @@ definePageMeta({
         }
 
         try {
-            const response =  await useFetch(`https://peehorto.cloud/relatoriogeracao/`, {
+            const response =  await useFetch(`${API_BASE_URL}/relatoriogeracao/`, {
                         method: 'POST',
                         body: 
                             {
@@ -196,7 +197,7 @@ definePageMeta({
     const informacoesGeracao = async (geracaoId, tipo) => {
         //INFO PROJEÇÃO
         if(tipo === 'P'){   
-            const {data: projecao} = await useFetch(`https://peehorto.cloud/projecaogeracao/${geracaoId}`)
+            const {data: projecao} = await useFetch(`${API_BASE_URL}/projecaogeracao/${geracaoId}`)
             mesGeracaoEdit.value = projecao.value.mes
             anoGeracaoEdit.value = projecao.value.ano
             kwhGeracaoEdit.value = projecao.value.projecao
@@ -204,7 +205,7 @@ definePageMeta({
 
         //INFO GERAÇÃO REAL
         }else{
-            const {data: real} = await useFetch(`https://peehorto.cloud/relatoriogeracao/${geracaoId}`)
+            const {data: real} = await useFetch(`${API_BASE_URL}/relatoriogeracao/${geracaoId}`)
             mesGeracaoEdit.value = real.value.mes
             anoGeracaoEdit.value = real.value.ano
             kwhGeracaoEdit.value = real.value.geracao
@@ -235,7 +236,7 @@ definePageMeta({
             }
 
             try {
-                const response = await useFetch(`https://peehorto.cloud/projecaogeracao/${geracaoId}`, {
+                const response = await useFetch(`${API_BASE_URL}/projecaogeracao/${geracaoId}`, {
                     method: 'PUT',
                     body: 
                         {
@@ -252,7 +253,7 @@ definePageMeta({
                     showErrorCampoGeracaoEdit.value = false
                     showSuccessAlertGeracaoEdit.value = true
 
-                    const {data: updateProjecao} = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${route.params.id}`)
+                    const {data: updateProjecao} = await useFetch(`${API_BASE_URL}/projecaogeracao?idGeradora=${route.params.id}`)
                     proDetalheAno.value = updateProjecao._value
 
                 } else{
@@ -278,7 +279,7 @@ definePageMeta({
             }
 
             try {
-                const response = await useFetch(`https://peehorto.cloud/relatoriogeracao/${geracaoId}`, {
+                const response = await useFetch(`${API_BASE_URL}/relatoriogeracao/${geracaoId}`, {
                     method: 'PUT',
                     body: 
                         {
@@ -296,7 +297,7 @@ definePageMeta({
                     showErrorAlertGeracaoEdit.value = false
                     showSuccessAlertGeracaoEdit.value = true
 
-                    const {data: updateReal} = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${route.params.id}`)
+                    const {data: updateReal} = await useFetch(`${API_BASE_URL}/relatoriogeracao?idGeradora=${route.params.id}`)
                     gerDetalheAno.value = updateReal._value
 
                 } else{
@@ -318,12 +319,12 @@ definePageMeta({
     /* DELETAR GERAÇÕES */
     const deleteProjecao = async (projecaoId) => {
     try {
-        await useFetch(`https://peehorto.cloud/projecaogeracao/${projecaoId}`, {
+        await useFetch(`${API_BASE_URL}/projecaogeracao/${projecaoId}`, {
           method: 'DELETE',
           key: 'deleteProjecao'
         });
 
-        const { data: updatedGeraDetalhe } = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
+        const { data: updatedGeraDetalhe } = await useFetch(`${API_BASE_URL}/projecaogeracao?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
         proDetalheAno.value = updatedGeraDetalhe._value;
 
       } catch (error) {
@@ -334,12 +335,12 @@ definePageMeta({
 
     const deleteGeracao = async (geracaoId) => {
     try {
-        await useFetch(`https://peehorto.cloud/relatoriogeracao/${geracaoId}`, {
+        await useFetch(`${API_BASE_URL}/relatoriogeracao/${geracaoId}`, {
           method: 'DELETE',
           key: 'deleteGeracao'
         });
 
-        const { data: updatedGeraReal } = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
+        const { data: updatedGeraReal } = await useFetch(`${API_BASE_URL}/relatoriogeracao?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
         gerDetalheAno.value = updatedGeraReal._value;
 
       } catch (error) {
@@ -360,7 +361,7 @@ definePageMeta({
 
     const excluirUsina = async () => {
         try {
-            const response = await fetch(`https://peehorto.cloud/usina/${route.params.id}`, {
+            const response = await fetch(`${API_BASE_URL}/usina/${route.params.id}`, {
                 method: 'DELETE',
             });
             
@@ -376,14 +377,14 @@ definePageMeta({
     };
 
     // SISTEMA UNIDADES COMPENSADAS
-    const {data: porcentagens} = await useFetch(`https://peehorto.cloud/porcentagem?idGeradora=${route.params.id}`)
+    const {data: porcentagens} = await useFetch(`${API_BASE_URL}/porcentagem?idGeradora=${route.params.id}`)
 
     const procurarUnidadesCompensadas = async () => {
         const unidadesCompensadas = []
 
         await Promise.all(porcentagens.value.map(async (porcentagem) => {
             const idUnidadeCompensa = porcentagem.idUnidadeCompensa;
-                const { data: predio } = await useFetch(`https://peehorto.cloud/unidadecompensacao/${idUnidadeCompensa}`);
+                const { data: predio } = await useFetch(`${API_BASE_URL}/unidadecompensacao/${idUnidadeCompensa}`);
                 unidadesCompensadas.push(predio._rawValue);
         }));
         return unidadesCompensadas;
@@ -392,7 +393,7 @@ definePageMeta({
     const unidadesCompensadas = await procurarUnidadesCompensadas()
 
 
-    const {data: relatorios} = await useFetch(`https://peehorto.cloud/relatoriocompensacao/`)
+    const {data: relatorios} = await useFetch(`${API_BASE_URL}/relatoriocompensacao/`)
 
     const getQuantidadeRelatorios = (unidadeId, ano) => {
         const relatoriosCompensacaoDoAno = relatorios.value.filter((rela) => rela.idUnidadeCompensa === unidadeId && rela.ano === ano);
@@ -431,7 +432,7 @@ definePageMeta({
         }
 
         try {
-            const response =  await useFetch(`https://peehorto.cloud/unidadecompensacao/`, {
+            const response =  await useFetch(`${API_BASE_URL}/unidadecompensacao/`, {
             method: 'POST',
                 body: 
                     {
@@ -453,7 +454,7 @@ definePageMeta({
                 showErrorAlertUnidade.value = false;
                 showErrorCampoUnidade.value = false;
 
-                const {data: updateUnidade} = await useFetch(`https://peehorto.cloud/unidadecompensacao?idGeradora=${route.params.id}`)
+                const {data: updateUnidade} = await useFetch(`${API_BASE_URL}/unidadecompensacao?idGeradora=${route.params.id}`)
                 unidadeCompensada.value = updateUnidade._value
                 
             } else {
@@ -496,7 +497,7 @@ definePageMeta({
         dialogNovoRelatorio.value = true
         compensada.value = idUnidadeCompensa
 
-        const {data: unidadeDetalhe} = await useFetch(`https://peehorto.cloud/unidadecompensacao/${compensada.value}`)
+        const {data: unidadeDetalhe} = await useFetch(`${API_BASE_URL}/unidadecompensacao/${compensada.value}`)
         ucUnidadeRela.value = unidadeDetalhe.value.uc
         nomeUnidadeRela.value = unidadeDetalhe.value.nome
     }
@@ -510,7 +511,7 @@ definePageMeta({
             return;
         }
         
-        const {data: relaVerificar} = await useFetch(`https://peehorto.cloud/relatoriocompensacao?idUnidadeCompensa=${compensada.value}&mes=${mesRelUni.value}&ano=${anoRelUni.value}`)
+        const {data: relaVerificar} = await useFetch(`${API_BASE_URL}/relatoriocompensacao?idUnidadeCompensa=${compensada.value}&mes=${mesRelUni.value}&ano=${anoRelUni.value}`)
     
         if(relaVerificar.value.length){
             showErrorMesRelatorio.value = true
@@ -519,7 +520,7 @@ definePageMeta({
             return;
         }
         try {
-            const response = await useFetch(`https://peehorto.cloud/relatoriocompensacao/`, {
+            const response = await useFetch(`${API_BASE_URL}/relatoriocompensacao/`, {
                     method: 'POST',
                     body: 
                         {
@@ -582,7 +583,7 @@ definePageMeta({
         dialogEditUnidade.value = true
         
 
-        const {data: unidadeDetalhe} = await useFetch(`https://peehorto.cloud/unidadecompensacao/${unidadeId}`)
+        const {data: unidadeDetalhe} = await useFetch(`${API_BASE_URL}/unidadecompensacao/${unidadeId}`)
             ucUnidadeEdit.value = unidadeDetalhe.value.uc
             nomeUnidadeEdit.value = unidadeDetalhe.value.nome
             dataInicioUnidadeEdit.value = unidadeDetalhe.value.dataInicio
@@ -603,7 +604,7 @@ definePageMeta({
         }
 
         try {
-            const response = await useFetch(`https://peehorto.cloud/unidadecompensacao/${compensadaId.value}`, {
+            const response = await useFetch(`${API_BASE_URL}/unidadecompensacao/${compensadaId.value}`, {
                 method: 'PUT',
                 body: 
                     {
@@ -624,7 +625,7 @@ definePageMeta({
                 showErrorCampoUnidadeEdit.value = false
                 showSuccessAlertUnidadeEdit.value = true
 
-                const {data: updateUnidade} = await useFetch(`https://peehorto.cloud/unidadecompensacao?idGeradora=${route.params.id}`)
+                const {data: updateUnidade} = await useFetch(`${API_BASE_URL}/unidadecompensacao?idGeradora=${route.params.id}`)
                 unidadeCompensada.value = updateUnidade._value
 
             } else{
@@ -652,7 +653,7 @@ definePageMeta({
     const openDialogExcluirUnidade = async (unidadeId) =>{
         dialogExcluirUnidade.value = true
 
-        const {data: unidadeDetalhe} = await useFetch(`https://peehorto.cloud/unidadecompensacao/${unidadeId}`)
+        const {data: unidadeDetalhe} = await useFetch(`${API_BASE_URL}/unidadecompensacao/${unidadeId}`)
         ucUnidadeExcluir.value = unidadeDetalhe.value.uc
         nomeUnidadeExcluir.value = unidadeDetalhe.value.nome
         idUnidadeExcluir.value = unidadeDetalhe.value.id
@@ -660,7 +661,7 @@ definePageMeta({
 
     const deleteUnidade = async () => {
     try {
-        const response = await useFetch(`https://peehorto.cloud/unidadecompensacao/${idUnidadeExcluir.value}`, {
+        const response = await useFetch(`${API_BASE_URL}/unidadecompensacao/${idUnidadeExcluir.value}`, {
           method: 'DELETE',
           key: 'deleteUnidade'
         });
@@ -673,7 +674,7 @@ definePageMeta({
 
         }
 
-        const { data: updatedUnidadeCompensada } = await useFetch(`https://peehorto.cloud/unidadecompensacao?idGeradora=${route.params.id}`);
+        const { data: updatedUnidadeCompensada } = await useFetch(`${API_BASE_URL}/unidadecompensacao?idGeradora=${route.params.id}`);
         unidadeCompensada.value = updatedUnidadeCompensada._value;
 
       } catch (error) {
@@ -693,11 +694,11 @@ definePageMeta({
     const openDialogRelatorios = async (unidadeId) =>{
         dialogRelatorios.value = true
         
-        const {data: unidade} = await useFetch(`https://peehorto.cloud/unidadecompensacao/${unidadeId}`)
+        const {data: unidade} = await useFetch(`${API_BASE_URL}/unidadecompensacao/${unidadeId}`)
         ucUnidadeRelatorio.value = unidade.value.uc
         nomeUnidadeRelatorio.value = unidade.value.nome
 
-        const {data: relatorios} = await useFetch(`https://peehorto.cloud/relatoriocompensacao?idUnidadeCompensa=${unidadeId}`)
+        const {data: relatorios} = await useFetch(`${API_BASE_URL}/relatoriocompensacao?idUnidadeCompensa=${unidadeId}`)
         relatoriosUnidade.value = relatorios._value
         idUnidadeRela.value = unidadeId
     }
@@ -705,12 +706,12 @@ definePageMeta({
     /* DELETAR RELATORIOS */
     const deleteRelatorio = async (relatorioId) => {
         try {
-            await useFetch(`https://peehorto.cloud/relatoriocompensacao/${relatorioId}`, {
+            await useFetch(`${API_BASE_URL}/relatoriocompensacao/${relatorioId}`, {
                 method: 'DELETE',
                 key: 'deleteRelatorio'
             });
 
-            const { data: updatedRelatorios } = await useFetch(`https://peehorto.cloud/relatoriocompensacao?idUnidadeCompensa=${idUnidadeRela.value}`);
+            const { data: updatedRelatorios } = await useFetch(`${API_BASE_URL}/relatoriocompensacao?idUnidadeCompensa=${idUnidadeRela.value}`);
             relatoriosUnidade.value = updatedRelatorios._value;
 
         } catch (error) {
@@ -737,7 +738,7 @@ definePageMeta({
     const saldoEnergiaEdit = ref("");
 
     const openDialogRelatoriosEditar = async (relatorioId) =>{
-        const { data: relatorioInd } = await useFetch(`https://peehorto.cloud/relatoriocompensacao/${relatorioId}`);
+        const { data: relatorioInd } = await useFetch(`${API_BASE_URL}/relatoriocompensacao/${relatorioId}`);
 
         idRelaEdit.value = relatorioInd.value.id
         mesRelUniEdit.value = relatorioInd.value.mes
@@ -762,7 +763,7 @@ definePageMeta({
 
 
       try {
-        const response = await useFetch(`https://peehorto.cloud/relatoriocompensacao/${idRelaEdit}`,
+        const response = await useFetch(`${API_BASE_URL}/relatoriocompensacao/${idRelaEdit}`,
           {
             method: "PUT",
             body: {
@@ -797,9 +798,9 @@ definePageMeta({
 
     //MANUTENÇÃO
     /* APRESENTAÇÃO MANUTENCAO */
-    const { data: manutencoes } = await useFetch(`https://peehorto.cloud/manutencao?idGeradora=${geradora}`); 
-    const { data: programada } = await useFetch(`https://peehorto.cloud/manutencao?idGeradora=${geradora}&status=1`); 
-    const { data: ultima } = await useFetch(`https://peehorto.cloud/manutencao?idGeradora=${geradora}&status=3`); 
+    const { data: manutencoes } = await useFetch(`${API_BASE_URL}/manutencao?idGeradora=${geradora}`); 
+    const { data: programada } = await useFetch(`${API_BASE_URL}/manutencao?idGeradora=${geradora}&status=1`); 
+    const { data: ultima } = await useFetch(`${API_BASE_URL}/manutencao?idGeradora=${geradora}&status=3`); 
     
     
     const formatarData = (dataString) => {
@@ -847,7 +848,7 @@ definePageMeta({
     const verManutencoes = async () =>{
         dialogVerManutencoes.value = true
 
-        const { data: updateManu } = await useFetch(`https://peehorto.cloud/manutencao?idGeradora=${geradora}`);
+        const { data: updateManu } = await useFetch(`${API_BASE_URL}/manutencao?idGeradora=${geradora}`);
         manutencoes.value = updateManu._value
     }
 
@@ -878,7 +879,7 @@ definePageMeta({
         }
 
         try{
-            const response = await useFetch(`https://peehorto.cloud/manutencao/`, {
+            const response = await useFetch(`${API_BASE_URL}/manutencao/`, {
                 method: 'POST',
                 body: JSON.stringify({
                     idGeradora: geradora,
@@ -894,10 +895,10 @@ definePageMeta({
                 showSuccessAlertManu.value = true
                 showErrorCampoManu.value = false
                 
-                const { data: updateManu } = await useFetch(`https://peehorto.cloud/manutencao?idGeradora=${geradora}`);
+                const { data: updateManu } = await useFetch(`${API_BASE_URL}/manutencao?idGeradora=${geradora}`);
                 manutencoes.value = updateManu._value
 
-                const { data: updaPro } = await useFetch(`https://peehorto.cloud/manutencao?idGeradora=${geradora}&status=1`); 
+                const { data: updaPro } = await useFetch(`${API_BASE_URL}/manutencao?idGeradora=${geradora}&status=1`); 
                 programada.value = updaPro._value
 
                 
@@ -934,15 +935,15 @@ definePageMeta({
     /* APAGAR MANUTENCAO */
     const deleteManutencao = async (manuId) => {
         try {
-            await useFetch(`https://peehorto.cloud/manutencao/${manuId}`, {
+            await useFetch(`${API_BASE_URL}/manutencao/${manuId}`, {
                 method: 'DELETE',
                 key: 'deleteManutencao'
             });
 
-            const { data: updaManutencao } = await useFetch(`https://peehorto.cloud/manutencao?idGeradora=${geradora}`);
+            const { data: updaManutencao } = await useFetch(`${API_BASE_URL}/manutencao?idGeradora=${geradora}`);
             manutencoes.value = updaManutencao._value;
 
-            const { data: updaPro } = await useFetch(`https://peehorto.cloud/manutencao?idGeradora=${geradora}&status=1`); 
+            const { data: updaPro } = await useFetch(`${API_BASE_URL}/manutencao?idGeradora=${geradora}&status=1`); 
             programada.value = updaPro._value
 
         } catch (error) {
@@ -962,7 +963,7 @@ definePageMeta({
     const manuRefId = ref("")
 
     const abrirDialog = async (manuId) => {
-        const { data: manuIndi } = await useFetch(`https://peehorto.cloud/manutencao/${manuId}`);
+        const { data: manuIndi } = await useFetch(`${API_BASE_URL}/manutencao/${manuId}`);
 
         dataIndi.value = manuIndi.value.data
         empresaIndi.value = manuIndi.value.empresa
@@ -984,7 +985,7 @@ definePageMeta({
         }
 
         try {
-            const response = await useFetch(`https://peehorto.cloud/manutencao/${manuId}`, {
+            const response = await useFetch(`${API_BASE_URL}/manutencao/${manuId}`, {
                 method: 'PUT',
                 body: 
                     {   
@@ -1001,13 +1002,13 @@ definePageMeta({
                 showSuccessAlertManuEdit.value = true
                 showErrorCampoManuEdit.value = false
 
-                const { data: updaManutencao } = await useFetch(`https://peehorto.cloud/manutencao?idGeradora=${geradora}`);
+                const { data: updaManutencao } = await useFetch(`${API_BASE_URL}/manutencao?idGeradora=${geradora}`);
                 manutencoes.value = updaManutencao._value;
 
-                const { data: updaPro } = await useFetch(`https://peehorto.cloud/manutencao?idGeradora=${geradora}&status=1`); 
+                const { data: updaPro } = await useFetch(`${API_BASE_URL}/manutencao?idGeradora=${geradora}&status=1`); 
                 programada.value = updaPro._value
 
-                const { data: updaUlt } = await useFetch(`https://peehorto.cloud/manutencao?idGeradora=${geradora}&status=3`); 
+                const { data: updaUlt } = await useFetch(`${API_BASE_URL}/manutencao?idGeradora=${geradora}&status=3`); 
                 ultima.value = updaUlt._value
 
             } else{
@@ -1054,7 +1055,7 @@ definePageMeta({
             return;
         }
 
-        const {data: mesVetor} = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${route.params.id}&mes=${mesInjecao.value}&ano=${anoInjecao.value}`)
+        const {data: mesVetor} = await useFetch(`${API_BASE_URL}/relatoriousina?idGeradora=${route.params.id}&mes=${mesInjecao.value}&ano=${anoInjecao.value}`)
             if(mesVetor.value.length){
                     showSuccessAlertInjecao.value = false;
                     showErrorCampoInjecao.value = false;
@@ -1063,7 +1064,7 @@ definePageMeta({
         }
 
         try{
-            const response = await useFetch(`https://peehorto.cloud/relatoriousina/`, {
+            const response = await useFetch(`${API_BASE_URL}/relatoriousina/`, {
                 method: 'POST',
                 body: JSON.stringify({
                     idGeradora: geradora,
@@ -1082,7 +1083,7 @@ definePageMeta({
                 showErrorMesInjecao.value = false
                 showSuccessAlertInjecao.value = true
                 
-                const { data: updatedUsina } = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
+                const { data: updatedUsina } = await useFetch(`${API_BASE_URL}/relatoriousina?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
                 injecaoUsinaAno.value = updatedUsina._value
 
                 
@@ -1114,7 +1115,7 @@ definePageMeta({
     const openDialogInjecao3 = async (injecaoId) =>{
         dialogInjecao3.value = true
 
-        const { data: dadosInjecao } = await useFetch(`https://peehorto.cloud/relatoriousina/${injecaoId}`);
+        const { data: dadosInjecao } = await useFetch(`${API_BASE_URL}/relatoriousina/${injecaoId}`);
         mesInjecao.value = dadosInjecao.value.mes
         anoInjecao.value = dadosInjecao.value.ano
         pontaInjetado.value = dadosInjecao.value.injetadoPonta
@@ -1136,7 +1137,7 @@ definePageMeta({
         }
 
         try {
-            const response = await useFetch(`https://peehorto.cloud/relatoriousina/${injecaoId}`, {
+            const response = await useFetch(`${API_BASE_URL}/relatoriousina/${injecaoId}`, {
                 method: 'PUT',
                 body: 
                     {   
@@ -1155,7 +1156,7 @@ definePageMeta({
                 showErrorCampoInjecao.value = false
                 showSuccessAlertInjecao.value = true
 
-                const { data: updaInjecao } = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
+                const { data: updaInjecao } = await useFetch(`${API_BASE_URL}/relatoriousina?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
                 injecaoUsinaAno.value = updaInjecao._value;
 
             } else{
@@ -1169,12 +1170,12 @@ definePageMeta({
     /* DELETANDO INJEÇÃO */
     const deleteInjecao = async (injecaoId) => {
         try {
-            await useFetch(`https://peehorto.cloud/relatoriousina/${injecaoId}`, {
+            await useFetch(`${API_BASE_URL}/relatoriousina/${injecaoId}`, {
                 method: 'DELETE',
                 key: 'deleteInjecao'
             });
 
-            const { data: updaInjecao } = await useFetch(`https://peehorto.cloud/relatoriousina?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
+            const { data: updaInjecao } = await useFetch(`${API_BASE_URL}/relatoriousina?idGeradora=${route.params.id}&ano=${selectedYear.value}`);
             injecaoUsinaAno.value = updaInjecao._value;
 
         } catch (error) {

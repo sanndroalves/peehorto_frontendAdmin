@@ -1,6 +1,7 @@
 <script setup >
 
 import { useHead  } from '@vueuse/head';
+import { API_BASE_URL } from '~/api/link';
 
 // Defina o título da página
 useHead ({
@@ -14,8 +15,8 @@ definePageMeta({
 import { ref } from 'vue';
 import UiParentCard from '@/components/shared/UiParentCard.vue';
 
-const { data: manutencao } = await useFetch("https://peehorto.cloud/manutencao/");
-const { data: usinas } = await useFetch("https://peehorto.cloud/usina/");
+const { data: manutencao } = await useFetch(`${API_BASE_URL}/manutencao/`);
+const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/`);
 
 
 //SELECIONAR A CATEGORIA DA MANUTENÇÃO
@@ -63,8 +64,8 @@ const manuRealizadas = manutencao.value.filter(item => item.status === '3')
     for (let i=0; i<usinas.value.length; i++){
         const individual = usinas.value[i]
 
-        const { data: proIndi } = await useFetch(`https://peehorto.cloud/projecaogeracao?idGeradora=${individual.id}&ano=2024`);
-        const { data: geraIndi } = await useFetch(`https://peehorto.cloud/relatoriogeracao?idGeradora=${individual.id}&ano=2024`);
+        const { data: proIndi } = await useFetch(`${API_BASE_URL}/projecaogeracao?idGeradora=${individual.id}&ano=2024`);
+        const { data: geraIndi } = await useFetch(`${API_BASE_URL}/relatoriogeracao?idGeradora=${individual.id}&ano=2024`);
          
         for (let a=0; a < geraIndi.value.length; a++){
                 const projetado = proIndi.value[a]
@@ -98,7 +99,7 @@ const manuRealizadas = manutencao.value.filter(item => item.status === '3')
 
     const procurarUsina = async () => {
         for (let i=0; i < usinasAbaixo._rawValue.length; i++) {
-              const { data: individual } = await useFetch(`https://peehorto.cloud/usina/${usinasAbaixo._rawValue[i].usina}`);
+              const { data: individual } = await useFetch(`${API_BASE_URL}/usina/${usinasAbaixo._rawValue[i].usina}`);
               usinasProcuradas.value.push(individual.value);
         }
     }
@@ -106,7 +107,7 @@ const manuRealizadas = manutencao.value.filter(item => item.status === '3')
     procurarUsina(usinasAbaixo)
 
     // PEGAR ULT MANU DA USINA COM ALERA
-    const { data: checklists } = await useFetch("https://peehorto.cloud/checklist/");
+    const { data: checklists } = await useFetch(`${API_BASE_URL}/checklist/`);
 
     const procurarUltManu = (idUsina) =>{
       const manuUsina = manutencao.value.filter(item => item.idGeradora == idUsina && item.status == '3')

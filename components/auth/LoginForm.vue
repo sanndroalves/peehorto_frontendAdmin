@@ -1,5 +1,7 @@
 <script setup>
 import { ref } from 'vue';
+import { API_BASE_URL } from '~/api/link';
+
 const { signIn } = useAuth()
 
     const overlay = ref(false)
@@ -21,7 +23,7 @@ const { signIn } = useAuth()
 
         showAlertError.value = false
         showAlertErrorPermissao.value = false
-        const {data: userPesquisar} = await useFetch(`https://peehorto.cloud/usuarios?username=${credentials.username}`)
+        const {data: userPesquisar} = await useFetch(`${API_BASE_URL}/usuarios?username=${credentials.username}`)
          
         if(userPesquisar._rawValue[0] && userPesquisar._rawValue[0].cargo !== 'AD'){
             showAlertErrorPermissao.value = true

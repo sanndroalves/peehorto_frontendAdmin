@@ -5,8 +5,10 @@ useHead({
 definePageMeta({
   layout: "blank",
 });
+import { API_BASE_URL } from '~/api/link';
 
-const { data: usinas } = await useFetch("https://peehorto.cloud/usina/");
+
+const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/`);
 
 
 import Bar from "@/components/painel/Bar.vue";

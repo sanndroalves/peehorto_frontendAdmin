@@ -1,5 +1,6 @@
 <script setup>
 import { useHead  } from '@vueuse/head';
+import { API_BASE_URL } from '~/api/link';
 
 // Defina o título da página
 useHead ({
@@ -16,8 +17,8 @@ import UiParentCard from "@/components/shared/UiParentCard.vue";
 const cateSelecionada = ref()
 
 const predioSelect = ref()
-const { data: usinas } = await useFetch("https://peehorto.cloud/usina/");
-const { data: checklists } = await useFetch("https://peehorto.cloud/checklist/");
+const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/`);
+const { data: checklists } = await useFetch(`${API_BASE_URL}/checklist/`);
 
 
 // CARDS VALORES
@@ -54,7 +55,7 @@ const enviarCheck = async () =>{
       showAlertSuccess.value = false
     }
 
-    const { data: usinaInfo } = await useFetch(`https://peehorto.cloud/checklist?idUsina=${predioSelect.value.id}`);
+    const { data: usinaInfo } = await useFetch(`${API_BASE_URL}/checklist?idUsina=${predioSelect.value.id}`);
     const mesAtual = new Date().getMonth() + 1; 
 
     const mesFilter = usinaInfo.value.filter(item => {
@@ -71,7 +72,7 @@ const enviarCheck = async () =>{
     }
 
     try {
-      const response = await useFetch(`https://peehorto.cloud/checklist/`, {
+      const response = await useFetch(`${API_BASE_URL}/checklist/`, {
                 method: 'POST',
                 body: {
                     idUsina: predioSelect.value.id,
@@ -218,12 +219,12 @@ const getStatusColorClass = (status) => {
 
 const deleteCheck = async (idCheck) => {
     try {
-        await useFetch(`https://peehorto.cloud/checklist/${idCheck}`, {
+        await useFetch(`${API_BASE_URL}/checklist/${idCheck}`, {
           method: 'DELETE',
           key: 'deleteCheck'
         });
 
-        const { data: checklists } = await useFetch("https://peehorto.cloud/checklist/");
+        const { data: checklists } = await useFetch(`${API_BASE_URL}/checklist/`);
         dadosCheck.value = checklists.value.filter(item => item.idUsina == idUsina)
         
 

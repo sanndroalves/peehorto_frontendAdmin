@@ -2,12 +2,13 @@
     <apexchart type="area" height="350" :options="chartOptions" :series="series"></apexchart>
   </template>
   
-  <script setup>
+<script setup>
   import { ref } from 'vue';
+  import { API_BASE_URL } from '~/api/link';
   import VueApexCharts from 'vue3-apexcharts';
   
-  const { data: agendamentos } = await useFetch("https://peehorto.cloud/agendamento/");
-  const { data: dias } = await useFetch("https://peehorto.cloud/diautil/"); 
+  const { data: agendamentos } = await useFetch(`${API_BASE_URL}/agendamento/`);
+  const { data: dias } = await useFetch(`${API_BASE_URL}/diautil/`); 
 
 const agendamentosComDatas = agendamentos.value.map(agendamento => {
   const diaUtil = dias.value.find(dia => dia.id === agendamento.diasAgendadoFK);

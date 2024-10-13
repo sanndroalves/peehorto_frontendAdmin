@@ -1,7 +1,8 @@
 <script setup>
-
-    const { data: usinas } = await useFetch("https://peehorto.cloud/usina/");
-    const { data: carregadores } = await useFetch("https://peehorto.cloud/carregador/");
+    import { API_BASE_URL } from '~/api/link';
+    
+    const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/`);
+    const { data: carregadores } = await useFetch(`${API_BASE_URL}/carregador/`);
     
 
     /* DIALOG ELEMENTOS */
@@ -41,7 +42,7 @@
 
         /* enviar carregador (post) para o sistema */
         try {
-            const response = await useFetch(`https://peehorto.cloud/carregador/`, {
+            const response = await useFetch(`${API_BASE_URL}/carregador/`, {
                 method: 'POST',
                 body: {
                     predioFK: predioSelect.value.id,
@@ -55,7 +56,7 @@
                 showSuccessAlert.value = true;
                 showErrorCampo.value = false;
 
-                const { data: updatedCarregadores } = await useFetch("https://peehorto.cloud/carregador/");
+                const { data: updatedCarregadores } = await useFetch(`${API_BASE_URL}/carregador/`);
                 carregadores.value = updatedCarregadores._rawValue
             } else {
                 showErrorAlert.value = true;
@@ -83,9 +84,9 @@
         showSuccessAlertEdit.value = false
         editIdCarregador.value = idCarregador
 
-        const {data: indiCarregador} = await useFetch(`https://peehorto.cloud/carregador/${idCarregador}`)
+        const {data: indiCarregador} = await useFetch(`${API_BASE_URL}/carregador/${idCarregador}`)
 
-        const {data: indiPredio} = await useFetch(`https://peehorto.cloud/usina/${indiCarregador.value.predioFK}`)
+        const {data: indiPredio} = await useFetch(`${API_BASE_URL}/usina/${indiCarregador.value.predioFK}`)
         var linha = {id: indiPredio.value.id, nome: indiPredio.value.nome}
         predioSelectEdit.value = linha
         statusSelectEdit.value = indiCarregador._rawValue.status
@@ -93,7 +94,7 @@
 
     const editarCarregador = async () => {
         try {
-            const response = await useFetch(`https://peehorto.cloud/carregador/${editIdCarregador.value}`, {
+            const response = await useFetch(`${API_BASE_URL}/carregador/${editIdCarregador.value}`, {
                 method: 'PUT',
                 body: { 
                     status: statusSelectEdit.value
@@ -106,7 +107,7 @@
                 showError.value = false
                 showSuccessAlertEdit.value = true; 
 
-                const { data: updatedCarregadores } = await useFetch("https://peehorto.cloud/carregador/");
+                const { data: updatedCarregadores } = await useFetch(`${API_BASE_URL}/carregador/`);
                 carregadores.value = updatedCarregadores._rawValue
             } else {
                 showError.value = true
@@ -154,12 +155,12 @@
     /* EXCLUIR CARREGADOR */
     const excluirCarregador = async(idCarregador) =>{
         try {
-            await useFetch(`https://peehorto.cloud/carregador/${idCarregador}`, {
+            await useFetch(`${API_BASE_URL}/carregador/${idCarregador}`, {
                 method: 'DELETE',
                 key: 'deleteCarregador'
             });
 
-            const { data: updatedCarregadores } = await useFetch("https://peehorto.cloud/carregador/");
+            const { data: updatedCarregadores } = await useFetch(`${API_BASE_URL}/carregador/`);
             carregadores.value = updatedCarregadores._rawValue
 
         } catch (error) {

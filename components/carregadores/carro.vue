@@ -1,7 +1,8 @@
 <script setup>
-
-    const { data: veiculos } = await useFetch("https://peehorto.cloud/veiculo/");
-    const { data: usuarios } = await useFetch("https://peehorto.cloud/usuarios/");
+    import { API_BASE_URL } from '~/api/link';
+    
+    const { data: veiculos } = await useFetch(`${API_BASE_URL}/veiculo/`);
+    const { data: usuarios } = await useFetch(`${API_BASE_URL}/usuarios/`);
 
     //PROCURAR VEICULOS DE ACORDO COM A CATEGORIA SELECIONADA
     const categoriaVeiculo = ref()
@@ -19,12 +20,12 @@
     //EXCLUIR O CARRO SELECIONADO
     const excluirVeiculo = async (idVeiculo) => {
         try {
-            await useFetch(`https://peehorto.cloud/veiculo/${idVeiculo}`, {
+            await useFetch(`${API_BASE_URL}/veiculo/${idVeiculo}`, {
                 method: 'DELETE',
                 key: 'deleteVeiculo'
             });
 
-            const { data: updateVeiculo } = await useFetch("https://peehorto.cloud/veiculo/");
+            const { data: updateVeiculo } = await useFetch(`${API_BASE_URL}/veiculo/`);
             veiculos.value = updateVeiculo._rawValue
 
         } catch (error) {

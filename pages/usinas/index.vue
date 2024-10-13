@@ -1,5 +1,7 @@
 <script setup>
 import { useHead  } from '@vueuse/head';
+import { API_BASE_URL } from '~/api/link';
+
 
 // Defina o título da página
 useHead ({
@@ -26,7 +28,7 @@ const showSuccessAlert = ref(false);
 const showErrorAlert = ref(false);
 const showErrorCampo = ref(false);
 
-const { data: usinas } = await useFetch("https://peehorto.cloud/usina/");
+const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/`);
 
 const getStatusLabel = (status) => {
   switch (status) {
@@ -53,7 +55,7 @@ const getStatusColorClass = (status) => {
 
 const openDialog = async (idUsina) => {
   const { data: usinaDetalhe } = await useFetch(
-    `https://peehorto.cloud/usina/${idUsina}`
+    `${API_BASE_URL}/usina/${idUsina}`
   );
 
   ucUsina.value = usinaDetalhe.value.uc;
@@ -89,7 +91,7 @@ const saveChanges = async () => {
 
   try {
     const response = await useFetch(
-      `https://peehorto.cloud/usina/${usinaId.value}`,
+      `${API_BASE_URL}/usina/${usinaId.value}`,
       {
         method: "PUT",
         body: {
@@ -117,7 +119,7 @@ const saveChanges = async () => {
   }
 
   const { data: updatedUsinas } = await useFetch(
-    "https://peehorto.cloud/usina/"
+    "${API_BASE_URL}/usina/"
   );
   usinas.value = updatedUsinas._value;
 };

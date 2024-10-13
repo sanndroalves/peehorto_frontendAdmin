@@ -1,6 +1,8 @@
 <script setup>
 
 import { useHead } from '@vueuse/head';
+import { API_BASE_URL } from '~/api/link';
+
 
 // Defina o título da página
 useHead ({
@@ -11,25 +13,24 @@ definePageMeta({
     middleware: 'auth'
 })
 
-import SalesOverview from "~~/components/dashboard/RelatorioGeracao.vue";
-import YearlyBreakup from "@/components/dashboard/YearlyBreakup.vue"; 
+import RelatorioGeracao from "~~/components/dashboard/RelatorioGeracao.vue";
+import AnaliseGeracao from "~~/components/dashboard/AnaliseGeracao.vue";
 import GeracaoDinheiro from "@/components/dashboard/GeracaoDinheiro.vue"; 
 import Irregular from "@/components/dashboard/Irregular.vue"; 
 import Alerta from "@/components/dashboard/Alerta.vue"; 
 
-const { data: usinas } = await useFetch(`https://peehorto.cloud/usina/`);
-const { data: predios } = await useFetch( `https://peehorto.cloud/unidadecompensacao/`);
-const { data: unidades } = await useFetch( `https://peehorto.cloud/unidadecompensacao?status=L`);
-const { data: relatorios } = await useFetch(`https://peehorto.cloud/relatoriocompensacao/`);
-const { data: manutencoes } = await useFetch(`https://peehorto.cloud/manutencao/`); 
-const { data: geracao } = await useFetch(`https://peehorto.cloud/relatoriogeracao/`);
+const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/`); 
+const { data: unidades } = await useFetch( `${API_BASE_URL}/unidadecompensacao?status=L`);
+const { data: cip } = await useFetch( `${API_BASE_URL}/unidadecompensacao`);
+const { data: relatorios } = await useFetch(`${API_BASE_URL}/relatoriocompensacao/`);
+const { data: manutencoes } = await useFetch(`${API_BASE_URL}/manutencao/`);  
 
-const valorIluminacao = unidades.value.filter(item => item.secretaria == 'I' || item.secretaria == 'P') 
+const valorIluminacao = cip.value.filter(item => item.secretaria == 'I' || item.secretaria == 'P') 
 const valoresPredios = unidades.value.filter(item => item.secretaria == 'E' || item.secretaria == 'S' || item.secretaria == 'O')
   
 </script>
 <template>
-    <!-- <v-overlay
+    <v-overlay
       :model-value="overlay"
       class="align-center justify-center"
     >
@@ -38,7 +39,7 @@ const valoresPredios = unidades.value.filter(item => item.secretaria == 'E' || i
         size="64"
         indeterminate
       ></v-progress-circular>
-    </v-overlay> -->
+    </v-overlay>
     <v-row>
     <div
       class="v-card v-theme--BLUE_THEME v-card--density-default elevation-10 rounded-md v-card--variant-elevated bg-lightprimary elevation-0 rounded-md mb-8"
@@ -188,21 +189,21 @@ const valoresPredios = unidades.value.filter(item => item.secretaria == 'E' || i
         </div>
 
         <v-col class="text-center" cols="12">
-          <v-btn class="bg-roxo"  >
+
+          <v-btn class="bg-primary"  href="painel/">
             Painel Central
           </v-btn>
-        </v-col>
-        <!-- Sales overview -->
+        </v-col> 
         
         <v-col cols="12" lg="8">
            <GeracaoDinheiro/>  
             <br>
-          <SalesOverview />
+          <RelatorioGeracao />
         </v-col>
 
         <v-col cols="12" lg="4">
           <div class="mb-6">
-            <YearlyBreakup />
+            <AnaliseGeracao />
           </div>
           
           <Alerta />

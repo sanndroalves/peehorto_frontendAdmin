@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { API_BASE_URL } from '~/api/link';
+
 import { computed } from 'vue';
 import { useTheme } from 'vuetify';
 const theme = useTheme();

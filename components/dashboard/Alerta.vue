@@ -1,5 +1,7 @@
 <script setup>
-    const { data: usinas } = await useFetch(`https://peehorto.cloud/usina/`);
+    import { API_BASE_URL } from '~/api/link';
+
+    const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/`);
     const usinasPesquisa = usinas.value.filter(item => item.id === 1) 
 </script>
 

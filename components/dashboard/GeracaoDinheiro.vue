@@ -1,5 +1,7 @@
 <script setup >
 import { ref } from 'vue';
+import { API_BASE_URL } from '~/api/link';
+
 import { computed } from 'vue';
 import { useTheme } from 'vuetify';
 const theme = useTheme();
@@ -91,7 +93,7 @@ const mudarAno = () =>{
 
 }
 const carregarDados = async (ano) => {
-    const { data: relatorioPesquisa } = await useFetch(`https://peehorto.cloud/relatoriocompensacao?ano=${ano}&ligacao=L`);
+    const { data: relatorioPesquisa } = await useFetch(`${API_BASE_URL}/relatoriocompensacao?ano=${ano}&ligacao=L`);
     novaLista.value = calcularSomaPorMes(relatorioPesquisa._value);
     totalAnual.value = calcularSomaPorAno(relatorioPesquisa._value)
     somaTotalAnual.value = Object.values(totalAnual.value).reduce((acc, curr) => acc + curr, 0);

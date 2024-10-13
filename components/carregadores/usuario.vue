@@ -1,7 +1,8 @@
 <script setup>
-
-    const { data: veiculos } = await useFetch("https://peehorto.cloud/veiculo/");
-    const { data: usuarios } = await useFetch("https://peehorto.cloud/usuarios/");
+    import { API_BASE_URL } from '~/api/link';
+    
+    const { data: veiculos } = await useFetch(`${API_BASE_URL}/veiculo/`);
+    const { data: usuarios } = await useFetch(`${API_BASE_URL}/usuarios/`);
 
     /* PROCURAR USER POR CATEGORIA SELECIONADA */
     const categoriaUser = ref()
@@ -93,7 +94,7 @@
     // SALVAR USUARIO
     const salvarUser = async (idUsuario) =>{
         try {
-            const response = await useFetch(`https://peehorto.cloud/usuarios/${idUsuario}`, {
+            const response = await useFetch(`${API_BASE_URL}/usuarios/${idUsuario}`, {
                 method: 'PUT',
                 body: { 
                     username: usuarioUser.value,
@@ -109,7 +110,7 @@
                 showError.value = false
                 showSuccessAlert.value = true; 
 
-                const { data: updatedUser } = await useFetch("https://peehorto.cloud/usuarios/");
+                const { data: updatedUser } = await useFetch(`${API_BASE_URL}/usuarios/`);
                 usuarios.value = updatedUser._rawValue
             } else {
                 showError.value = true
@@ -142,7 +143,7 @@
 
     const excluirUser = async () => {
         try {
-            const response = await useFetch(`https://peehorto.cloud/usuarios/${userSelected.value}`, {
+            const response = await useFetch(`${API_BASE_URL}/usuarios/${userSelected.value}`, {
                 method: 'DELETE',
                 key: 'deleteUser'
             });
@@ -151,7 +152,7 @@
                 showSuccessAlertExcluir.value = true
                 showErrorExcluir.value = false
 
-                const { data: updatedUser } = await useFetch("https://peehorto.cloud/usuarios/");
+                const { data: updatedUser } = await useFetch(`${API_BASE_URL}/usuarios/`);
                 usuarios.value = updatedUser._rawValue    
             }else{
                 showSuccessAlertExcluir.value = false

@@ -6,6 +6,8 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { API_BASE_URL } from '~/api/link';
+
 import VueApexCharts from 'vue3-apexcharts';
 
 const props = defineProps({

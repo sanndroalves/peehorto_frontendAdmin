@@ -1,5 +1,6 @@
 <script setup >
 import { useHead  } from '@vueuse/head';
+import { API_BASE_URL } from '~/api/link';
 
 // Defina o título da página
 useHead ({
@@ -33,7 +34,7 @@ const sendUsina = async () => {
     }
 
     try {
-        const response = await useFetch(`https://peehorto.cloud/usina/`, {
+        const response = await useFetch(`${API_BASE_URL}/usina/`, {
         method: 'POST',
         body: {
             uc: ucUsina.value,

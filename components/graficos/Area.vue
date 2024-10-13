@@ -4,10 +4,12 @@
 
 <script setup>
 import { onMounted } from 'vue';
+import { API_BASE_URL } from '~/api/link';
+
 import ApexCharts from 'apexcharts';
 
 // SOMA POR MES FUNÇÃO
-const { data: real } = await useFetch(`https://peehorto.cloud/relatoriogeracao`);
+const { data: real } = await useFetch(`${API_BASE_URL}/relatoriogeracao`);
         
 const somarIndividualReal = async (anoId) => {
     const totalPorMes = real.value

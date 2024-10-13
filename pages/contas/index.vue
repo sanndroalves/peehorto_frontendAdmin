@@ -1,5 +1,6 @@
 <script setup >
 import { useHead  } from '@vueuse/head';
+import { API_BASE_URL } from '~/api/link';
 
 // Defina o título da página
 useHead ({
@@ -14,8 +15,8 @@ import Automatizacao from '@/components/predios/automatizacao.vue';
 
 import { ref } from 'vue';
 
-const { data: solicitacoes } = await useFetch("https://peehorto.cloud/logsolicitacao/");
-const { data: downloads } = await useFetch("https://peehorto.cloud/logdownloadpdf?download=True");
+const { data: solicitacoes } = await useFetch(`${API_BASE_URL}/logsolicitacao/`);
+const { data: downloads } = await useFetch(`${API_BASE_URL}/logdownloadpdf?download=True`);
 
 </script>
 <template>

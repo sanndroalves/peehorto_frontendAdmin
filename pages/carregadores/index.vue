@@ -1,14 +1,16 @@
 <script setup>
+  import { API_BASE_URL } from '~/api/link';
+
     import Carregador from "~~/components/carregadores/carregador.vue";
     import Carro from "~~/components/carregadores/carro.vue";
     import Usuario from "~~/components/carregadores/usuario.vue";
     import Funcionario from "~~/components/carregadores/funcionario.vue";
 
-    const { data: carregadores } = await useFetch("https://peehorto.cloud/carregador/");
-    const { data: veiculos } = await useFetch("https://peehorto.cloud/veiculo/");
-    const { data: municipes } = await useFetch("https://peehorto.cloud/usuarios?cargo=MU");
-    const { data: servidor } = await useFetch("https://peehorto.cloud/usuarios?cargo=SE");
-    const { data: funcionarios } = await useFetch("https://peehorto.cloud/usuarios?cargo=FU");
+    const { data: carregadores } = await useFetch(`${API_BASE_URL}/carregador/`);
+    const { data: veiculos } = await useFetch(`${API_BASE_URL}/veiculo/`);
+    const { data: municipes } = await useFetch(`${API_BASE_URL}/usuarios?cargo=MU`);
+    const { data: servidor } = await useFetch(`${API_BASE_URL}/usuarios?cargo=SE`);
+    const { data: funcionarios } = await useFetch(`${API_BASE_URL}/usuarios?cargo=FU`);
 
 useHead ({
         title: 'Carregadores'

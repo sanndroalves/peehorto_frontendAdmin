@@ -1,12 +1,16 @@
 <script setup>
 import { ref } from 'vue';
+import { API_BASE_URL } from '~/api/link';
+
 import { computed } from 'vue';
 import { useTheme } from 'vuetify';
 const theme = useTheme();
 const primary = theme.current.value.colors.primary;
 const lightprimary = theme.current.value.colors.lightprimary;
 
-const { data: dados } = await useFetch(`http://localhost:8000/salvar?ano=2024`);
+const anoAtual = new Date().getFullYear();  
+const { data: dados } = await useFetch(`${API_BASE_URL}/salvar?ano=${anoAtual}`);
+
 const ultDados = dados.value[0];
 
 const chartOptions = computed(() => {

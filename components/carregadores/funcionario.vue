@@ -1,8 +1,10 @@
 <script setup>
-    const { data: usinas } = await useFetch("https://peehorto.cloud/usina/");
-    const { data: funcionarios } = await useFetch("https://peehorto.cloud/usuarios?cargo=FU");
-    const { data: funcUnidade } = await useFetch("https://peehorto.cloud/funcionariounidade/");
-    const { data: carregadores } = await useFetch("https://peehorto.cloud/carregador/");
+    import { API_BASE_URL } from '~/api/link';
+    
+    const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/`);
+    const { data: funcionarios } = await useFetch(`${API_BASE_URL}/usuarios?cargo=FU`);
+    const { data: funcUnidade } = await useFetch(`${API_BASE_URL}/funcionariounidade/`);
+    const { data: carregadores } = await useFetch(`${API_BASE_URL}/carregador/`);
     
 
     /* DIALOG NOVO FUNCIONARIO ELEMENTOS */
@@ -51,7 +53,7 @@
         }
 
         try {
-            const response1 = await useFetch(`https://peehorto.cloud/usuarios/`, {
+            const response1 = await useFetch(`${API_BASE_URL}/usuarios/`, {
                 method: 'POST',
                 body: {
                     first_name: nomeFunc.value,
@@ -66,8 +68,8 @@
 
  
             if (response1.error.value === null) {
-                const { data: funcionarioNovo } = await useFetch(`https://peehorto.cloud/usuarios?email=${emailFunc.value}`);
-                const response2 = await useFetch(`https://peehorto.cloud/funcionariounidade/`, {
+                const { data: funcionarioNovo } = await useFetch(`${API_BASE_URL}/usuarios?email=${emailFunc.value}`);
+                const response2 = await useFetch(`${API_BASE_URL}/funcionariounidade/`, {
                     method: 'POST',
                     body: {
                         userFK: funcionarioNovo.value[0].id,
@@ -80,10 +82,10 @@
                     showErrorCampo.value = false;
                     showErrorAlert.value = false
 
-                    const { data: updatedFunc } = await useFetch("https://peehorto.cloud/usuarios?cargo=FU");
+                    const { data: updatedFunc } = await useFetch(`${API_BASE_URL}/usuarios?cargo=FU`);
                     funcionarios.value = updatedFunc._rawValue  
 
-                    const { data: updatedFuncUnidade } = await useFetch("https://peehorto.cloud/funcionariounidade/");
+                    const { data: updatedFuncUnidade } = await useFetch(`${API_BASE_URL}/funcionariounidade/`);
                     funcUnidade.value = updatedFuncUnidade._rawValue
                 }
 
@@ -130,8 +132,8 @@
 
         idFuncionarioEdit.value = idFuncionario
 
-        const { data: funcInfo } = await useFetch(`https://peehorto.cloud/usuarios/${idFuncionario}`);
-        const { data: funcUniInfo } = await useFetch(`https://peehorto.cloud/funcionariounidade?userFK=${idFuncionario}`);
+        const { data: funcInfo } = await useFetch(`${API_BASE_URL}/usuarios/${idFuncionario}`);
+        const { data: funcUniInfo } = await useFetch(`${API_BASE_URL}/funcionariounidade?userFK=${idFuncionario}`);
 
         nomeFuncEdit.value = funcInfo.value.first_name
         emailFuncEdit.value = funcInfo.value.email
@@ -139,7 +141,7 @@
         passwordEdit.value = funcInfo.value.password
         idFuncUni.value = funcUniInfo.value[0].id
 
-        const { data: usinaInfo } = await useFetch(`https://peehorto.cloud/usina/${funcUniInfo.value[0].usinaFK}`);
+        const { data: usinaInfo } = await useFetch(`${API_BASE_URL}/usina/${funcUniInfo.value[0].usinaFK}`);
         
         unidadeFuncEdit.value = {id: usinaInfo.value.id, nome: usinaInfo.value.nome}
 
@@ -153,7 +155,7 @@
             showErrorAlertEdit.value = false
         }
         try {
-            const response1 = await useFetch(`https://peehorto.cloud/usuarios/${idFuncionarioEdit.value}`, {
+            const response1 = await useFetch(`${API_BASE_URL}/usuarios/${idFuncionarioEdit.value}`, {
                 method: 'PUT',
                 body: { 
                     username: usuarioFuncEdit.value,
@@ -165,7 +167,7 @@
             });
              
             if(response1.error.value === null){
-                const response2 = await useFetch(`https://peehorto.cloud/funcionariounidade/${idFuncUni.value}`, {
+                const response2 = await useFetch(`${API_BASE_URL}/funcionariounidade/${idFuncUni.value}`, {
                 method: 'PUT',
                 body: { 
                     userFK: idFuncionarioEdit.value,
@@ -179,10 +181,10 @@
                     showErrorCampoEdit.value = false;
                     showErrorAlertEdit.value = false
 
-                    const { data: updatedFunc } = await useFetch("https://peehorto.cloud/usuarios?cargo=FU");
+                    const { data: updatedFunc } = await useFetch(`${API_BASE_URL}/usuarios?cargo=FU`);
                     funcionarios.value = updatedFunc._rawValue  
 
-                    const { data: updatedFuncUnidade } = await useFetch("https://peehorto.cloud/funcionariounidade/");
+                    const { data: updatedFuncUnidade } = await useFetch(`${API_BASE_URL}/funcionariounidade/`);
                     funcUnidade.value = updatedFuncUnidade._rawValue
                 }
             }else{
@@ -253,7 +255,7 @@
 
     const excluirFuncionario = async () => {
         try {
-            const response = await useFetch(`https://peehorto.cloud/usuarios/${userSelected.value}`, {
+            const response = await useFetch(`${API_BASE_URL}/usuarios/${userSelected.value}`, {
                 method: 'DELETE',
                 key: 'deleteUser'
             });
@@ -262,7 +264,7 @@
                 showSuccessAlertExcluir.value = true
                 showErrorExcluir.value = false
 
-                const { data: updatedFunc } = await useFetch("https://peehorto.cloud/usuarios?cargo=FU");
+                const { data: updatedFunc } = await useFetch("${API_BASE_URL}/usuarios?cargo=FU");
                 funcionarios.value = updatedFunc._rawValue     
             }else{
                 showSuccessAlertExcluir.value = false

@@ -4,11 +4,12 @@
 
 <script setup>
 import { ref } from 'vue';
+import { API_BASE_URL } from '~/api/link';
 import ApexCharts from 'apexcharts';
 import VueApexCharts from 'vue3-apexcharts';
 
-const { data: carregadores } = await useFetch("https://peehorto.cloud/carregador/");
-const { data: usinas } = await useFetch("https://peehorto.cloud/usina/");
+const { data: carregadores } = await useFetch(`${API_BASE_URL}/carregador/`);
+const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/`);
 
 
 // INFORMAÇÕES DAS USINAS e QTD UTILZIADA
