@@ -1,5 +1,5 @@
 <script setup>
-  import { API_BASE_URL } from '~/api/link';
+  import { API_BASE_URL } from '~/base/link';
 
     import Carregador from "~~/components/carregadores/carregador.vue";
     import Carro from "~~/components/carregadores/carro.vue";

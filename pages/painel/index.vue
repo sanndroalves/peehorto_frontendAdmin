@@ -5,7 +5,7 @@ useHead({
 definePageMeta({
   layout: "blank",
 });
-import { API_BASE_URL } from '~/api/link';
+import { API_BASE_URL } from '~/base/link';
 
 
 const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/`);

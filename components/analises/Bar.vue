@@ -4,7 +4,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { API_BASE_URL } from '~/api/link';
+import { API_BASE_URL } from '~/base/link';
 import ApexCharts from 'apexcharts';
 import VueApexCharts from 'vue3-apexcharts';
 

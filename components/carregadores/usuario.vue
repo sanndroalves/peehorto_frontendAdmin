@@ -1,5 +1,5 @@
 <script setup>
-    import { API_BASE_URL } from '~/api/link';
+    import { API_BASE_URL } from '~/base/link';
     
     const { data: veiculos } = await useFetch(`${API_BASE_URL}/veiculo/`);
     const { data: usuarios } = await useFetch(`${API_BASE_URL}/usuarios/`);

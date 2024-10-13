@@ -1,6 +1,6 @@
 <script setup >
     import { useHead  } from '@vueuse/head';
-    import { API_BASE_URL } from '~/api/link';
+    import { API_BASE_URL } from '~/base/link';
 
     // Defina o título da página
 useHead ({

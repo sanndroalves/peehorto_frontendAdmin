@@ -1,7 +1,7 @@
 <script setup>
 
     import UiParentCard from '@/components/shared/UiParentCard.vue'; 
-    import { API_BASE_URL } from '~/api/link';
+    import { API_BASE_URL } from '~/base/link';
     
     const { data } = useAuth()
     const idUsuario = ref(JSON.stringify(data.value.results[0].id))

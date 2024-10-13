@@ -4,7 +4,7 @@
   
 <script setup>
   import { ref } from 'vue';
-  import { API_BASE_URL } from '~/api/link';
+  import { API_BASE_URL } from '~/base/link';
   import VueApexCharts from 'vue3-apexcharts';
   
   const { data: agendamentos } = await useFetch(`${API_BASE_URL}/agendamento/`);

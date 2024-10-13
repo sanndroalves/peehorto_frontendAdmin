@@ -4,7 +4,7 @@
 
 <script setup>
 import { onMounted } from 'vue';
-import { API_BASE_URL } from '~/api/link';
+import { API_BASE_URL } from '~/base/link';
 import ApexCharts from 'apexcharts';
 
 // SOMA POR MES FUNÇÃO

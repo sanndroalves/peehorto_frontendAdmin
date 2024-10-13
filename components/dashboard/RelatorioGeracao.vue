@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { API_BASE_URL } from '~/api/link';
+import { API_BASE_URL } from '~/base/link';
 
 import { computed } from 'vue';
 import { useTheme } from 'vuetify';
