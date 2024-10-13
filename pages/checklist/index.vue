@@ -232,6 +232,14 @@ const deleteCheck = async (idCheck) => {
         alert("Erro ao excluir a checklist..");
       }
     }
+
+    //FORMATANDO DATA DO DIALGO
+    const formatarMesAno = (data) => {
+      const dataObj = new Date(data);
+      const mes = String(dataObj.getMonth() + 1).padStart(2, '0'); // Meses em JS começam em 0, então adicionamos 1
+      const ano = dataObj.getFullYear();
+      return `${mes}/${ano}`;
+    }
 </script>
 <template>
   <!--BANNER-->
@@ -479,6 +487,7 @@ const deleteCheck = async (idCheck) => {
                                 <th class="header-cell text-center">Inversor</th>
                                 <th class="header-cell text-center">Roteador</th>
                                 <th class="header-cell text-center">Comentário</th>
+                                <th class="header-cell text-center">Data</th>
                                 <th class="header-cell text-center">Ações</th>
                             </tr>
                         </thead>
@@ -501,6 +510,7 @@ const deleteCheck = async (idCheck) => {
                                   </v-chip>
                                 </td>
                                 <td>{{ check.comentario }}</td>
+                                <td>{{ formatarMesAno(check.data) }}</td>
                                 <td>
                                   <v-col>
                                     <v-btn @click="deleteCheck(check.id)" size="30" icon class="bg-error mr-2">
