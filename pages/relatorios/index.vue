@@ -1,9 +1,8 @@
 <script setup >
 import { useHead  } from '@vueuse/head';
-import { API_BASE_URL } from '~/api/link';
-
 import { nextTick } from 'vue';
 
+import { API_BASE_URL } from '~/api/link';
 
 // Defina o título da página
 useHead ({
@@ -18,7 +17,7 @@ import UiParentCard from '@/components/shared/UiParentCard.vue';
 import RelatorioUsina from "~~/components/dashboard/RelatorioUsina.vue";
 
 import { ref } from 'vue';
-const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/`);
+  const { data: usinas } = await useFetch(`${API_BASE_URL}/usina/`);
   const { data: todosPredios } = await useFetch(`${API_BASE_URL}/unidadecompensacao/`);
   const { data: todosRela } = await useFetch(`${API_BASE_URL}/relatoriocompensacao/`);
 
@@ -599,12 +598,13 @@ const getBG = (rela, index, predioId, predioCategoria) =>{
       const valoresInjetados = Object.values(somaInjetado.value);
       const valoresCompensado = Object.values(somaCompensado.value);
 
+      console.log("PROJETADO", valoresProjetado)
+
       totalProjetado.value = valoresProjetado.reduce((total, valor) => total + valor, 0);
       totalReal.value = valoresReal.reduce((total, valor) => total + valor, 0);
       totalInjetado.value = valoresInjetados.reduce((total, valor) => total + valor, 0);
       totalCompensado.value = valoresCompensado.reduce((total, valor) => total + valor, 0);
-
-      console.log("T", totalProjetado.value)
+ 
 
   }
 
@@ -768,6 +768,75 @@ const injecoesUsinas = ref()
     const { data: relatorioMensal } = await useFetch(`${API_BASE_URL}/relatoriocompensacao?ano=${anoSelecionado.value}&mes=${mesSelecionado.value}&idUnidadeCompensa=${selectedUnidade.value}`);
     relatorioUnidadeCompensaIndividual.value = relatorioMensal._rawValue
   } 
+
+
+
+  //BAIXAR PDF DA PAGINA
+  const dataAtual = ref(new Date().toLocaleDateString('pt-BR')); // Formato de data brasileiro
+
+  import html2pdf from 'html2pdf.js';
+  const baixarPDF = (Tipo) => {
+  // Referência para os elementos
+  const tabelaElement = ref();
+  const tituloElement = document.getElementById('titulo');
+
+  // Verifica qual tabela utilizar
+  if (Tipo == 'Mensal') {
+    tabelaElement.value = document.getElementById('tabelaMensalGeral');
+  } else if (Tipo == 'Geral') {
+    tabelaElement.value = document.getElementById('tabelaGeral');
+  }
+
+  // Verifica se os elementos existem
+  if (!tabelaElement.value || !tituloElement) {
+    console.error('Elementos não encontrados.');
+    return;
+  }
+
+  // Cria um contêiner temporário para combinar os elementos
+  const tempContainer = document.createElement('div');
+    
+  // Clona e adiciona o título e a tabela no contêiner temporário
+  const clonedTitulo = tituloElement.cloneNode(true);
+  const clonedTabela = tabelaElement.value.cloneNode(true);
+  
+  tempContainer.appendChild(clonedTitulo);
+  tempContainer.appendChild(clonedTabela);
+
+  // Gera o PDF usando o contêiner temporário
+  html2pdf(tempContainer, {
+    margin: 0.5, // Margem em polegadas
+    filename: 'relatorio.pdf',
+    html2canvas: {
+      scale: 3, // Aumenta a qualidade
+    },
+    jsPDF: {
+      unit: 'in',
+      format: 'a4', // Tamanho do papel
+      orientation: 'landscape', // Orientação do papel
+    }
+  });
+};
+
+
+  //RELATORIO GERAL
+  const mudarVisu = ref(0) //mudar vizu de mensal pra geral
+ 
+  const somarMesGeral = async () =>{  
+    if(mesSelecionado.value == 12){
+      mesSelecionado.value = 1; 
+    }else{
+      mesSelecionado.value++; 
+    }
+  }  
+  const diminuirMesGeral = async() =>{  
+    if(mesSelecionado.value == 1){
+      mesSelecionado.value = 12; 
+    }else{
+      mesSelecionado.value--; 
+    }
+  }
+ 
 
 </script>
 <template>
@@ -1589,7 +1658,7 @@ const injecoesUsinas = ref()
                     </v-row> -->
 
                     <!-- TABELA COM ESTATISTICAS -->
-                    <v-card-text>
+                    <v-card-text id="tabelaCompensa">
                       <v-table class="bordered">
                         <template v-slot:default>
                           <thead>
@@ -1739,18 +1808,38 @@ const injecoesUsinas = ref()
                           </tbody>
                         </template>
                       </v-table>
+                      <v-row justify="space-around" style="margin:15px;">
+                        <v-btn @click="baixarPDF()" color="error">
+                          <v-avatar size="30" class="text-white">
+                              <FileTextIcon  />
+                          </v-avatar>
+                          Gerar PDF
+                        </v-btn>
+                      </v-row>
                     </v-card-text>
                 </v-card>
 
                 <!-- RELATÓRIO GERAL -->
                 <v-card elevation="0" v-if="totalProjetado && cateSelecionada === 'GERAL'">
-                    <div class="text-center mb-5">
-                      <h2 v-if=" !selectedYearGeral">Gerando Relatório</h2>
-                      <h2 v-else>Relatório Gerado</h2>
-                      <h5>{{selectedYearGeral }} </h5>
+                  <div>
+                    <div id="titulo">
+                      <div class="text-center mb-5">
+                        <br>
+                        <br> 
+                        <br> 
+                        <h2 v-if=" !selectedYearGeral">Gerando Relatório</h2>
+                        <h2 v-else>Relatório Gerado</h2>
+                        <h5>{{selectedYearGeral }} </h5>
+                      </div>
+                      <div class="footer">
+                        PEE Horto - Administrativo
+                        <p>Informações geradas no dia: {{ dataAtual }}</p>
+                      </div>  
                     </div>
+                    
                     <v-divider></v-divider>
-                    <v-row class="pa-5">
+                    <!-- INFOS GERAIS -->
+                    <v-row class="pa-5" id="tabelaGeral">
                     <div class="v-col-sm-4 v-col-md-4 v-col-lg-3 v-col-12">
                       <div
                         class="text-decoration-none d-flex align-center justify-center text-center rounded-md pa-6 bg-lightprimary"
@@ -1815,8 +1904,128 @@ const injecoesUsinas = ref()
                     </div>
                      
                     </v-row>
-                    <!-- TABELA -->
-                    <v-card-text>
+                  </div>
+
+                  <!-- BOTOES PDF E VIZUALIZAÇÃO -->
+                  <v-row justify="space-around">
+                      
+                    <v-btn @click="baixarPDF('Geral')" color="error">
+                      <v-avatar size="30" class="text-white">
+                          <FileTextIcon  />
+                      </v-avatar>
+                      PDF Geral
+                    </v-btn>
+                    <v-btn @click="mudarVisu === 0 ? mudarVisu = 1 : mudarVisu = 0" size="40" icon class="bg-primary mt-2 ml-5 mr-5 mb-2">
+                        <v-avatar size="30" class="text-white">
+                            <ExchangeIcon size="20" />
+                        </v-avatar>
+                        <v-tooltip activator="parent" location="bottom">Trocar visualização</v-tooltip>
+                    </v-btn>
+                    <v-btn @click="baixarPDF('Mensal')" color="error">
+                      <v-avatar size="30" class="text-white">
+                          <FileTextIcon  />
+                      </v-avatar>
+                      PDF Mensal
+                    </v-btn>
+                  </v-row>
+                    
+                    
+                     <!-- TABELA GERAL MENSAL -->
+                     <v-card-text v-if="mudarVisu == 0" id="tabelaMensalGeral">
+                      <v-table class="bordered">
+                        <template v-slot:default>
+                          <thead>
+                            <tr>
+                                <th colspan="8" style="font-weight: bold; background: linear-gradient(to bottom, #0249fd, #479be4); color: white; padding: 8px; font-size: 15px; text-align: center; position: relative;">
+                                  <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">
+                                    <v-btn @click="diminuirMesGeral()" size="40" icon color="primary" dark  >
+                                        <v-avatar size="30" class="text-white">
+                                            <ArrowLeftIcon size="17" />
+                                        </v-avatar>
+                                      <v-tooltip activator="parent" location="bottom">Voltar Mês</v-tooltip>
+                                    </v-btn>
+                                  </span>
+                                  <span style="font-size: 20px;">
+                                    {{ labelMes() }}
+                                  </span>
+                                  <span style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">
+                                    <v-btn @click="somarMesGeral()" size="40" icon color="primary" dark  >
+                                        <v-avatar size="30" class="text-white">
+                                            <ArrowRightIcon size="17" />
+                                        </v-avatar>
+                                      <v-tooltip activator="parent" location="bottom">Próximo Mês</v-tooltip>
+                                    </v-btn>
+                                  </span>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="sticky-cell" style="text-align: center;  font-size: 15px; background: linear-gradient(to bottom, #8fb9ff, #b0d4ff);" >Projetada<span style="font-size: 10px; margin: 0; display: block;">kWh</span></th>
+                                <th class="text-center" style="padding: 15px; height: 40px; background: linear-gradient(to bottom, #8fb9ff, #b0d4ff); font-size: 16px;">Real<span style="font-size: 10px; margin: 0; display: block;">kWh</span></th>
+                                <th class="text-center" style="height: 40px; background: linear-gradient(to bottom, #8fb9ff, #b0d4ff); font-size: 16px;">Injetado<span style="font-size: 10px; margin: 0; display: block;">kWh</span></th>
+                                <th class="text-center" style="height: 40px; background: linear-gradient(to bottom, #8fb9ff, #b0d4ff); font-size: 14px;">Saldo<span style="font-size: 10px; margin: 0; display: block;">kWh</span></th>
+                                <th class="text-center" style="height: 40px; background: linear-gradient(to bottom, #8fb9ff, #b0d4ff); font-size: 14px;">Compensado<span style="font-size: 10px; margin: 0; display: block;">kWh</span></th>
+                                <th class="text-center" style="height: 40px; background: linear-gradient(to bottom, #8fb9ff, #b0d4ff); font-size: 14px;">Status Compensado</th>
+                                <th class="text-center" style="height: 40px; background: linear-gradient(to bottom, #8fb9ff, #b0d4ff); font-size: 14px;">Crédito Comp./Inj<span style="font-size: 10px; margin: 0; display: block;">kWh</span></th>
+                            </tr>
+                            
+                            <tr> 
+                              <td>{{somaProjecao[mesSelecionado]}}</td>
+                              <td>{{somaReal[mesSelecionado]}}</td>
+                              <td>{{somaInjetado[mesSelecionado]}}</td>
+                              <td>{{somaSaldoEnergia[mesSelecionado]}}</td>
+                              <td>{{somaCompensado[mesSelecionado]}}</td>
+                              <td> 
+                                <span v-if="mesSelecionado == 1">
+                                  <span v-if="somaCompensado[mesSelecionado] - somaInjetadoAnterior[12]"> 
+                                    <v-avatar :class="parseInt(somaCompensado[mesSelecionado] - somaInjetadoAnterior[12]) > 0 ? 'bg-lightsuccess text-success' : 'bg-lighterror text-error'" class="text-center" size="30">
+                                        <template v-if="parseInt(somaCompensado[mesSelecionado] - somaInjetadoAnterior[12]) > 0">
+                                            <ArrowUpRightIcon size="20" />
+                                        </template>
+                                        <template v-else>
+                                            <ArrowDownRightIcon size="20" />
+                                        </template> 
+                                    </v-avatar>  
+                                  </span>
+                                  <span v-else>
+                                    s/inj. dez.
+                                  </span>
+                                </span>
+                                <v-avatar v-else :class="parseInt(somaCompensado[mesSelecionado] - somaInjetado[mesSelecionado-1]) > 0 ? 'bg-lightsuccess text-success' : 'bg-lighterror text-error'" class="text-center" size="30">
+                                    <template v-if="parseInt(somaCompensado[mesSelecionado] - somaInjetado[mesSelecionado-1]) > 0">
+                                        <ArrowUpRightIcon size="20" />
+                                    </template>
+                                    <template v-else>
+                                        <ArrowDownRightIcon size="20" />
+                                    </template> 
+                                </v-avatar>
+                              </td>
+                              <td>
+                                 <span v-if="mesSelecionado == 1">
+                                  <span v-if="somaCompensado[mesSelecionado] - somaInjetadoAnterior[12]">
+                                    <v-chip color="secondary" variant="flat" class="pa-2"> 
+                                      {{ parseInt(somaCompensado[mesSelecionado] - somaInjetadoAnterior[12]) }}
+                                    </v-chip>
+                                    
+                                  </span>
+                                  <span v-else>
+                                    s/inj. dez.
+                                  </span>
+                                 </span> 
+                                 <span v-else>
+                                    <v-chip color="secondary" variant="flat" class="pa-2">
+                                      {{ Math.abs(parseInt(somaCompensado[mesSelecionado] - somaInjetado[mesSelecionado-1])) }}  
+                                    </v-chip>
+                                 </span>
+                                </td>
+                               
+                            </tr>
+                          </thead>
+                        </template>
+                      </v-table> 
+                    </v-card-text>
+
+                    <!-- TABELA GERAL ANUAL -->
+                    <v-card-text v-if="mudarVisu == 1">
                       <v-table class="bordered">
                         <template v-slot:default>
                           <thead>
@@ -1890,8 +2099,7 @@ const injecoesUsinas = ref()
                               <tr>
                                 <td v-for="(mesCompensado, index) in somaCompensado" :key="mesCompensado" style="height: 39px; background-color: #afc6ff">
                                  <span v-if="index == 1">
-                                  <span v-if="mesCompensado - somaInjetadoAnterior[12]">
-                                    {{ parseInt(mesCompensado - somaInjetadoAnterior[12]) }}
+                                  <span v-if="mesCompensado - somaInjetadoAnterior[12]"> 
                                     <v-avatar :class="parseInt(mesCompensado - somaInjetadoAnterior[12]) > 0 ? 'bg-lightsuccess text-success' : 'bg-lighterror text-error'" class="text-center" size="30">
                                         <template v-if="parseInt(mesCompensado - somaInjetadoAnterior[12]) > 0">
                                             <ArrowUpRightIcon size="20" />
@@ -1937,7 +2145,8 @@ const injecoesUsinas = ref()
                               </tr>
                           </tbody>
                         </template>
-                      </v-table>
+                      </v-table> 
+
                     </v-card-text>
                 </v-card>
 
@@ -1991,4 +2200,15 @@ const injecoesUsinas = ref()
     padding: 8px;  
     font-weight: bold;
   }
+
+  .footer {
+  text-align: center;
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  font-size: 12px;
+  color: #000;
+}
 </style>
