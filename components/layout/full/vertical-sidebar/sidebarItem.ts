@@ -75,15 +75,16 @@ const sidebarItem: menu[] = [
     
     { header: 'GERENCIAMENTO' },
     {
-        title: 'Contas (ATT)',
-        icon: RobotIcon,                               
-        to: '/contas/'
-    },
-    {
         title: 'Relatórios',
         icon: FilePowerIcon,
         to: '/relatorios/'
     },
+    {
+        title: 'Contas (Manu.)',
+        icon: RobotIcon,                               
+        to: '/contas/'
+    },
+    
     // {
     //     title: 'Shadow',
     //     icon: CopyIcon,
