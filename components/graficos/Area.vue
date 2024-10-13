@@ -5,7 +5,6 @@
 <script setup>
 import { onMounted } from 'vue';
 import { API_BASE_URL } from '~/api/link';
-
 import ApexCharts from 'apexcharts';
 
 // SOMA POR MES FUNÇÃO
@@ -28,30 +27,46 @@ const somarIndividualReal = async (anoId) => {
     };
 
 //SOMA POR MES 2024
-const valores2024 = await somarIndividualReal(2024)
-const valoresCompletos2024 = [];
+const valores2024 = await somarIndividualReal(2024) 
+const valoresCompletos2024 = ref([]);
 
-for(let i=0;i<12;i++){
-  valoresCompletos2024[i] = valores2024[i] || 0;
+// Preencher valoresCompletos2024
+for (let i = 0; i < 13; i++) {
+  if (i === 0) {
+    valoresCompletos2024.value[0] = 0;  // Acessa o valor com `.value`
+  } else {
+    valoresCompletos2024.value[i] = valores2024[i] || 0;
+  }
 }
 
-//SOMA POR MES 2023
-const valores2023 = await somarIndividualReal(2023)
-const valoresCompletos2023 = [];
+// SOMA POR MES 2023
+const valores2023 = await somarIndividualReal(2023);
+const valoresCompletos2023 = ref([]);
 
-for(let i=0;i<12;i++){
-  valoresCompletos2023[i] = valores2023[i] || 0;
+// Preencher valoresCompletos2023
+for (let i = 0; i < 13; i++) {
+  if (i === 0) {
+    valoresCompletos2023.value[0] = 0;
+  }else{
+   valoresCompletos2023.value[i] = valores2023[i] || 0; 
+  }
+  
 }
+
+// Remover o primeiro índice dos arrays
+valoresCompletos2024.value = valoresCompletos2024.value.slice(1);
+valoresCompletos2023.value = valoresCompletos2023.value.slice(1);
+
 
 const options = {
   series: [
     {
       name: "Geração - 2024",
-      data: valoresCompletos2024
+      data: valoresCompletos2024.value
     },
     {
       name: "Geração - 2023",
-      data: valoresCompletos2023
+      data: valoresCompletos2023.value
     }
   ],
   chart: {
