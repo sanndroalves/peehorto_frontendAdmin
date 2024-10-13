@@ -27,7 +27,7 @@ const ultimaReal = ref("")
                 }, {});
 
                 const mesAtual = new Date().getMonth() + 1;
-                const projecaoMesAtual = totalPorMes[mesAtual] || 0;
+                const projecaoMesAtual = totalPorMes[mesAtual - 1] || 0;
                 ultimaProjetada.value = projecaoMesAtual;
 
                 return totalPorMes;
