@@ -2,6 +2,9 @@
     import { useHead  } from '@vueuse/head';
     import { API_BASE_URL } from '~/base/link';
 
+    const { data } = useAuth()
+ 
+
     // Defina o título da página
 useHead ({
     title: 'Usina Informações'
@@ -836,6 +839,7 @@ definePageMeta({
     const dialogConfiguracoes = ref(false)
     const dialogProgramarManutencao = ref(false);
     const dialogVerManutencoes = ref(false);
+    const dialogManuCriada = ref(false);
 
     const openDialogConfigManu = async (usinaId) =>{
         dialogConfiguracoes.value = true
@@ -843,6 +847,10 @@ definePageMeta({
 
     const programarManutencao = () =>{
         dialogProgramarManutencao.value = true
+        dataManutencao.value = null
+        empresaResponsavel.value = null
+        showErrorCampoManu.value = false
+        showSuccessAlertManu.value = false
     }
 
     const verManutencoes = async () =>{
@@ -900,6 +908,9 @@ definePageMeta({
 
                 const { data: updaPro } = await useFetch(`${API_BASE_URL}/manutencao?idGeradora=${geradora}&status=1`); 
                 programada.value = updaPro._value
+                
+                dialogManuCriada.value = true
+                dialogProgramarManutencao.value = false
 
                 
             }else{
@@ -932,6 +943,33 @@ definePageMeta({
 
         return colorMap[status] || 'bg-primary';
     };
+
+    /* BAIXAR PDF */
+    import html2pdf from 'html2pdf.js';
+  const baixarPDF = () => {
+  // Referência para os elementos 
+  const tituloElement = document.getElementById('OSPDF'); 
+ 
+  const tempContainer = document.createElement('div');
+     
+  const clonedTitulo = tituloElement.cloneNode(true); 
+  
+  tempContainer.appendChild(clonedTitulo); 
+
+  // Gera o PDF usando o contêiner temporário
+  html2pdf(tituloElement, {
+    margin: 0, // Margem em polegadas
+    filename: 'OSPeeHorto.pdf',
+    html2canvas: {
+      scale: 3, // Aumenta a qualidade
+    },
+    jsPDF: {
+      unit: 'in',
+      format: 'a4', // Tamanho do papel
+    //   orientation: 'landscape', // Orientação do papel
+    }
+  });
+};
     /* APAGAR MANUTENCAO */
     const deleteManutencao = async (manuId) => {
         try {
@@ -1427,6 +1465,106 @@ definePageMeta({
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="dialogManuCriada" width="1024">
+      <v-card>
+        <v-card-title style="background: linear-gradient(to bottom, #4d7fff, #1e73be); color: white;">
+          <span class="text-h5">Manutenção Programada...</span>
+        </v-card-title>
+        <v-card-text ref="tabelaElement" id="OSPDF">
+            <v-row>
+                <v-col cols="2" class="text-right">
+                    <img src="/images/logo_horto.png" alt="" width="70"> 
+                </v-col> 
+                <v-col cols="7" class="text-center">
+                    
+                </v-col> 
+                <v-col cols="2">
+                    <img src="/images/logo_peehorto.png" alt="" style="margin-right: 250px" width="150"> 
+                </v-col> 
+            </v-row>
+            <v-row justify="space-around">
+                <v-col cols="12" class="text-center" style="padding-bottom: 10px;">
+                    <h2>ORDEM DE SERVIÇO</h2>
+                </v-col> 
+                <v-col cols="12" class="text-center" style="padding-top: 0px; padding-bottom: 0px;">
+                    <h5>Secretaria de Obras</h5>
+                </v-col> 
+                <v-col cols="12" class="text-center" style="padding-top: 0px;">
+                    <h5>Departamento de Iluminação Pública</h5>
+                </v-col>   
+            </v-row>
+            <v-row>
+                <v-col cols="12" class="text-center">
+                    <v-table>
+                        <thead>
+                            <tr>
+                                <th colspan="3" class="text-center bg-primary" >INFORMAÇÕES</th>
+                            </tr>
+                            <tr>
+                                <th class="text-center" style="background-color: #e8e8e8">UNIDADE</th>
+                                <th colspan="2" class="text-center" style="background-color: #e8e8e8">DESCRIÇÃO</th>
+                            </tr>
+                            <tr>
+                                <td>{{ usinaDetalhe.uc}}</td>
+                                <td colspan="2" class="text-center">{{ usinaDetalhe.nome }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3"></td>
+                            </tr>
+                            <tr>
+                                <th class="text-center" style="background-color: #e8e8e8">DATA</th>
+                                <th class="text-center" style="background-color: #e8e8e8">SOLICITAÇÃO</th>
+                                <th class="text-center" style="background-color: #e8e8e8">EMPRESA</th>
+                            </tr>
+                            <tr>
+                                <td>{{ formatarData(dataManutencao) }}</td>
+                                <td>Manutenção em Usina Fotovoltaica.</td>
+                                <td>{{ empresaResponsavel }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3"></td>
+                            </tr>
+                            <tr>
+                                <th class="text-center" style="background-color: #e8e8e8">@Usuário Solicitante</th>
+                                <th colspan="2" class="text-center" style="background-color: #e8e8e8">Nome Solicitante</th>
+                            </tr>
+                            <tr>
+                                <td>@teste</td>
+                                <td colspan="2"> Teste Testando Testado</td>
+                            </tr>
+                        </thead>
+                    </v-table>
+                    <br>
+                    <v-divider></v-divider>
+                    <br>
+                    <v-row>
+                        <v-col cols="6" class="text-left">
+                            <h5>www.admin.peehorto.com</h5>
+                        </v-col>
+                        <v-col cols="6" class="text-right">
+                            <h5>{{ new Date().toLocaleDateString() }}</h5>
+                        </v-col>
+                    </v-row>
+                    <br>
+                    <br>
+                    <br>  
+                    <v-divider></v-divider>
+                </v-col>
+            </v-row>
+        </v-card-text>
+        <v-card-actions>
+           <v-row justify="space-around">
+            <v-btn @click="baixarPDF()" color="error">
+                <v-avatar size="30" class="text-error">
+                    <FileTextIcon  />
+                </v-avatar>
+                PDF Geral
+            </v-btn>
+           </v-row>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-dialog v-model="dialogVerManutencoes" width="800">
       <v-card class="text-center">
         <v-card-title style="background: linear-gradient(to bottom, #4d7fff, #1e73be); color: white;">
@@ -1454,7 +1592,10 @@ definePageMeta({
                         </v-chip>
                     </td> 
                     <td>
-                        <v-btn @click="abrirDialog(manutencao.id)" icon class="mr-5">
+                        <v-btn @click="verOrdem(manutencao.id)" icon class="mr-2">
+                            <FileTextIcon  />
+                        </v-btn>
+                        <v-btn @click="abrirDialog(manutencao.id)" icon class="mr-2">
                             <v-icon>mdi-pencil</v-icon>
                         </v-btn>
                         <v-btn @click="deleteManutencao(manutencao.id)" icon>
