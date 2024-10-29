@@ -48,7 +48,7 @@
                 if(resultado){
                   resultado.forEach(item => {
                     if (item.connectStatus === 0 || item.connectStatus === 2) {
-                      inversoresAlerta.value.push({ucUsina: usina.uc, Inversor: item}); 
+                      inversoresAlerta.value.push({ucUsina: usina.uc, Inversor: item, nomeUsina: usina.nome }); 
                     }
                   });  
                 }
@@ -99,7 +99,7 @@
             if(resultado){
               resultado.forEach(item => {
                 if (item.connectStatus === 0 || item.connectStatus === 2) {
-                  inversoresAlerta.value.push({ucUsina: 4003667424, Inversor: item}); 
+                  inversoresAlerta.value.push({ucUsina: 4003667424, Inversor: item, nomeUsina: 'NOVO PAÇO MUNICIPAL'}); 
                 }
               });  
             }
@@ -142,7 +142,7 @@
                         </div>
                         <div class="pl-4 mt-n1 flex-grow-1">
                             <h5 class="text-h6">{{ usina.Inversor.deviceSn }}</h5>
-                            <h6 class="text-subtitle-1 text-medium-emphasis">UC {{ usina.ucUsina }}</h6>
+                            <h6 class="text-subtitle-1 text-medium-emphasis">{{ usina.nomeUsina }}</h6>
                         </div> 
                     </div>
                   </div>
